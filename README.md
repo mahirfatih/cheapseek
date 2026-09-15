@@ -6,17 +6,22 @@
 
 When it's cheap, you code. When it's expensive, you wait. Simple.
 
+> **DEV MODE:** The project is currently **ad-hoc signed** (`CODE_SIGN_IDENTITY: "-"` in `project.yml`). Because of this, `SMAppService` launch-at-login may fail to register, and macOS may print harmless `com.apple.linkd.autoShortcut` connection messages at launch. Sign with a Development Team for properly signed builds.
+
 ---
 
 ## 🛠️ Tech Stack & Architecture
 
 - **Language & Framework:** Swift 5.9 / SwiftUI, macOS 13+, `MenuBarExtra` popup (`.window` style)
+- **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`), state (`AppModel`, `AppSettings`), and views (`PopupView`, `SettingsView`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
 - **State & Settings:** `AppModel` (`ObservableObject`, refresh timer) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 7 languages (EN / TR / DE / ES / PT / FR / IT) via Localize-Swift; live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
+- **Testing:** XCTest unit tests (46) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** Localize-Swift 3.2.0 (vendored — see note in `project.yml`)
+- **Bundle ID:** `com.mahirfatih.CheapSeek`
 
 ---
 
@@ -50,13 +55,18 @@ graph TD
         L10n["Localize-Swift<br/>7 .lproj"]
     end
 
-    Entry --> Popup & Settings
-    Popup --> Model & Fmt
-    Settings --> Config & L10n
-    Model --> Core & Config
-    Config --> Store["UserDefaults"]
-    Config --> SM["SMAppService"]
-    L10n --> Model
+    Entry -->|"opens popup"| Popup
+    Entry -->|"Settings scene"| Settings
+    Popup -->|"observes"| Model
+    Popup -->|"countdown"| Fmt
+    Settings -->|"writes"| Config
+    Settings -->|"setCurrentLanguage"| L10n
+    Model -->|"isPeak · schedule"| Core
+    Model -->|"timeZone · interval"| Config
+    Config -->|"persist"| Store["UserDefaults"]
+    Config -->|"register"| SM["SMAppService"]
+    L10n -->|"localized()"| Popup
+    L10n -->|"localized()"| Settings
 ```
 
 ### Data Flow Summary
@@ -93,6 +103,8 @@ No hardcoded bundle identifiers or provisioning profiles are required. On launch
 1. Generate the project first: `xcodegen generate` (`project.yml` is canonical — never edit the `.xcodeproj` by hand).
 2. Open `CheapSeek.xcodeproj` in Xcode.
 3. Press `Cmd + R` to build and run.
+
+> **Note on code signing:** Local builds are ad-hoc signed. `SMAppService` launch-at-login can fail until the app is signed with a Development Team (and, for distribution, notarized). See the **DEV MODE** note at the top.
 
 ---
 
@@ -132,6 +144,11 @@ CheapSeek/
 ├── TESTING.md                           # Test strategy, runner, UI tests, coverage
 ├── SECURITY.md                          # OWASP/MASVS security & privacy report
 ├── CONTRIBUTING.md                      # Setup, testing, commit conventions
+├── docs/diagrams/                       # Archify diagrams (interactive HTML + JSON)
+│   ├── cheapseek-architecture.html      # Components and boundaries
+│   ├── cheapseek-dataflow.html          # How data moves through the app
+│   └── cheapseek-workflow.html          # Runtime workflow and life cycle
+├── README.md
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
 
@@ -147,6 +164,7 @@ CheapSeek/
 ```
 
 - Suites: `PeakCalculatorTests` (32), `CountdownFormatterTests` (5), `AppSettingsTests` (4), `AppModelTests` (3), `LocalizationTests` (2) — **46 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 30%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
@@ -155,10 +173,11 @@ CheapSeek/
 ## Documentation & Architecture
 
 ### Architecture Diagrams (Archify)
-Architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). No diagrams have been generated for this project yet.
+System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
 
-### Context Verification (PCP)
-No [PCP](https://github.com/IsoCodeCrafter/PCP) context has been initialized for this project yet.
+- **Architecture:** [`cheapseek-architecture.html`](./docs/diagrams/cheapseek-architecture.html) — component relationships and system structure
+- **Data-Flow:** [`cheapseek-dataflow.html`](./docs/diagrams/cheapseek-dataflow.html) — how data moves through the app
+- **Workflow & Lifecycle:** [`cheapseek-workflow.html`](./docs/diagrams/cheapseek-workflow.html) — runtime workflow and life cycle
 
 ### Project Documentation
 - [TESTING.md](./TESTING.md) — test suites, runner, UI tests, and coverage.
@@ -169,12 +188,22 @@ No [PCP](https://github.com/IsoCodeCrafter/PCP) context has been initialized for
 
 ## 🔐 Permissions & Privacy
 
-| Setting | Purpose |
-| :--- | :--- |
-| `LSUIElement = true` | Runs as a menu-bar-only app (no Dock icon) |
-| `SMAppService.mainApp` | Optional launch-at-login (no deprecated login-item APIs) |
+| Setting / Key | Purpose | Location |
+| :--- | :--- | :--- |
+| `LSUIElement = true` | Runs as a menu-bar-only app (no Dock icon) | `project.yml` → `INFOPLIST_KEY_LSUIElement` |
+| `SMAppService.mainApp` | Optional launch-at-login (no deprecated login-item APIs) | `AppSettings.swift` |
+| _(no entitlements)_ | The app uses **no entitlements** and is not sandboxed | `project.yml` |
+| `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | `1.0.0` / `1` | `project.yml` |
 
 > **Privacy:** CheapSeek makes **no network requests** and sends **no telemetry or analytics**. All state is stored locally in `UserDefaults` (timezone, notifications toggle, refresh interval, language). Peak pricing is computed entirely on-device from the current UTC time.
+
+**Version:** `CFBundleShortVersionString 1.0.0` (`CFBundleVersion 1`), set via `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml`.
+
+### Known limitations
+
+- **Menu bar tint** — macOS may render the status item as a monochrome template, so the red/green tint is not guaranteed; the full status is always visible in the popup.
+- **Launch at login** — depends on a properly signed build (ad-hoc signing may be rejected by `SMAppService`).
+- **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 
 ---
 
