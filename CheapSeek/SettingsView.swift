@@ -24,7 +24,7 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             HStack {
                 Text("settings".localized())
                     .font(.headline)
@@ -36,6 +36,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.borderless)
                 .help("info".localized())
+                .accessibilityLabel("info".localized())
             }
 
             Form {
@@ -88,6 +89,7 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.borderless)
                     .help("close".localized())
+                    .accessibilityLabel("close".localized())
                 }
                 .padding([.horizontal, .top])
 

@@ -1,4 +1,7 @@
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.labrus.CheapSeek", category: "DeepSeekConfig")
 
 struct Price: Codable, Equatable {
     let offPeak: Double
@@ -26,7 +29,7 @@ struct DeepSeekConfig: Codable, Equatable {
         PeakSchedule(
             windows: peakWindows,
             weekdayOnly: weekdayOnly,
-            timeZone: TimeZone(identifier: "UTC")!
+            timeZone: .gmt
         )
     }
 
@@ -34,6 +37,7 @@ struct DeepSeekConfig: Codable, Equatable {
         guard let url = bundle.url(forResource: "Configuration", withExtension: "plist"),
               let data = try? Data(contentsOf: url),
               let config = try? PropertyListDecoder().decode(DeepSeekConfig.self, from: data) else {
+            logger.warning("Configuration.plist missing or invalid; falling back to built-in defaults.")
             return .fallback
         }
         return config
