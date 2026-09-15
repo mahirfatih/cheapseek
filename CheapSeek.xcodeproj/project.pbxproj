@@ -10,7 +10,9 @@
 		0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */; };
 		100E28BF2CA601D02A42E661 /* Localize_Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0A8C362EF9F17DF2E9CA2E8C /* Localize_Swift */; };
 		196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */; };
+		1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B3BAC8BD269D2785F8B1EE /* Configuration.plist */; };
 		218005DBCF74F85BAB77DABA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */; };
+		29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */; };
 		30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */; };
 		37E5B5C5EA59317D96CE4CA9 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C5D9710C23F4365935612A /* AppModelTests.swift */; };
 		4370A60BF367C4573E503170 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */; };
@@ -61,6 +63,7 @@
 		4D1016ED3456DBA8E571CE61 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
 		4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownFormatterTests.swift; sourceTree = "<group>"; };
 		61633EBA46222979417D06D7 /* CheapSeekUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CheapSeekUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		63B3BAC8BD269D2785F8B1EE /* Configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Configuration.plist; sourceTree = "<group>"; };
 		69AC5FA463CDF1857250EA03 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		933686AA06E3C3664B2F0C5E /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 		E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheapSeekUITests.swift; sourceTree = "<group>"; };
 		EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownFormatter.swift; sourceTree = "<group>"; };
 		F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
+		F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekConfig.swift; sourceTree = "<group>"; };
 		FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -131,7 +135,9 @@
 				3484E7F470640E5E6846B2E1 /* AppSettings.swift */,
 				7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */,
 				49C279555B7F82A2FE33A7F2 /* CheapSeekApp.swift */,
+				63B3BAC8BD269D2785F8B1EE /* Configuration.plist */,
 				EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */,
+				F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */,
 				46F2A1FEA30372C33D73172D /* PeakCalculator.swift */,
 				F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */,
 				149221745A4677F8E75AA64A /* SettingsView.swift */,
@@ -265,6 +271,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4370A60BF367C4573E503170 /* Assets.xcassets in Resources */,
+				1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */,
 				54366E19CFDCE6B53C65B295 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -281,6 +288,7 @@
 				88B85725DEBA6711CD63A328 /* AppSettings.swift in Sources */,
 				920B76F5946AC47A459DEEA1 /* CheapSeekApp.swift in Sources */,
 				F5000755D99EF9C67BDF3A79 /* CountdownFormatter.swift in Sources */,
+				29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */,
 				6FD3C51B32FFC3999052B012 /* PeakCalculator.swift in Sources */,
 				30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */,
 				BD7DC30CE6E327D9147AD4CF /* SettingsView.swift in Sources */,
