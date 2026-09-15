@@ -3,11 +3,42 @@ import Localize_Swift
 
 struct PopupView: View {
     @ObservedObject var viewModel: AppModel
+    @State private var showInfo = false
 
     var body: some View {
+        Group {
+            if showInfo {
+                infoContent
+            } else {
+                statusContent
+            }
+        }
+    }
+
+    private var infoContent: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("pricing".localized())
+                    .font(.headline)
+                Spacer()
+                Button {
+                    showInfo = false
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .buttonStyle(.borderless)
+            }
+            PricingInfoView(config: viewModel.config, timeZone: viewModel.timeZone)
+        }
+        .padding()
+        .frame(width: 340)
+        .background(.regularMaterial)
+    }
+
+    private var statusContent: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             let now = context.date
-            let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now)
+            let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: viewModel.config.schedule)
             let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
 
             VStack(alignment: .leading, spacing: 12) {
@@ -75,6 +106,13 @@ struct PopupView: View {
                             NSApp.activate(ignoringOtherApps: true)
                         }
                     }
+                    Button {
+                        showInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                    }
+                    .buttonStyle(.borderless)
+                    .help("info".localized())
                     Spacer()
                     Button("quit".localized()) {
                         NSApplication.shared.terminate(nil)

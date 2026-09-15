@@ -6,6 +6,7 @@ struct SettingsView: View {
     let config: DeepSeekConfig
 
     @State private var selectedLanguage: String = Localize.currentLanguage()
+    @State private var showInfo = false
 
     init(settings: AppSettings, config: DeepSeekConfig = .fallback) {
         self.settings = settings
@@ -21,41 +22,76 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        Form {
-            Picker("language".localized(), selection: languageBinding) {
-                ForEach(languages) { language in
-                    Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
-                }
-            }
-
-            Picker("timezone".localized(), selection: $settings.timeZoneIdentifier) {
-                Text("system_timezone".localized()).tag(AppSettings.systemTimeZoneIdentifier)
-                ForEach(timeZoneIdentifiers, id: \.self) { identifier in
-                    Text(identifier).tag(identifier)
-                }
-            }
-
-            Toggle("notifications".localized(), isOn: $settings.notificationsEnabled)
-
-            Toggle("launch_at_login".localized(), isOn: launchAtLoginBinding)
-            if settings.loginItemError {
-                Text("login_item_error".localized())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
+        VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("update_interval".localized())
+                Text("settings".localized())
+                    .font(.headline)
                 Spacer()
-                Text("update_interval_value".localizedFormat(Int(settings.updateInterval)))
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
+                Button {
+                    showInfo = true
+                } label: {
+                    Image(systemName: "info.circle")
+                }
+                .buttonStyle(.borderless)
+                .help("info".localized())
             }
-            Slider(value: $settings.updateInterval, in: 30...300, step: 10)
+
+            Form {
+                Picker("language".localized(), selection: languageBinding) {
+                    ForEach(languages) { language in
+                        Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
+                    }
+                }
+
+                Picker("timezone".localized(), selection: $settings.timeZoneIdentifier) {
+                    Text("system_timezone".localized()).tag(AppSettings.systemTimeZoneIdentifier)
+                    ForEach(timeZoneIdentifiers, id: \.self) { identifier in
+                        Text(identifier).tag(identifier)
+                    }
+                }
+
+                Toggle("notifications".localized(), isOn: $settings.notificationsEnabled)
+
+                Toggle("launch_at_login".localized(), isOn: launchAtLoginBinding)
+                if settings.loginItemError {
+                    Text("login_item_error".localized())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                HStack {
+                    Text("update_interval".localized())
+                    Spacer()
+                    Text("update_interval_value".localizedFormat(Int(settings.updateInterval)))
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                Slider(value: $settings.updateInterval, in: 30...300, step: 10)
+            }
         }
         .padding()
-        .frame(width: 360)
+        .frame(width: 380)
+        .sheet(isPresented: $showInfo) {
+            VStack(spacing: 0) {
+                HStack {
+                    Text("pricing".localized())
+                        .font(.headline)
+                    Spacer()
+                    Button {
+                        showInfo = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                    .help("close".localized())
+                }
+                .padding([.horizontal, .top])
+
+                PricingInfoView(config: config, timeZone: settings.timeZone, scrollable: false)
+            }
+        }
     }
 
     private var languageBinding: Binding<String> {

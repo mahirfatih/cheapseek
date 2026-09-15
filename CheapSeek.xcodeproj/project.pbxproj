@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */; };
 		100E28BF2CA601D02A42E661 /* Localize_Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0A8C362EF9F17DF2E9CA2E8C /* Localize_Swift */; };
+		180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */; };
 		196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */; };
 		1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B3BAC8BD269D2785F8B1EE /* Configuration.plist */; };
 		218005DBCF74F85BAB77DABA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */; };
@@ -24,6 +25,7 @@
 		920B76F5946AC47A459DEEA1 /* CheapSeekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C279555B7F82A2FE33A7F2 /* CheapSeekApp.swift */; };
 		AD944C9DE6FC59A68B4686E1 /* CountdownFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */; };
 		BD7DC30CE6E327D9147AD4CF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149221745A4677F8E75AA64A /* SettingsView.swift */; };
+		D3BDC9FCFC8C64CE61DBC4C2 /* PricingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */; };
 		DF0A46B608893FBD260EA8CB /* CheapSeekUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */; };
 		E8BFC00ED122F05A7354A1CE /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096CD96CC89D1404EE66324E /* AppLanguage.swift */; };
 		F5000755D99EF9C67BDF3A79 /* CountdownFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */; };
@@ -54,6 +56,7 @@
 		12B2B985E9C83F1D341164FB /* CheapSeek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheapSeek.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		149221745A4677F8E75AA64A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2C3A059695B2650C96B93038 /* PeakCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakCalculatorTests.swift; sourceTree = "<group>"; };
+		2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricingInfoView.swift; sourceTree = "<group>"; };
 		3484E7F470640E5E6846B2E1 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		3716943104FC5D1473FB5B23 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		46F2A1FEA30372C33D73172D /* PeakCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakCalculator.swift; sourceTree = "<group>"; };
@@ -74,6 +77,7 @@
 		E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheapSeekUITests.swift; sourceTree = "<group>"; };
 		EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownFormatter.swift; sourceTree = "<group>"; };
 		F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupView.swift; sourceTree = "<group>"; };
+		F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricingConfigTests.swift; sourceTree = "<group>"; };
 		F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekConfig.swift; sourceTree = "<group>"; };
 		FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -140,6 +144,7 @@
 				F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */,
 				46F2A1FEA30372C33D73172D /* PeakCalculator.swift */,
 				F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */,
+				2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */,
 				149221745A4677F8E75AA64A /* SettingsView.swift */,
 				AD4A6A234682FAE0F930CEC0 /* Localizable.strings */,
 			);
@@ -154,6 +159,7 @@
 				4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */,
 				933686AA06E3C3664B2F0C5E /* LocalizationTests.swift */,
 				2C3A059695B2650C96B93038 /* PeakCalculatorTests.swift */,
+				F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */,
 				AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */,
 			);
 			path = CheapSeekTests;
@@ -291,6 +297,7 @@
 				29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */,
 				6FD3C51B32FFC3999052B012 /* PeakCalculator.swift in Sources */,
 				30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */,
+				180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */,
 				BD7DC30CE6E327D9147AD4CF /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -304,6 +311,7 @@
 				AD944C9DE6FC59A68B4686E1 /* CountdownFormatterTests.swift in Sources */,
 				6B644DD9FD4A9AC924DDE2C0 /* LocalizationTests.swift in Sources */,
 				8170F0506086C9AACB4FF9C9 /* PeakCalculatorTests.swift in Sources */,
+				D3BDC9FCFC8C64CE61DBC4C2 /* PricingConfigTests.swift in Sources */,
 				0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -425,7 +433,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeek;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeek;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};
@@ -445,7 +453,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeekTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CheapSeek.app/Contents/MacOS/CheapSeek";
@@ -466,7 +474,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeekUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekUITests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_TARGET_NAME = CheapSeek;
@@ -552,7 +560,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeekTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekTests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CheapSeek.app/Contents/MacOS/CheapSeek";
@@ -573,7 +581,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeekUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekUITests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 				TEST_TARGET_NAME = CheapSeek;
@@ -598,7 +606,7 @@
 				);
 				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.mahirfatih.CheapSeek;
+				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeek;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 5.9;
 			};

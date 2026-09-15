@@ -10,7 +10,11 @@ final class LocalizationTests: XCTestCase {
         "today_schedule", "next_change", "in_label", "to_peak", "to_offpeak",
         "settings", "quit", "language", "timezone", "notifications", "launch_at_login",
         "update_interval", "unit_hours", "unit_minutes", "unit_seconds",
-        "system_timezone", "update_interval_value", "login_item_error"
+        "system_timezone", "update_interval_value", "login_item_error",
+        "pricing", "info", "peak_label", "off_peak_label", "peak_window",
+        "off_peak_window", "full_price", "half_price", "your_time",
+        "input_cache_hit", "input_cache_miss", "output_tokens", "per_million_tokens",
+        "view_pricing_page", "api_docs", "base_url", "close"
     ]
 
     private var cheapSeekDir: URL {

@@ -80,9 +80,11 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 | :--- | :--- |
 | `project.yml` | XcodeGen spec — canonical source |
 | `CheapSeek/` | App source (main target) |
+| `CheapSeek/Configuration.plist` | Bundled config: peak hours, model pricing, links |
+| `CheapSeek/DeepSeekConfig.swift` | Loads and decodes the bundled config (with fallback) |
 | `CheapSeek/AppLanguage.swift` | Single source of truth for the 7 supported languages |
 | `CheapSeek/Assets.xcassets/` | App icon + accent color |
-| `CheapSeekTests/` | XCTest suite (unit + security regression) |
+| `CheapSeekTests/` | XCTest suite (unit + security regression + config) |
 | `CheapSeekUITests/` | XCUITest suite (launch + best-effort menu bar checks) |
 | `test/test.sh` | Single test runner script |
 | `.github/workflows/ci.yml` | CI workflow (build + unit tests + coverage gate) |
