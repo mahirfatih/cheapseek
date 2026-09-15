@@ -196,4 +196,63 @@ final class PeakCalculatorTests: XCTestCase {
         XCTAssertEqual(segments[4].1, utcDate(2026, 1, 5, 21, 0))
         XCTAssertFalse(segments[4].2)
     }
+
+    // MARK: - Exact transition instants
+
+    func testNextTransitionExactlyAtFirstWindowStart() {
+        let result = PeakCalculator.nextTransition(from: utcDate(2026, 1, 5, 1, 0))
+        XCTAssertEqual(result.0, utcDate(2026, 1, 5, 4, 0))
+        XCTAssertFalse(result.1)
+    }
+
+    func testNextTransitionExactlyAtFirstWindowEnd() {
+        let result = PeakCalculator.nextTransition(from: utcDate(2026, 1, 5, 4, 0))
+        XCTAssertEqual(result.0, utcDate(2026, 1, 5, 6, 0))
+        XCTAssertTrue(result.1)
+    }
+
+    func testNextTransitionExactlyAtSecondWindowStart() {
+        let result = PeakCalculator.nextTransition(from: utcDate(2026, 1, 5, 6, 0))
+        XCTAssertEqual(result.0, utcDate(2026, 1, 5, 10, 0))
+        XCTAssertFalse(result.1)
+    }
+
+    func testNextTransitionExactlyAtSecondWindowEnd() {
+        let result = PeakCalculator.nextTransition(from: utcDate(2026, 1, 5, 10, 0))
+        XCTAssertEqual(result.0, utcDate(2026, 1, 6, 1, 0))
+        XCTAssertTrue(result.1)
+    }
+
+    // MARK: - DST timezone
+
+    func testSchedulesForDSTDayAreContiguousAndCorrect() {
+        let newYork = TimeZone(identifier: "America/New_York")!
+        var localCalendar = Calendar(identifier: .gregorian)
+        localCalendar.timeZone = newYork
+
+        // DST ends 2026-11-01 02:00 in America/New_York (a 25-hour local day).
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 11
+        components.day = 1
+        components.hour = 12
+        let referenceDate = localCalendar.date(from: components)!
+
+        let segments = PeakCalculator.schedules(for: newYork, referenceDate: referenceDate)
+        let dayStart = localCalendar.startOfDay(for: referenceDate)
+        let dayEnd = localCalendar.date(byAdding: .day, value: 1, to: dayStart)!
+
+        XCTAssertFalse(segments.isEmpty)
+        XCTAssertEqual(segments.first?.0, dayStart)
+        XCTAssertEqual(segments.last?.1, dayEnd)
+
+        for (index, segment) in segments.enumerated() {
+            XCTAssertEqual(segment.2, PeakCalculator.isPeak(at: segment.0),
+                           "Segment \(index) peak flag does not match isPeak at start")
+            if index < segments.count - 1 {
+                XCTAssertEqual(segment.1, segments[index + 1].0,
+                               "Segment \(index) is not contiguous with the next")
+            }
+        }
+    }
 }
