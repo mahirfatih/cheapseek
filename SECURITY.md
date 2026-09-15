@@ -79,7 +79,7 @@
 
 ## Incident Response (condensed playbook)
 
-- **Reset all preferences:** `defaults delete com.mahirfatih.CheapSeek` (then relaunch).
+- **Reset all preferences:** `defaults delete com.labrus.CheapSeek` (then relaunch).
 - **Disable launch at login:** toggle it off in **Settings**, or remove it in **System Settings → General → Login Items**.
 - **Wrong peak status:** verify the system date/time and the selected timezone in Settings (peak windows are always computed in UTC).
 

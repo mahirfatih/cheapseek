@@ -21,7 +21,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **Testing:** XCTest unit tests (59, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
-- **Bundle ID:** `com.mahirfatih.CheapSeek`
+- **Bundle ID:** `com.labrus.CheapSeek`
 
 ---
 
