@@ -24,6 +24,7 @@ struct SettingsView: View {
     }
 
     var body: some View {
+        let _ = model.languageRevision
         VStack(alignment: .leading, spacing: Spacing.sm) {
             HStack {
                 Text("settings".localized())

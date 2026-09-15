@@ -7,6 +7,7 @@ struct PopupView: View {
     @State private var showInfo = false
 
     var body: some View {
+        let _ = model.languageRevision
         Group {
             if showInfo {
                 infoContent

@@ -1,4 +1,5 @@
 import XCTest
+import Localize_Swift
 @testable import CheapSeek
 
 final class AppModelTests: XCTestCase {
@@ -54,5 +55,20 @@ final class AppModelTests: XCTestCase {
         // Should not crash; the clock is simply restarted with a clamped interval.
         model.setUpdateInterval(1)
         model.setUpdateInterval(1000)
+    }
+
+    func testLanguageChangeNotificationIncrementsRevision() {
+        let model = makeModel(hour: 12)
+        let before = model.languageRevision
+        let exp = expectation(description: "language revision increments")
+
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: LCLLanguageChangeNotification),
+            object: nil
+        )
+        DispatchQueue.main.async { exp.fulfill() }
+
+        wait(for: [exp], timeout: 1)
+        XCTAssertGreaterThan(model.languageRevision, before)
     }
 }

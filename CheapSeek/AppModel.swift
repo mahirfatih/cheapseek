@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import Localize_Swift
 
 @Observable
 final class AppModel {
@@ -8,12 +9,28 @@ final class AppModel {
 
     private let clock: Clock
 
+    private(set) var languageRevision = 0
+    @ObservationIgnored private var languageObserver: NSObjectProtocol?
+
     init(settings: AppSettings, config: DeepSeekConfig = .fallback, clock: Clock = Clock(), autoStart: Bool = true) {
         self.settings = settings
         self.config = config
         self.clock = clock
         if autoStart {
             clock.start(interval: settings.updateInterval)
+        }
+        languageObserver = NotificationCenter.default.addObserver(
+            forName: Notification.Name(rawValue: LCLLanguageChangeNotification),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.languageRevision &+= 1
+        }
+    }
+
+    deinit {
+        if let languageObserver {
+            NotificationCenter.default.removeObserver(languageObserver)
         }
     }
 
