@@ -5,6 +5,18 @@ options:
     macOS: "13.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CLANG_ENABLE_MODULES: YES
+  configs:
+    Debug:
+      type: debug
+    Release:
+      type: release
+
 # Localize-Swift 3.2.0 is vendored locally because the upstream SPM target is
 # iOS-only (unconditional `import UIKit` in Sources/UI) and does not build on macOS.
 packages:
@@ -68,8 +80,16 @@ schemes:
     build:
       targets:
         CheapSeek: all
+    run:
+      config: Debug
     test:
       config: Debug
       targets:
         - CheapSeekTests
         - CheapSeekUITests
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
