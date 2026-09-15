@@ -2,7 +2,7 @@
 
 **Scope:** `CheapSeek` macOS client (menu bar app).
 **Architecture:** 100% on-device. No network calls, no telemetry, no accounts, no shared container.
-**Date:** 2026-09-15 · **Last re-verified:** 2026-09-15 (46 unit tests pass; 1 UI launch test passes) · **Validated by:** `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
+**Date:** 2026-09-15 · **Last re-verified:** 2026-09-15 (54 unit tests pass; 1 UI launch test passes) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
 
 ## OWASP Top 10 (2021) — Desktop Client Applicability
 
@@ -48,11 +48,34 @@
 
 ## Risk Assessment Matrix (known, unresolved)
 
-| # | Risk | Severity | Likelihood | Status | Rationale / Accepted because |
-| :-- | :--- | :--- | :--- | :--- | :--- |
-| R1 | `SMAppService.register()` may fail for ad-hoc signed builds | Low | Medium | Accepted | Ad-hoc signing is dev-only; distributed builds should be properly signed/notarized. Failures are caught and surfaced in Settings. |
-| R2 | Menu bar label may render monochrome, hiding red/green | Low | High | Accepted | A macOS rendering behavior, not a security issue. Status text remains present in the popup. |
-| R3 | Incorrect status if the system clock is wrong | Low | Low | Accepted | Peak logic trusts UTC from the OS; there is no independent time source by design. |
+| # | Risk | Severity | Likelihood | Status | Rationale / Accepted because | Mitigation if threat model changes |
+| :-- | :--- | :--- | :--- | :--- | :--- | :--- |
+| R1 | `SMAppService.register()` may fail for ad-hoc signed builds | Low | Medium | Accepted | Ad-hoc signing is dev-only; distributed builds should be properly signed/notarized. Failures are caught and surfaced in Settings. | Sign with a Development Team / notarize for distribution |
+| R2 | Menu bar label may render monochrome, hiding red/green | Low | High | Accepted | A macOS rendering behavior, not a security issue. Status text remains present in the popup. | Use a shape/emblem indicator if color is required |
+| R3 | Incorrect status if the system clock is wrong | Low | Low | Accepted | Peak logic trusts UTC from the OS; there is no independent time source by design. | Fetch trusted time if an offline-trust requirement emerges |
+
+## Security Regression Suite (runs on every build)
+
+`SecurityRegressionTests.swift` — if any check fails, the **build is rejected**:
+
+| Check | Category | Assurance |
+| :--- | :--- | :--- |
+| `testA05_noATSArbitraryLoads` | OWASP A05 | No `NSAllowsArbitraryLoads` in `project.yml` |
+| `testA05_noEntitlementsDeclared` | A05 | The app declares no entitlements and is not sandboxed |
+| `testMenuBarAgent_isLSUIElement` | MASVS-PLATFORM | Runs as a menu-bar-only agent (`LSUIElement`) |
+| `test_noNetworkingAPIs` | A10 / MASVS-NETWORK | No `URLSession` / `URLRequest` / `import Network` in app sources |
+| `test_noAnalyticsOrTelemetrySDKs` | MASVS-PRIVACY | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
+| `test_noKeychainOrSecretStorage` | MASVS-STORAGE | No Keychain / `SecItem` — UserDefaults-only persistence |
+| `testA06_noRemotePackageDependencies` | A06 | No remote SPM packages; only the vendored Localize-Swift |
+| `testLocalizations_allSevenLanguagesPresent` | i18n integrity | All 7 `.lproj` packs exist |
+
+## Findings Closed This Sprint
+
+| Finding | Risk | Fix |
+| :--- | :--- | :--- |
+| Localize-Swift pulled from upstream SPM did not build for macOS (iOS-only `import UIKit`) | Medium (A06 / supply chain) | Vendored 3.2.0 locally under `Packages/` — no remote resolution |
+| Settings window could not open on macOS 26 (private `showSettingsWindow:` selector removed) | Low (UX) | Modern `openSettings` action with a macOS 13 selector fallback |
+| Launch-at-login silently failed for ad-hoc signed builds | Low | `SMAppService` errors are caught and surfaced in Settings |
 
 ## Incident Response (condensed playbook)
 

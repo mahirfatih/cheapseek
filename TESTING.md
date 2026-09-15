@@ -47,8 +47,24 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `AppSettingsTests` (4) | Defaults, `updateInterval` clamping, timezone resolution, persistence. | Injected `UserDefaults` suite (hermetic) |
 | `AppModelTests` (3) | `isPeak`/`schedule` from injected date + timezone, `refresh()`. | Injected clock/timezone via `autoRefresh: false` |
 | `LocalizationTests` (2) | All 7 `.lproj` files have identical key sets; every expected key present in every language. | Direct source-file parsing — no bundle state |
+| `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages, `LSUIElement`, 7 languages present. | Source + `project.yml` assertions — no mocks |
 
 > There is no unit test for the SwiftUI views (`PopupView`, `SettingsView`): SwiftUI view bodies are not meaningfully unit-testable. Rendering is covered by SwiftUI previews (light/dark) and manual verification.
+
+## Security Regression Suite (runs on every build)
+
+`SecurityRegressionTests.swift` — if any check fails, the **build is rejected**:
+
+| Check | Assurance |
+| :--- | :--- |
+| `testA05_noATSArbitraryLoads` | No `NSAllowsArbitraryLoads` in `project.yml` |
+| `testA05_noEntitlementsDeclared` | The app declares no entitlements and is not sandboxed |
+| `testMenuBarAgent_isLSUIElement` | Runs as a menu-bar-only agent (`LSUIElement`) |
+| `test_noNetworkingAPIs` | No `URLSession` / `URLRequest` / `import Network` in app sources |
+| `test_noAnalyticsOrTelemetrySDKs` | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
+| `test_noKeychainOrSecretStorage` | No Keychain / `SecItem` usage (UserDefaults-only persistence) |
+| `testA06_noRemotePackageDependencies` | No remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
+| `testLocalizations_allSevenLanguagesPresent` | All 7 `.lproj` packs exist |
 
 ## UI Tests (`CheapSeekUITests`, XCUITest)
 

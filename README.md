@@ -18,7 +18,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **State & Settings:** `AppModel` (`ObservableObject`, refresh timer) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 7 languages (EN / TR / DE / ES / PT / FR / IT) via Localize-Swift; live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (46) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (54, incl. security regression) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** Localize-Swift 3.2.0 (vendored — see note in `project.yml`)
 - **Bundle ID:** `com.mahirfatih.CheapSeek`
@@ -120,8 +120,10 @@ CheapSeek/
 │   ├── AppSettings.swift                # UserDefaults-backed settings + SMAppService
 │   ├── PeakCalculator.swift             # Pure UTC peak/off-peak logic
 │   ├── CountdownFormatter.swift         # Localized countdown formatting
+│   ├── AppLanguage.swift                # Single source of truth for the 7 languages
 │   ├── PopupView.swift                  # Menu bar popup (status, schedule, countdown, actions)
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
+│   ├── Assets.xcassets/                 # App icon + accent color
 │   ├── en.lproj/Localizable.strings     # English (23 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
@@ -135,7 +137,8 @@ CheapSeek/
 │   ├── AppSettingsTests.swift           # Defaults, clamping, persistence
 │   ├── AppModelTests.swift              # State computation with injected date/timezone
 │   ├── CountdownFormatterTests.swift    # Localized countdown units
-│   └── LocalizationTests.swift          # 7-language key parity & completeness
+│   ├── LocalizationTests.swift          # 7-language key parity & completeness
+│   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
 │   └── CheapSeekUITests.swift           # App launch + best-effort menu bar checks
 ├── test/test.sh                         # Test runner (xcodegen + xcodebuild test)
@@ -163,7 +166,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (32), `CountdownFormatterTests` (5), `AppSettingsTests` (4), `AppModelTests` (3), `LocalizationTests` (2) — **46 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (32), `CountdownFormatterTests` (5), `AppSettingsTests` (4), `AppModelTests` (3), `LocalizationTests` (2), `SecurityRegressionTests` (8) — **54 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 30%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).

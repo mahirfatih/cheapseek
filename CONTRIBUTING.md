@@ -59,19 +59,36 @@ Keep one logical change per commit.
 ## Adding New Languages
 
 1. Create `CheapSeek/<lang>.lproj/Localizable.strings` with **all** keys (copy `en.lproj` as a template).
-2. Add the language code to the `languages` array in `CheapSeekTests/LocalizationTests.swift`.
-3. Run `./test/test.sh` — `LocalizationTests` verifies key parity and completeness.
+2. Add a case to the `AppLanguage` enum in `CheapSeek/AppLanguage.swift` — code, endonym `displayName`, flag emoji, and `localeIdentifier` (the single source of truth for the language list).
+3. Run `./test/test.sh` — `LocalizationTests` and `SecurityRegressionTests` verify key parity, completeness, and pack presence.
 
 ## Adding New Tests
 
 1. Add the test file to `CheapSeekTests/` (unit) or `CheapSeekUITests/` (UI).
 2. Follow the existing naming conventions (`*Tests.swift`).
 3. Unit tests must be hermetic — use a unique `UserDefaults` suite or injected dates, never shared global state.
-4. Run `xcodegen generate` so the new file is added to the project (XcodeGen syncs the target folders).
+4. Security checks belong in `SecurityRegressionTests.swift` (they assert on `project.yml` and app sources).
+5. Run `xcodegen generate` so the new file is added to the project (XcodeGen syncs the target folders).
 
 ## Dependency Notes
 
 The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/Localize-Swift` and wired in `project.yml` as a local package. Upstream's SPM target is iOS-only (it imports `UIKit` unconditionally in `Sources/UI`), so it cannot build for macOS as-is — do not switch it back to the remote URL without verifying macOS support.
+
+## Key Files Reference
+
+| File | Purpose |
+| :--- | :--- |
+| `project.yml` | XcodeGen spec — canonical source |
+| `CheapSeek/` | App source (main target) |
+| `CheapSeek/AppLanguage.swift` | Single source of truth for the 7 supported languages |
+| `CheapSeek/Assets.xcassets/` | App icon + accent color |
+| `CheapSeekTests/` | XCTest suite (unit + security regression) |
+| `CheapSeekUITests/` | XCUITest suite (launch + best-effort menu bar checks) |
+| `test/test.sh` | Single test runner script |
+| `.github/workflows/ci.yml` | CI workflow (build + unit tests + coverage gate) |
+| `README.md` | Installation, features, architecture |
+| `TESTING.md` | Detailed test strategy and coverage |
+| `SECURITY.md` | OWASP/MASVS security report |
 
 ## CI
 
