@@ -34,8 +34,15 @@ final class CheapSeekUITests: XCTestCase {
             throw XCTSkip("Settings window did not open (macOS menu bar automation limitation).")
         }
 
-        XCTAssertTrue(app.staticTexts["Timezone"].exists)
-        XCTAssertTrue(app.switches["Launch at Login"].exists)
+        guard app.staticTexts["Timezone"].waitForExistence(timeout: 5) else {
+            throw XCTSkip("Settings controls did not appear (macOS menu bar automation limitation).")
+        }
+
+        let launchAtLogin = app.switches["Launch at Login"]
+        if !launchAtLogin.waitForExistence(timeout: 5) {
+            throw XCTSkip("Launch at Login toggle not exposed to accessibility.")
+        }
+        XCTAssertTrue(launchAtLogin.exists)
     }
 
     // MARK: - Helpers

@@ -33,6 +33,7 @@
 		DF0A46B608893FBD260EA8CB /* CheapSeekUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */; };
 		E8BFC00ED122F05A7354A1CE /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096CD96CC89D1404EE66324E /* AppLanguage.swift */; };
 		F5000755D99EF9C67BDF3A79 /* CountdownFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */; };
+		FC62B4C4D35F906B391F7995 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D95B4445F26332442C9330A8 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +82,7 @@
 		BF892B96EDE3FD286D8B54B2 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
 		CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
 		D1ED9E73F171BE9137D6737D /* PeakStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakStatus.swift; sourceTree = "<group>"; };
+		D95B4445F26332442C9330A8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		D9C5D9710C23F4365935612A /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheapSeekUITests.swift; sourceTree = "<group>"; };
 		EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountdownFormatter.swift; sourceTree = "<group>"; };
@@ -157,6 +159,7 @@
 				D1ED9E73F171BE9137D6737D /* PeakStatus.swift */,
 				F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */,
 				2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */,
+				D95B4445F26332442C9330A8 /* PrivacyInfo.xcprivacy */,
 				149221745A4677F8E75AA64A /* SettingsView.swift */,
 				AD4A6A234682FAE0F930CEC0 /* Localizable.strings */,
 			);
@@ -291,6 +294,7 @@
 				4370A60BF367C4573E503170 /* Assets.xcassets in Resources */,
 				1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */,
 				54366E19CFDCE6B53C65B295 /* Localizable.strings in Resources */,
+				FC62B4C4D35F906B391F7995 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
