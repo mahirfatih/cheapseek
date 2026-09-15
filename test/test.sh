@@ -75,6 +75,10 @@ set -e
 if [[ "$STATUS" -eq 0 ]]; then
   echo "Log:     $LOG_PATH"
   echo "Results: $RESULT_PATH"
+  if [[ "$COVERAGE" == 1 ]]; then
+    echo "Coverage:"
+    xcrun xccov view --report "$RESULT_PATH" | grep -E "CheapSeek\.app|CheapSeekTests\.xctest" || true
+  fi
 else
   echo "Tests failed (exit $STATUS). Log: $LOG_PATH" >&2
 fi
