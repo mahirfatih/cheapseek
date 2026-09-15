@@ -16,11 +16,11 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`), state (`AppModel`, `AppSettings`), and views (`PopupView`, `SettingsView`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
 - **State & Settings:** `AppModel` (`ObservableObject`, refresh timer) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
-- **Localization:** 7 languages (EN / TR / DE / ES / PT / FR / IT) via Localize-Swift; live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
+- **Localization:** 7 languages (EN / TR / DE / ES / PT / FR / IT) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
 - **Testing:** XCTest unit tests (54, incl. security regression) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
-- **Dependency:** Localize-Swift 3.2.0 (vendored — see note in `project.yml`)
+- **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.mahirfatih.CheapSeek`
 
 ---
@@ -209,6 +209,10 @@ System architecture and visual documentation are generated with [Archify](https:
 - **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 
 ---
+
+## 🙏 Acknowledgements
+
+- [Localize-Swift](https://github.com/marmelroy/Localize-Swift) by [Roy Marmelstein](https://github.com/marmelroy) (MIT) — the localization layer that powers CheapSeek's 7-language support.
 
 ## 📄 License
 

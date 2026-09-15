@@ -119,7 +119,7 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Measured Coverage (2026-09-15, local macOS run)
 
-`CheapSeek.app` line coverage: **36.79%** (CI gate ≥ 30% ✅ — views are intentionally untested by unit tests)
+`CheapSeek.app` line coverage: **34.24%** (CI gate ≥ 30% ✅ — views are intentionally untested by unit tests)
 
 | File | Line Coverage |
 | :--- | :--- |
@@ -128,6 +128,7 @@ UI tests are intended to run **locally**; see CI below.
 | `CheapSeekApp.swift` | 95.24% |
 | `AppModel.swift` | 78.65% |
 | `AppSettings.swift` | 78.08% |
+| `AppLanguage.swift` | 0.00% (enum — exercised via Settings picker) |
 | `PopupView.swift` | 0.00% (SwiftUI view) |
 | `SettingsView.swift` | 0.00% (SwiftUI view) |
 

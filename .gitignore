@@ -10,4 +10,6 @@ yarn.lock
 build/
 DerivedData/
 *.xcresult
+test/TestResults/
 xcuserdata/
+AGENTS.md
