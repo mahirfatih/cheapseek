@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "CheapSeek — Veri Akışı",
+    "output": "cheapseek-dataflow.html",
+    "viewBox": [1040, 520],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    { "label": "Girdi" },
+    { "label": "Değerlendirme" },
+    { "label": "Durum" },
+    { "label": "Gösterim" }
+  ],
+  "nodes": [
+    { "id": "clock", "type": "external", "label": "Sistem Saati", "sublabel": "UTC · Date()", "stage": 0, "row": 1, "tag": "zaman" },
+    { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "tercihler", "stage": 0, "row": 2, "tag": "kalıcı" },
+    { "id": "peakcalc", "type": "backend", "label": "PeakCalculator", "sublabel": "pencere · geçiş · program", "stage": 1, "row": 1 },
+    { "id": "appsettings", "type": "backend", "label": "AppSettings", "sublabel": "saat dilimi · aralık", "stage": 1, "row": 2 },
+    { "id": "appmodel", "type": "backend", "label": "AppModel", "sublabel": "@Published durum", "stage": 2, "row": 1 },
+    { "id": "menubar", "type": "frontend", "label": "Menü Çubuğu", "sublabel": "ikon · coding", "stage": 3, "row": 1 },
+    { "id": "popup", "type": "frontend", "label": "PopupView", "sublabel": "program · geri sayım", "stage": 3, "row": 2 }
+  ],
+  "flows": [
+    { "id": "clock-to-peak", "from": "clock", "to": "peakcalc", "label": "UTC şimdi", "classification": "zaman", "variant": "emphasis" },
+    { "id": "defaults-to-config", "from": "defaults", "to": "appsettings", "label": "tercihler", "classification": "kalıcı", "variant": "dashed" },
+    { "id": "peak-to-model", "from": "peakcalc", "to": "appmodel", "label": "isPeak · program", "classification": "durum", "variant": "emphasis", "route": "straight", "labelDy": -22 },
+    { "id": "config-to-model", "from": "appsettings", "to": "appmodel", "label": "saat dilimi · aralık", "classification": "yapılandırma" },
+    { "id": "model-to-menubar", "from": "appmodel", "to": "menubar", "label": "isPeak", "classification": "görünüm", "route": "straight", "labelDy": -22 },
+    { "id": "model-to-popup", "from": "appmodel", "to": "popup", "label": "durum · geri sayım", "classification": "görünüm", "labelDy": 22 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Ana Veri Yolu", "items": ["UTC saat → PeakCalculator → AppModel → Görünüm", "Durum tek yönlü yayılır (@Published)", "Menü etiketi ve popup aynı kaynağı okur"] },
+    { "dot": "emerald", "title": "Hesaplama Çekirdeği", "items": ["PeakCalculator yarı-açık UTC pencereleri üretir", "Geri sayım CountdownFormatter ile biçimlenir", "Tüm mantık UI'dan bağımsız test edilir"] },
+    { "dot": "violet", "title": "Yerel ve Çevrimdışı", "items": ["Tercihler UserDefaults'ta saklanır", "Dil 7 .lproj dosyasından çözülür", "Ağ çağrısı ve telemetri yok"] }
+  ]
+}
