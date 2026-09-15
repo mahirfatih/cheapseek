@@ -6,9 +6,8 @@ struct SettingsView: View {
 
     @State private var selectedLanguage: String = Localize.currentLanguage()
 
-    private var languages: [String] {
-        Localize.availableLanguages(true)
-            .sorted { endonym($0) < endonym($1) }
+    private var languages: [AppLanguage] {
+        AppLanguage.allCases.sorted { $0.displayName < $1.displayName }
     }
 
     private var timeZoneIdentifiers: [String] {
@@ -18,8 +17,8 @@ struct SettingsView: View {
     var body: some View {
         Form {
             Picker("language".localized(), selection: languageBinding) {
-                ForEach(languages, id: \.self) { code in
-                    Text(endonym(code)).tag(code)
+                ForEach(languages) { language in
+                    Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
                 }
             }
 
@@ -70,10 +69,6 @@ struct SettingsView: View {
                 settings.setLaunchAtLogin(enabled)
             }
         )
-    }
-
-    private func endonym(_ code: String) -> String {
-        Locale(identifier: code).localizedString(forIdentifier: code) ?? code
     }
 }
 
