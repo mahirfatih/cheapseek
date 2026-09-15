@@ -9,6 +9,8 @@ on:
 jobs:
   build-test:
     runs-on: macos-latest
+    env:
+      COVERAGE_MIN: "0.30"
     steps:
       - uses: actions/checkout@v4
 
@@ -21,5 +23,28 @@ jobs:
       - name: Build
         run: xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek -configuration Debug build
 
-      - name: Test
-        run: xcodebuild test -project CheapSeek.xcodeproj -scheme CheapSeek -destination 'platform=macOS'
+      - name: Test (unit, with coverage)
+        run: |
+          xcodebuild test \
+            -project CheapSeek.xcodeproj \
+            -scheme CheapSeek \
+            -destination 'platform=macOS' \
+            -only-testing:CheapSeekTests \
+            -enableCodeCoverage YES \
+            -resultBundlePath "$RUNNER_TEMP/CheapSeek.xcresult"
+
+      - name: Coverage gate
+        run: |
+          COVERAGE=$(xcrun xccov view --report --only-targets "$RUNNER_TEMP/CheapSeek.xcresult" \
+            | grep 'CheapSeek.app' | grep -oE '[0-9]+\.[0-9]+%' | head -1 | tr -d '%')
+          echo "CheapSeek.app line coverage: ${COVERAGE}% (gate: ${COVERAGE_MIN})"
+          awk -v c="$COVERAGE" -v min="$COVERAGE_MIN" 'BEGIN { exit (c+0 >= min+0) ? 0 : 1 }' \
+            || { echo "Coverage ${COVERAGE}% is below the ${COVERAGE_MIN} gate"; exit 1; }
+
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ${{ runner.temp }}/CheapSeek.xcresult
+          if-no-files-found: ignore
