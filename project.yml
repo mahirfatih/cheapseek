@@ -1,0 +1,50 @@
+name: CheapSeek
+options:
+  bundleIdPrefix: com.mahirfatih
+  deploymentTarget:
+    macOS: "13.0"
+  xcodeVersion: "15.0"
+  createIntermediateGroups: true
+packages:
+  Localize_Swift:
+    path: Packages/Localize-Swift
+targets:
+  CheapSeek:
+    type: application
+    platform: macOS
+    sources:
+      - CheapSeek
+    dependencies:
+      - package: Localize_Swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mahirfatih.CheapSeek
+        GENERATE_INFOPLIST_FILE: true
+        INFOPLIST_KEY_LSUIElement: true
+        INFOPLIST_KEY_CFBundleDisplayName: CheapSeek
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        CODE_SIGN_STYLE: Automatic
+        CODE_SIGN_IDENTITY: "-"
+  CheapSeekTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - CheapSeekTests
+    dependencies:
+      - target: CheapSeek
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mahirfatih.CheapSeekTests
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+schemes:
+  CheapSeek:
+    build:
+      targets:
+        CheapSeek: all
+    test:
+      config: Debug
+      targets:
+        - CheapSeekTests
