@@ -124,9 +124,14 @@ CheapSeek/
 │   ├── AppModelTests.swift              # State computation with injected date/timezone
 │   ├── CountdownFormatterTests.swift    # Localized countdown units
 │   └── LocalizationTests.swift          # 7-language key parity & completeness
+├── CheapSeekUITests/                    # UI tests (XCUITest)
+│   └── CheapSeekUITests.swift           # App launch + best-effort menu bar checks
 ├── test/test.sh                         # Test runner (xcodegen + xcodebuild test)
 ├── test/TestResults/                    # .xcresult bundles (gitignored; .empty keeps the dir)
-├── .github/workflows/ci.yml             # CI: generate, build, test on macOS runner
+├── .github/workflows/ci.yml             # CI: generate, build, unit tests + coverage gate
+├── TESTING.md                           # Test strategy, runner, UI tests, coverage
+├── SECURITY.md                          # OWASP/MASVS security & privacy report
+├── CONTRIBUTING.md                      # Setup, testing, commit conventions
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
 
@@ -136,13 +141,14 @@ CheapSeek/
 
 ```bash
 ./test/test.sh --list                 # show the plan without running
-./test/test.sh                        # xcodegen generate + xcodebuild test
-./test/test.sh --no-gen               # skip project generation
-./test/test.sh --coverage             # enable code coverage
+./test/test.sh                        # unit tests (xcodegen generate + xcodebuild test)
+./test/test.sh --ui                   # include the UI tests (local only)
+./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (32), `AppSettingsTests` (4), `AppModelTests` (3), `CountdownFormatterTests` (5), `LocalizationTests` (2) — **46 unit tests** total.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, and runs the full test suite on push / PR / manual dispatch. Because the only dependency is vendored locally, no SPM/network resolution is required in CI.
+- Suites: `PeakCalculatorTests` (32), `CountdownFormatterTests` (5), `AppSettingsTests` (4), `AppModelTests` (3), `LocalizationTests` (2) — **46 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 30%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
+- Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
@@ -153,6 +159,11 @@ Architecture and visual documentation are generated with [Archify](https://githu
 
 ### Context Verification (PCP)
 No [PCP](https://github.com/IsoCodeCrafter/PCP) context has been initialized for this project yet.
+
+### Project Documentation
+- [TESTING.md](./TESTING.md) — test suites, runner, UI tests, and coverage.
+- [SECURITY.md](./SECURITY.md) — OWASP Top 10, MASVS, threat model, and privacy posture.
+- [CONTRIBUTING.md](./CONTRIBUTING.md) — development setup, tests, and commit conventions.
 
 ---
 
