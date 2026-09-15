@@ -2,15 +2,17 @@ import SwiftUI
 import Localize_Swift
 
 struct SettingsView: View {
-    @ObservedObject var settings: AppSettings
+    @Bindable var settings: AppSettings
     let config: DeepSeekConfig
+    let model: AppModel
 
     @State private var selectedLanguage: String = Localize.currentLanguage()
     @State private var showInfo = false
 
-    init(settings: AppSettings, config: DeepSeekConfig = .fallback) {
+    init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel) {
         self.settings = settings
         self.config = config
+        self.model = model
     }
 
     private var languages: [AppLanguage] {
@@ -92,6 +94,9 @@ struct SettingsView: View {
                 PricingInfoView(config: config, timeZone: settings.timeZone, scrollable: false)
             }
         }
+        .onChange(of: settings.updateInterval) { _, newValue in
+            model.setUpdateInterval(newValue)
+        }
     }
 
     private var languageBinding: Binding<String> {
@@ -116,12 +121,16 @@ struct SettingsView: View {
 
 #if DEBUG
 #Preview("Settings · Light") {
-    SettingsView(settings: AppSettings())
+    let settings = AppSettings()
+    let model = AppModel(settings: settings, config: .fallback, autoStart: false)
+    return SettingsView(settings: settings, config: .fallback, model: model)
         .preferredColorScheme(.light)
 }
 
 #Preview("Settings · Dark") {
-    SettingsView(settings: AppSettings())
+    let settings = AppSettings()
+    let model = AppModel(settings: settings, config: .fallback, autoStart: false)
+    return SettingsView(settings: settings, config: .fallback, model: model)
         .preferredColorScheme(.dark)
 }
 #endif

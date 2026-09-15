@@ -13,7 +13,7 @@ struct PeakSchedule: Equatable {
     static let deepseekDefault = PeakSchedule(
         windows: [PeakWindow(startHour: 1, endHour: 4), PeakWindow(startHour: 6, endHour: 10)],
         weekdayOnly: true,
-        timeZone: TimeZone(identifier: "UTC")!
+        timeZone: .gmt
     )
 
     var calendar: Calendar {
@@ -80,7 +80,7 @@ struct PeakCalculator {
         localCalendar.timeZone = timeZone
 
         let dayStart = localCalendar.startOfDay(for: referenceDate)
-        let dayEnd = localCalendar.date(byAdding: .day, value: 1, to: dayStart)!
+        let dayEnd = localCalendar.date(byAdding: .day, value: 1, to: dayStart) ?? dayStart.addingTimeInterval(86_400)
 
         var segments: [(Date, Date, Bool)] = []
         var cursor = dayStart
@@ -104,19 +104,19 @@ struct PeakCalculator {
         components.minute = 0
         components.second = 0
         components.nanosecond = 0
-        return calendar.date(from: components)!
+        return calendar.date(from: components) ?? date
     }
 
     private static func nextWindowStart(after date: Date, schedule: PeakSchedule) -> Date {
         let calendar = schedule.calendar
         let firstStart = schedule.sortedWindows.map(\.startHour).min() ?? 0
-        var day = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: date))!
+        var day = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: date)) ?? date.addingTimeInterval(86_400)
 
         if schedule.weekdayOnly {
             while true {
                 let weekday = calendar.component(.weekday, from: day)
                 if (2...6).contains(weekday) { break }
-                day = calendar.date(byAdding: .day, value: 1, to: day)!
+                day = calendar.date(byAdding: .day, value: 1, to: day) ?? day.addingTimeInterval(86_400)
             }
         }
 

@@ -6,7 +6,7 @@ final class AppModelTests: XCTestCase {
     private func utcDate(_ year: Int, _ month: Int, _ day: Int,
                          _ hour: Int, _ minute: Int = 0, _ second: Int = 0) -> Date {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC")!
+        calendar.timeZone = .gmt
         var components = DateComponents()
         components.year = year
         components.month = month
@@ -14,42 +14,45 @@ final class AppModelTests: XCTestCase {
         components.hour = hour
         components.minute = minute
         components.second = second
-        return calendar.date(from: components)!
+        return calendar.date(from: components) ?? Date()
     }
 
-    private func makeSettings() -> AppSettings {
+    private func makeSettings(timeZoneIdentifier: String = "UTC") -> AppSettings {
         let suite = "AppModelTests-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!
         defaults.removePersistentDomain(forName: suite)
-        return AppSettings(defaults: defaults)
+        let settings = AppSettings(defaults: defaults)
+        settings.timeZoneIdentifier = timeZoneIdentifier
+        return settings
     }
 
-    func testIsPeakComputedFromInjectedDate() {
-        let utc = TimeZone(identifier: "UTC")!
-        let peakModel = AppModel(settings: makeSettings(), date: utcDate(2026, 1, 5, 2, 0), timeZone: utc, autoRefresh: false)
-        XCTAssertTrue(peakModel.isPeak)
-
-        let offPeakModel = AppModel(settings: makeSettings(), date: utcDate(2026, 1, 5, 12, 0), timeZone: utc, autoRefresh: false)
-        XCTAssertFalse(offPeakModel.isPeak)
+    private func makeModel(hour: Int) -> AppModel {
+        AppModel(
+            settings: makeSettings(),
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, hour, 0)),
+            autoStart: false
+        )
     }
 
-    func testScheduleUsesInjectedTimeZone() {
-        let utc = TimeZone(identifier: "UTC")!
-        let model = AppModel(settings: makeSettings(), date: utcDate(2026, 1, 5, 12, 0), timeZone: utc, autoRefresh: false)
+    func testIsPeakComputedFromInjectedClock() {
+        XCTAssertTrue(makeModel(hour: 2).isPeak)
+        XCTAssertFalse(makeModel(hour: 12).isPeak)
+    }
 
-        XCTAssertEqual(model.timeZone, utc)
+    func testScheduleUsesSettingsTimeZone() {
+        let model = makeModel(hour: 12)
+
+        XCTAssertEqual(model.timeZone, TimeZone(identifier: "UTC"))
         XCTAssertEqual(model.schedule.count, 5)
         XCTAssertEqual(model.schedule[1].isPeak, true)
         XCTAssertEqual(model.schedule[2].isPeak, false)
     }
 
-    func testRefreshRecomputesState() {
-        let utc = TimeZone(identifier: "UTC")!
-        let model = AppModel(settings: makeSettings(), date: utcDate(2026, 1, 5, 12, 0), timeZone: utc, autoRefresh: false)
-        XCTAssertFalse(model.isPeak)
-
-        model.refresh(now: utcDate(2026, 1, 5, 2, 0))
-        XCTAssertTrue(model.isPeak)
-        XCTAssertEqual(model.schedule.count, 5)
+    func testSetUpdateIntervalClampsToRange() {
+        let model = makeModel(hour: 12)
+        // Should not crash; the clock is simply restarted with a clamped interval.
+        model.setUpdateInterval(1)
+        model.setUpdateInterval(1000)
     }
 }

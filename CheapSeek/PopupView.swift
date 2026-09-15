@@ -2,7 +2,7 @@ import SwiftUI
 import Localize_Swift
 
 struct PopupView: View {
-    @ObservedObject var viewModel: AppModel
+    let model: AppModel
     @State private var showInfo = false
 
     var body: some View {
@@ -28,7 +28,7 @@ struct PopupView: View {
                 }
                 .buttonStyle(.borderless)
             }
-            PricingInfoView(config: viewModel.config, timeZone: viewModel.timeZone)
+            PricingInfoView(config: model.config, timeZone: model.timeZone)
         }
         .padding()
         .frame(width: 340)
@@ -38,7 +38,7 @@ struct PopupView: View {
     private var statusContent: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             let now = context.date
-            let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: viewModel.config.schedule)
+            let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
             let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
 
             VStack(alignment: .leading, spacing: 12) {
@@ -46,10 +46,10 @@ struct PopupView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Text((viewModel.isPeak ? "status_peak" : "status_offpeak").localized())
+                Text((model.isPeak ? "status_peak" : "status_offpeak").localized())
                     .font(.headline)
                     .bold()
-                    .foregroundStyle(viewModel.isPeak ? .red : .green)
+                    .foregroundStyle(model.isPeak ? .red : .green)
 
                 HStack {
                     Text("now_label".localized())
@@ -64,7 +64,7 @@ struct PopupView: View {
                     Text("timezone_label".localized())
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(viewModel.timeZone.identifier)
+                    Text(model.timeZone.identifier)
                         .lineLimit(1)
                         .truncationMode(.middle)
                 }
@@ -76,7 +76,7 @@ struct PopupView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                ForEach(Array(viewModel.schedule.enumerated()), id: \.offset) { _, segment in
+                ForEach(Array(model.schedule.enumerated()), id: \.offset) { _, segment in
                     scheduleRow(segment)
                 }
 
@@ -153,40 +153,44 @@ private struct OpenSettingsButton: View {
 #if DEBUG
 private extension AppModel {
     static func preview(isPeak: Bool) -> AppModel {
+        let settings = AppSettings()
+        settings.timeZoneIdentifier = "UTC"
+
         var components = DateComponents()
         components.year = 2026
         components.month = 1
         components.day = 5
         components.hour = isPeak ? 2 : 12
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = TimeZone(identifier: "UTC")!
-        let date = calendar.date(from: components)!
+        calendar.timeZone = .gmt
+        let date = calendar.date(from: components) ?? Date()
+
         return AppModel(
-            settings: AppSettings(),
-            date: date,
-            timeZone: TimeZone(identifier: "UTC")!,
-            autoRefresh: false
+            settings: settings,
+            config: .fallback,
+            clock: Clock(now: date),
+            autoStart: false
         )
     }
 }
 
 #Preview("Peak · Light") {
-    PopupView(viewModel: .preview(isPeak: true))
+    PopupView(model: .preview(isPeak: true))
         .preferredColorScheme(.light)
 }
 
 #Preview("Peak · Dark") {
-    PopupView(viewModel: .preview(isPeak: true))
+    PopupView(model: .preview(isPeak: true))
         .preferredColorScheme(.dark)
 }
 
 #Preview("Off-Peak · Light") {
-    PopupView(viewModel: .preview(isPeak: false))
+    PopupView(model: .preview(isPeak: false))
         .preferredColorScheme(.light)
 }
 
 #Preview("Off-Peak · Dark") {
-    PopupView(viewModel: .preview(isPeak: false))
+    PopupView(model: .preview(isPeak: false))
         .preferredColorScheme(.dark)
 }
 #endif

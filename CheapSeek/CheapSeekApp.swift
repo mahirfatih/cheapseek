@@ -2,33 +2,27 @@ import SwiftUI
 
 @main
 struct CheapSeekApp: App {
-    @StateObject private var settings: AppSettings
-    @StateObject private var status: AppModel
+    @State private var settings: AppSettings
+    @State private var model: AppModel
 
     init() {
         let settings = AppSettings()
         let config = DeepSeekConfig.load()
-        _settings = StateObject(wrappedValue: settings)
-        _status = StateObject(wrappedValue: AppModel(settings: settings, config: config))
+        let model = AppModel(settings: settings, config: config)
+        _settings = State(initialValue: settings)
+        _model = State(initialValue: model)
     }
 
     var body: some Scene {
         MenuBarExtra {
-            PopupView(viewModel: status)
+            PopupView(model: model)
         } label: {
-            if status.isPeak {
-                Image(systemName: "dollarsign.circle.fill")
-                    .foregroundStyle(.red)
-            } else {
-                Text("coding")
-                    .foregroundStyle(.green)
-                    .font(.system(size: 12, design: .monospaced))
-            }
+            MenuBarLabel(model: model)
         }
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(settings: settings, config: status.config)
+            SettingsView(settings: settings, config: model.config, model: model)
         }
     }
 }

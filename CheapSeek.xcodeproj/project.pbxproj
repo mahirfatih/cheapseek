@@ -10,6 +10,7 @@
 		0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */; };
 		100E28BF2CA601D02A42E661 /* Localize_Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0A8C362EF9F17DF2E9CA2E8C /* Localize_Swift */; };
 		180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */; };
+		1823F4DC61F4BD207B4CC333 /* MenuBarLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12698C1E79537D926548E6E6 /* MenuBarLabel.swift */; };
 		196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */; };
 		1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B3BAC8BD269D2785F8B1EE /* Configuration.plist */; };
 		218005DBCF74F85BAB77DABA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */; };
@@ -21,6 +22,7 @@
 		6B644DD9FD4A9AC924DDE2C0 /* LocalizationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 933686AA06E3C3664B2F0C5E /* LocalizationTests.swift */; };
 		6FD3C51B32FFC3999052B012 /* PeakCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46F2A1FEA30372C33D73172D /* PeakCalculator.swift */; };
 		8170F0506086C9AACB4FF9C9 /* PeakCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3A059695B2650C96B93038 /* PeakCalculatorTests.swift */; };
+		852DD1EFB3A68687EDD2AC09 /* Clock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B86E26005879300C35B112A /* Clock.swift */; };
 		88B85725DEBA6711CD63A328 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3484E7F470640E5E6846B2E1 /* AppSettings.swift */; };
 		920B76F5946AC47A459DEEA1 /* CheapSeekApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C279555B7F82A2FE33A7F2 /* CheapSeekApp.swift */; };
 		AD944C9DE6FC59A68B4686E1 /* CountdownFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */; };
@@ -53,6 +55,7 @@
 		096CD96CC89D1404EE66324E /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		0B859CFE0CD8C6722A379041 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		11B349D3761B3271E73A5DB8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		12698C1E79537D926548E6E6 /* MenuBarLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarLabel.swift; sourceTree = "<group>"; };
 		12B2B985E9C83F1D341164FB /* CheapSeek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheapSeek.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		149221745A4677F8E75AA64A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2C3A059695B2650C96B93038 /* PeakCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakCalculatorTests.swift; sourceTree = "<group>"; };
@@ -68,6 +71,7 @@
 		61633EBA46222979417D06D7 /* CheapSeekUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CheapSeekUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		63B3BAC8BD269D2785F8B1EE /* Configuration.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Configuration.plist; sourceTree = "<group>"; };
 		69AC5FA463CDF1857250EA03 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		6B86E26005879300C35B112A /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		933686AA06E3C3664B2F0C5E /* LocalizationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationTests.swift; sourceTree = "<group>"; };
 		AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityRegressionTests.swift; sourceTree = "<group>"; };
@@ -139,9 +143,11 @@
 				3484E7F470640E5E6846B2E1 /* AppSettings.swift */,
 				7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */,
 				49C279555B7F82A2FE33A7F2 /* CheapSeekApp.swift */,
+				6B86E26005879300C35B112A /* Clock.swift */,
 				63B3BAC8BD269D2785F8B1EE /* Configuration.plist */,
 				EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */,
 				F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */,
+				12698C1E79537D926548E6E6 /* MenuBarLabel.swift */,
 				46F2A1FEA30372C33D73172D /* PeakCalculator.swift */,
 				F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */,
 				2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */,
@@ -293,8 +299,10 @@
 				196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */,
 				88B85725DEBA6711CD63A328 /* AppSettings.swift in Sources */,
 				920B76F5946AC47A459DEEA1 /* CheapSeekApp.swift in Sources */,
+				852DD1EFB3A68687EDD2AC09 /* Clock.swift in Sources */,
 				F5000755D99EF9C67BDF3A79 /* CountdownFormatter.swift in Sources */,
 				29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */,
+				1823F4DC61F4BD207B4CC333 /* MenuBarLabel.swift in Sources */,
 				6FD3C51B32FFC3999052B012 /* PeakCalculator.swift in Sources */,
 				30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */,
 				180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */,
@@ -403,7 +411,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -431,7 +439,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeek;
 				SDKROOT = macosx;
@@ -451,7 +459,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekTests;
 				SDKROOT = macosx;
@@ -472,7 +480,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekUITests;
 				SDKROOT = macosx;
@@ -533,7 +541,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -558,7 +566,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekTests;
 				SDKROOT = macosx;
@@ -579,7 +587,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeekUITests;
 				SDKROOT = macosx;
@@ -604,7 +612,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.labrus.CheapSeek;
 				SDKROOT = macosx;
