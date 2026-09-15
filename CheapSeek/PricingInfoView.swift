@@ -4,23 +4,30 @@ import Localize_Swift
 struct PricingInfoView: View {
     let config: DeepSeekConfig
     let timeZone: TimeZone
+    var scrollable: Bool = true
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                legend
-                Divider()
-                Text("per_million_tokens".localized())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                ForEach(config.models, id: \.id) { model in
-                    modelCard(model)
-                }
-                Divider()
-                links
-            }
-            .padding()
+        if scrollable {
+            ScrollView { content }
+        } else {
+            content
         }
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            legend
+            Divider()
+            Text("per_million_tokens".localized())
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            ForEach(config.models, id: \.id) { model in
+                modelCard(model)
+            }
+            Divider()
+            links
+        }
+        .padding()
     }
 
     private var legend: some View {

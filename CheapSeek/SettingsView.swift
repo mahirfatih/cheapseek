@@ -73,7 +73,24 @@ struct SettingsView: View {
         .padding()
         .frame(width: 380)
         .sheet(isPresented: $showInfo) {
-            PricingInfoView(config: config, timeZone: settings.timeZone)
+            VStack(spacing: 0) {
+                HStack {
+                    Text("pricing".localized())
+                        .font(.headline)
+                    Spacer()
+                    Button {
+                        showInfo = false
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                    .help("close".localized())
+                }
+                .padding([.horizontal, .top])
+
+                PricingInfoView(config: config, timeZone: settings.timeZone, scrollable: false)
+            }
         }
     }
 
