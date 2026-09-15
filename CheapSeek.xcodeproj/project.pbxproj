@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */; };
 		100E28BF2CA601D02A42E661 /* Localize_Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 0A8C362EF9F17DF2E9CA2E8C /* Localize_Swift */; };
+		180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */; };
 		196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */; };
 		1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B3BAC8BD269D2785F8B1EE /* Configuration.plist */; };
 		218005DBCF74F85BAB77DABA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */; };
@@ -54,6 +55,7 @@
 		12B2B985E9C83F1D341164FB /* CheapSeek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheapSeek.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		149221745A4677F8E75AA64A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		2C3A059695B2650C96B93038 /* PeakCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakCalculatorTests.swift; sourceTree = "<group>"; };
+		2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricingInfoView.swift; sourceTree = "<group>"; };
 		3484E7F470640E5E6846B2E1 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		3716943104FC5D1473FB5B23 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
 		46F2A1FEA30372C33D73172D /* PeakCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakCalculator.swift; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 				F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */,
 				46F2A1FEA30372C33D73172D /* PeakCalculator.swift */,
 				F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */,
+				2E6AC93ACEBD5E730A368EAC /* PricingInfoView.swift */,
 				149221745A4677F8E75AA64A /* SettingsView.swift */,
 				AD4A6A234682FAE0F930CEC0 /* Localizable.strings */,
 			);
@@ -291,6 +294,7 @@
 				29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */,
 				6FD3C51B32FFC3999052B012 /* PeakCalculator.swift in Sources */,
 				30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */,
+				180503CA3B0A1062A4741B43 /* PricingInfoView.swift in Sources */,
 				BD7DC30CE6E327D9147AD4CF /* SettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
