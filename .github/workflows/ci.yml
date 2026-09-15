@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build
+        run: xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek -configuration Debug build
+
+      - name: Test
+        run: xcodebuild test -project CheapSeek.xcodeproj -scheme CheapSeek -destination 'platform=macOS'
