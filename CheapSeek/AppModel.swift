@@ -7,18 +7,23 @@ final class AppModel: ObservableObject {
     @Published private(set) var schedule: [(start: Date, end: Date, isPeak: Bool)]
     @Published private(set) var timeZone: TimeZone
 
+    let config: DeepSeekConfig
+
     private let settings: AppSettings
     private var timer: Timer?
     private var cancellables = Set<AnyCancellable>()
     private var languageObserver: NSObjectProtocol?
     private var systemTimeZoneObserver: NSObjectProtocol?
 
-    init(settings: AppSettings, date: Date = Date(), timeZone: TimeZone? = nil, autoRefresh: Bool = true) {
+    private var peakSchedule: PeakSchedule { config.schedule }
+
+    init(settings: AppSettings, config: DeepSeekConfig = .fallback, date: Date = Date(), timeZone: TimeZone? = nil, autoRefresh: Bool = true) {
         self.settings = settings
+        self.config = config
         let tz = timeZone ?? settings.timeZone
         self.timeZone = tz
-        isPeak = PeakCalculator.isPeak(at: date)
-        schedule = PeakCalculator.schedules(for: tz, referenceDate: date)
+        isPeak = PeakCalculator.isPeak(at: date, schedule: config.schedule)
+        schedule = PeakCalculator.schedules(for: tz, referenceDate: date, schedule: config.schedule)
 
         if autoRefresh {
             startTimer()
@@ -70,8 +75,8 @@ final class AppModel: ObservableObject {
     }
 
     func refresh(now: Date = Date()) {
-        isPeak = PeakCalculator.isPeak(at: now)
-        schedule = PeakCalculator.schedules(for: timeZone, referenceDate: now)
+        isPeak = PeakCalculator.isPeak(at: now, schedule: peakSchedule)
+        schedule = PeakCalculator.schedules(for: timeZone, referenceDate: now, schedule: peakSchedule)
     }
 
     private func startTimer() {

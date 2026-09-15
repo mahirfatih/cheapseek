@@ -7,8 +7,9 @@ struct CheapSeekApp: App {
 
     init() {
         let settings = AppSettings()
+        let config = DeepSeekConfig.load()
         _settings = StateObject(wrappedValue: settings)
-        _status = StateObject(wrappedValue: AppModel(settings: settings))
+        _status = StateObject(wrappedValue: AppModel(settings: settings, config: config))
     }
 
     var body: some Scene {
@@ -27,7 +28,7 @@ struct CheapSeekApp: App {
         .menuBarExtraStyle(.window)
 
         Settings {
-            SettingsView(settings: settings)
+            SettingsView(settings: settings, config: status.config)
         }
     }
 }

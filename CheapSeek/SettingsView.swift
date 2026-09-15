@@ -3,8 +3,14 @@ import Localize_Swift
 
 struct SettingsView: View {
     @ObservedObject var settings: AppSettings
+    let config: DeepSeekConfig
 
     @State private var selectedLanguage: String = Localize.currentLanguage()
+
+    init(settings: AppSettings, config: DeepSeekConfig = .fallback) {
+        self.settings = settings
+        self.config = config
+    }
 
     private var languages: [AppLanguage] {
         AppLanguage.allCases.sorted { $0.displayName < $1.displayName }

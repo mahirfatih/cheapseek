@@ -1,62 +1,81 @@
 import Foundation
 
-struct PeakCalculator {
+struct PeakWindow: Codable, Equatable {
+    let startHour: Int
+    let endHour: Int
+}
 
-    private static let utcTimeZone = TimeZone(identifier: "UTC")!
+struct PeakSchedule: Equatable {
+    let windows: [PeakWindow]
+    let weekdayOnly: Bool
+    let timeZone: TimeZone
 
-    private static var utcCalendar: Calendar {
+    static let deepseekDefault = PeakSchedule(
+        windows: [PeakWindow(startHour: 1, endHour: 4), PeakWindow(startHour: 6, endHour: 10)],
+        weekdayOnly: true,
+        timeZone: TimeZone(identifier: "UTC")!
+    )
+
+    var calendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = utcTimeZone
+        calendar.timeZone = timeZone
         return calendar
     }
 
-    static func isPeak(at date: Date) -> Bool {
-        let calendar = utcCalendar
+    var sortedWindows: [PeakWindow] {
+        windows.sorted { $0.startHour < $1.startHour }
+    }
+}
+
+struct PeakCalculator {
+
+    static func isPeak(at date: Date, schedule: PeakSchedule = .deepseekDefault) -> Bool {
+        let calendar = schedule.calendar
         let weekday = calendar.component(.weekday, from: date)
-        guard (2...6).contains(weekday) else { return false }
+        if schedule.weekdayOnly && !(2...6).contains(weekday) { return false }
 
         let hour = calendar.component(.hour, from: date)
         let minute = calendar.component(.minute, from: date)
         let second = calendar.component(.second, from: date)
         let secondsOfDay = hour * 3600 + minute * 60 + second
 
-        let firstWindow = 1 * 3600..<4 * 3600
-        let secondWindow = 6 * 3600..<10 * 3600
-        return firstWindow.contains(secondsOfDay) || secondWindow.contains(secondsOfDay)
+        return schedule.sortedWindows.contains { window in
+            secondsOfDay >= window.startHour * 3600 && secondsOfDay < window.endHour * 3600
+        }
     }
 
-    static func nextTransition(from date: Date) -> (Date, Bool) {
-        let calendar = utcCalendar
+    static func nextTransition(from date: Date, schedule: PeakSchedule = .deepseekDefault) -> (Date, Bool) {
+        let calendar = schedule.calendar
         let hour = calendar.component(.hour, from: date)
         let minute = calendar.component(.minute, from: date)
         let second = calendar.component(.second, from: date)
-        let weekday = calendar.component(.weekday, from: date)
         let secondsOfDay = hour * 3600 + minute * 60 + second
+        let weekday = calendar.component(.weekday, from: date)
 
-        if isPeak(at: date) {
-            let endHour = secondsOfDay < 4 * 3600 ? 4 : 10
-            return (atHour(endHour, on: date), false)
-        }
-
-        let isWeekend = weekday == 1 || weekday == 7
-        if !isWeekend {
-            if secondsOfDay < 1 * 3600 {
-                return (atHour(1, on: date), true)
-            } else if secondsOfDay < 6 * 3600 {
-                return (atHour(6, on: date), true)
-            } else {
-                return (nextWeekdayPeakStart(from: date, weekday: weekday), true)
+        if isPeak(at: date, schedule: schedule) {
+            for window in schedule.sortedWindows
+            where secondsOfDay >= window.startHour * 3600 && secondsOfDay < window.endHour * 3600 {
+                return (atHour(window.endHour, on: date, schedule: schedule), false)
             }
         }
 
-        return (nextMondayPeakStart(from: date), true)
+        let isWeekendDay = schedule.weekdayOnly && !(2...6).contains(weekday)
+        if isWeekendDay {
+            return (nextWindowStart(after: date, schedule: schedule), true)
+        }
+
+        for window in schedule.sortedWindows where window.startHour * 3600 > secondsOfDay {
+            return (atHour(window.startHour, on: date, schedule: schedule), true)
+        }
+
+        return (nextWindowStart(after: date, schedule: schedule), true)
     }
 
-    static func todaySchedules(for timeZone: TimeZone) -> [(Date, Date, Bool)] {
-        schedules(for: timeZone, referenceDate: Date())
+    static func todaySchedules(for timeZone: TimeZone, schedule: PeakSchedule = .deepseekDefault) -> [(Date, Date, Bool)] {
+        schedules(for: timeZone, referenceDate: Date(), schedule: schedule)
     }
 
-    static func schedules(for timeZone: TimeZone, referenceDate: Date) -> [(Date, Date, Bool)] {
+    static func schedules(for timeZone: TimeZone, referenceDate: Date, schedule: PeakSchedule = .deepseekDefault) -> [(Date, Date, Bool)] {
         var localCalendar = Calendar(identifier: .gregorian)
         localCalendar.timeZone = timeZone
 
@@ -65,21 +84,21 @@ struct PeakCalculator {
 
         var segments: [(Date, Date, Bool)] = []
         var cursor = dayStart
-        var state = isPeak(at: dayStart)
+        var state = isPeak(at: dayStart, schedule: schedule)
 
         while cursor < dayEnd {
-            let (transition, _) = nextTransition(from: cursor)
+            let (transition, _) = nextTransition(from: cursor, schedule: schedule)
             let segmentEnd = min(transition, dayEnd)
             segments.append((cursor, segmentEnd, state))
             cursor = segmentEnd
-            state = isPeak(at: cursor)
+            state = isPeak(at: cursor, schedule: schedule)
         }
 
         return segments
     }
 
-    private static func atHour(_ hour: Int, on date: Date) -> Date {
-        let calendar = utcCalendar
+    private static func atHour(_ hour: Int, on date: Date, schedule: PeakSchedule) -> Date {
+        let calendar = schedule.calendar
         var components = calendar.dateComponents([.year, .month, .day], from: date)
         components.hour = hour
         components.minute = 0
@@ -88,20 +107,19 @@ struct PeakCalculator {
         return calendar.date(from: components)!
     }
 
-    private static func nextWeekdayPeakStart(from date: Date, weekday: Int) -> Date {
-        let calendar = utcCalendar
-        let startOfDay = calendar.startOfDay(for: date)
-        let daysToAdd = weekday <= 5 ? 1 : 3
-        let nextDay = calendar.date(byAdding: .day, value: daysToAdd, to: startOfDay)!
-        return atHour(1, on: nextDay)
-    }
+    private static func nextWindowStart(after date: Date, schedule: PeakSchedule) -> Date {
+        let calendar = schedule.calendar
+        let firstStart = schedule.sortedWindows.map(\.startHour).min() ?? 0
+        var day = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: date))!
 
-    private static func nextMondayPeakStart(from date: Date) -> Date {
-        let calendar = utcCalendar
-        let weekday = calendar.component(.weekday, from: date)
-        let daysToAdd = (9 - weekday) % 7
-        let startOfDay = calendar.startOfDay(for: date)
-        let monday = calendar.date(byAdding: .day, value: daysToAdd, to: startOfDay)!
-        return atHour(1, on: monday)
+        if schedule.weekdayOnly {
+            while true {
+                let weekday = calendar.component(.weekday, from: day)
+                if (2...6).contains(weekday) { break }
+                day = calendar.date(byAdding: .day, value: 1, to: day)!
+            }
+        }
+
+        return atHour(firstStart, on: day, schedule: schedule)
     }
 }
