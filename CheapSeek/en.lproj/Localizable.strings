@@ -15,8 +15,9 @@
 "notifications" = "Notifications";
 "launch_at_login" = "Launch at Login";
 "update_interval" = "Update Interval";
-"save" = "Save";
-"cancel" = "Cancel";
+"unit_hours" = "h";
+"unit_minutes" = "m";
+"unit_seconds" = "s";
 "system_timezone" = "System Timezone";
 "update_interval_value" = "%d s";
 "login_item_error" = "Could not update login item.";

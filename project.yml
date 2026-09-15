@@ -5,6 +5,8 @@ options:
     macOS: "13.0"
   xcodeVersion: "15.0"
   createIntermediateGroups: true
+# Localize-Swift 3.2.0 is vendored locally because the upstream SPM target is
+# iOS-only (unconditional `import UIKit` in Sources/UI) and does not build on macOS.
 packages:
   Localize_Swift:
     path: Packages/Localize-Swift

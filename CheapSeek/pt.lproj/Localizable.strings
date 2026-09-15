@@ -15,8 +15,9 @@
 "notifications" = "Notificações";
 "launch_at_login" = "Iniciar ao fazer login";
 "update_interval" = "Intervalo de atualização";
-"save" = "Salvar";
-"cancel" = "Cancelar";
+"unit_hours" = "h";
+"unit_minutes" = "m";
+"unit_seconds" = "s";
 "system_timezone" = "Fuso horário do sistema";
 "update_interval_value" = "%d s";
 "login_item_error" = "Não foi possível atualizar o item de login.";

@@ -63,6 +63,26 @@ final class PeakCalculatorTests: XCTestCase {
         XCTAssertFalse(PeakCalculator.isPeak(at: utcDate(2026, 1, 4, 7, 0))) // Sunday
     }
 
+    func testIsPeakMonday0200() {
+        XCTAssertTrue(PeakCalculator.isPeak(at: utcDate(2026, 1, 5, 2, 0))) // Monday
+    }
+
+    func testIsPeakMonday0500() {
+        XCTAssertFalse(PeakCalculator.isPeak(at: utcDate(2026, 1, 5, 5, 0))) // Monday
+    }
+
+    func testIsPeakMonday1100() {
+        XCTAssertFalse(PeakCalculator.isPeak(at: utcDate(2026, 1, 5, 11, 0))) // Monday
+    }
+
+    func testIsPeakFriday2359() {
+        XCTAssertFalse(PeakCalculator.isPeak(at: utcDate(2026, 1, 2, 23, 59))) // Friday
+    }
+
+    func testIsPeakSunday0800() {
+        XCTAssertFalse(PeakCalculator.isPeak(at: utcDate(2026, 1, 4, 8, 0))) // Sunday
+    }
+
     // MARK: - nextTransition
 
     func testNextTransitionFromFirstPeakWindow() {

@@ -15,8 +15,9 @@
 "notifications" = "Notificaciones";
 "launch_at_login" = "Iniciar al iniciar sesión";
 "update_interval" = "Intervalo de actualización";
-"save" = "Guardar";
-"cancel" = "Cancelar";
+"unit_hours" = "h";
+"unit_minutes" = "m";
+"unit_seconds" = "s";
 "system_timezone" = "Zona horaria del sistema";
 "update_interval_value" = "%d s";
 "login_item_error" = "No se pudo actualizar el inicio de sesión.";

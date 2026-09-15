@@ -1,8 +1,8 @@
 import SwiftUI
 import Localize_Swift
 
-struct ContentView: View {
-    @ObservedObject var viewModel: PeakStatusViewModel
+struct PopupView: View {
+    @ObservedObject var viewModel: AppModel
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
@@ -100,19 +100,22 @@ struct ContentView: View {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
         let secs = seconds % 60
+        let hourUnit = "unit_hours".localized()
+        let minuteUnit = "unit_minutes".localized()
+        let secondUnit = "unit_seconds".localized()
         if hours > 0 {
-            return "\(hours)h \(minutes)m"
+            return "\(hours)\(hourUnit) \(minutes)\(minuteUnit)"
         } else if minutes > 0 {
-            return "\(minutes)m \(secs)s"
+            return "\(minutes)\(minuteUnit) \(secs)\(secondUnit)"
         } else {
-            return "\(secs)s"
+            return "\(secs)\(secondUnit)"
         }
     }
 }
 
 #if DEBUG
-private extension PeakStatusViewModel {
-    static func preview(isPeak: Bool) -> PeakStatusViewModel {
+private extension AppModel {
+    static func preview(isPeak: Bool) -> AppModel {
         var components = DateComponents()
         components.year = 2026
         components.month = 1
@@ -121,7 +124,7 @@ private extension PeakStatusViewModel {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "UTC")!
         let date = calendar.date(from: components)!
-        return PeakStatusViewModel(
+        return AppModel(
             settings: AppSettings(),
             date: date,
             timeZone: TimeZone(identifier: "UTC")!,
@@ -131,22 +134,22 @@ private extension PeakStatusViewModel {
 }
 
 #Preview("Peak · Light") {
-    ContentView(viewModel: .preview(isPeak: true))
+    PopupView(viewModel: .preview(isPeak: true))
         .preferredColorScheme(.light)
 }
 
 #Preview("Peak · Dark") {
-    ContentView(viewModel: .preview(isPeak: true))
+    PopupView(viewModel: .preview(isPeak: true))
         .preferredColorScheme(.dark)
 }
 
 #Preview("Off-Peak · Light") {
-    ContentView(viewModel: .preview(isPeak: false))
+    PopupView(viewModel: .preview(isPeak: false))
         .preferredColorScheme(.light)
 }
 
 #Preview("Off-Peak · Dark") {
-    ContentView(viewModel: .preview(isPeak: false))
+    PopupView(viewModel: .preview(isPeak: false))
         .preferredColorScheme(.dark)
 }
 #endif

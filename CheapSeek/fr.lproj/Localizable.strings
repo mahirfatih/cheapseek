@@ -15,8 +15,9 @@
 "notifications" = "Notifications";
 "launch_at_login" = "Lancer à la connexion";
 "update_interval" = "Intervalle de mise à jour";
-"save" = "Enregistrer";
-"cancel" = "Annuler";
+"unit_hours" = "h";
+"unit_minutes" = "m";
+"unit_seconds" = "s";
 "system_timezone" = "Fuseau horaire du système";
 "update_interval_value" = "%d s";
 "login_item_error" = "Impossible de mettre à jour l'élément de connexion.";

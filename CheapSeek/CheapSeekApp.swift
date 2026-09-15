@@ -3,17 +3,17 @@ import SwiftUI
 @main
 struct CheapSeekApp: App {
     @StateObject private var settings: AppSettings
-    @StateObject private var status: PeakStatusViewModel
+    @StateObject private var status: AppModel
 
     init() {
         let settings = AppSettings()
         _settings = StateObject(wrappedValue: settings)
-        _status = StateObject(wrappedValue: PeakStatusViewModel(settings: settings))
+        _status = StateObject(wrappedValue: AppModel(settings: settings))
     }
 
     var body: some Scene {
         MenuBarExtra {
-            ContentView(viewModel: status)
+            PopupView(viewModel: status)
         } label: {
             if status.isPeak {
                 Image(systemName: "dollarsign.circle.fill")

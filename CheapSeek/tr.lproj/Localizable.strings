@@ -15,8 +15,9 @@
 "notifications" = "Bildirimler";
 "launch_at_login" = "Girişte başlat";
 "update_interval" = "Güncelleme aralığı";
-"save" = "Kaydet";
-"cancel" = "İptal";
+"unit_hours" = "sa";
+"unit_minutes" = "dk";
+"unit_seconds" = "sn";
 "system_timezone" = "Sistem Saat Dilimi";
 "update_interval_value" = "%d sn";
 "login_item_error" = "Giriş öğesi güncellenemedi.";
