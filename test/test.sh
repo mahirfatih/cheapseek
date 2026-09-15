@@ -61,6 +61,10 @@ fi
 
 mkdir -p "$LOGS_DIR" "$RESULTS_DIR"
 
+# Benign macOS noise: AppKit tries to register the app with the AppIntents /
+# Shortcuts service at launch; ad-hoc signed builds get these XPC errors.
+NOISE_FILTER='linkd\.autoShortcut|registering app with intents|Process Instance Registry'
+
 STAMP="$(date +%Y-%m-%d_%H-%M-%S)"
 RESULT_PATH="$RESULTS_DIR/Test_${STAMP}.xcresult"
 LOG_PATH="$LOGS_DIR/Test_${STAMP}.log"
@@ -72,7 +76,7 @@ if [[ "$DO_GEN" == 1 ]]; then
 fi
 
 set +e
-"${TEST_CMD[@]}" 2>&1 | tee "$LOG_PATH"
+"${TEST_CMD[@]}" 2>&1 | grep -vE "$NOISE_FILTER" | tee "$LOG_PATH"
 STATUS=${PIPESTATUS[0]}
 set -e
 
