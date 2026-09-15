@@ -10,28 +10,31 @@ final class AppSettings: ObservableObject {
     }
 
     static let systemTimeZoneIdentifier = ""
+    static let defaultUpdateInterval: Double = 60
+    static let updateIntervalRange: ClosedRange<Double> = 30...300
 
     @Published var timeZoneIdentifier: String {
         didSet {
-            UserDefaults.standard.set(timeZoneIdentifier, forKey: Keys.timeZone)
+            defaults.set(timeZoneIdentifier, forKey: Keys.timeZone)
         }
     }
 
     @Published var notificationsEnabled: Bool {
         didSet {
-            UserDefaults.standard.set(notificationsEnabled, forKey: Keys.notifications)
+            defaults.set(notificationsEnabled, forKey: Keys.notifications)
         }
     }
 
     @Published var updateInterval: Double {
         didSet {
-            UserDefaults.standard.set(updateInterval, forKey: Keys.updateInterval)
+            defaults.set(updateInterval, forKey: Keys.updateInterval)
         }
     }
 
     @Published private(set) var launchAtLogin: Bool = false
     @Published private(set) var loginItemError: Bool = false
 
+    private let defaults: UserDefaults
     private var languageObserver: NSObjectProtocol?
 
     var timeZone: TimeZone {
@@ -41,8 +44,8 @@ final class AppSettings: ObservableObject {
         return TimeZone(identifier: timeZoneIdentifier) ?? .current
     }
 
-    init() {
-        let defaults = UserDefaults.standard
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
 
         if let tz = defaults.string(forKey: Keys.timeZone) {
             timeZoneIdentifier = tz
@@ -53,7 +56,11 @@ final class AppSettings: ObservableObject {
         notificationsEnabled = defaults.object(forKey: Keys.notifications) as? Bool ?? false
 
         let storedInterval = defaults.double(forKey: Keys.updateInterval)
-        updateInterval = storedInterval > 0 ? storedInterval : 60
+        if storedInterval > 0 {
+            updateInterval = min(max(storedInterval, Self.updateIntervalRange.lowerBound), Self.updateIntervalRange.upperBound)
+        } else {
+            updateInterval = Self.defaultUpdateInterval
+        }
 
         refreshLaunchAtLogin()
 
