@@ -34,7 +34,8 @@ xcodebuild -project CheapSeek.xcodeproj \
         │   UI    │  CheapSeekUITests (app launch; menu bar popup best-effort)
         ├─────────┤
         │  Unit   │  PeakCalculatorTests, CountdownFormatterTests,
-        │         │  AppSettingsTests, AppModelTests, LocalizationTests
+        │         │  AppSettingsTests, AppModelTests, LocalizationTests,
+        │         │  PricingConfigTests, SecurityRegressionTests
         └─────────┘
 ```
 
@@ -45,7 +46,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `PeakCalculatorTests` (32) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, DST day). | Pure functions — no mocks |
 | `CountdownFormatterTests` (5) | Hours/minutes/seconds formatting, exact hour, negative clamp. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (4) | Defaults, `updateInterval` clamping, timezone resolution, persistence. | Injected `UserDefaults` suite (hermetic) |
-| `AppModelTests` (3) | `isPeak`/`schedule` from injected date + timezone, `refresh()`. | Injected clock/timezone via `autoRefresh: false` |
+| `AppModelTests` (4) | `isPeak`/`schedule` from injected date + timezone, `refresh()`, language-change revision. | Injected clock/timezone via `autoRefresh: false` |
 | `LocalizationTests` (2) | All 7 `.lproj` files have identical key sets; every expected key present in every language. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (5) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation. | Injected `PeakSchedule` — no mocks |
 | `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages, `LSUIElement`, 7 languages present. | Source + `project.yml` assertions — no mocks |

@@ -48,9 +48,9 @@ Keep one logical change per commit.
 
 ## Code Style
 
-- **Language:** Swift 5.9 / SwiftUI, macOS 13+
+- **Language:** Swift 5.9 / SwiftUI, macOS 14+
 - **Architecture:** Pure logic (`PeakCalculator`, `CountdownFormatter`) separated from state (`AppModel`, `AppSettings`) and views (`PopupView`, `SettingsView`)
-- **Concurrency:** UI updates on the main actor; `AppModel` uses a `Timer` and Combine subscriptions
+- **Concurrency:** UI updates on the main actor; `AppModel` is `@Observable` and refreshed by an async `Clock` (no `Timer` or Combine)
 - **Localization:** Every user-facing string **must** use `"key".localized()`. Keys live in all 7 `*.lproj/Localizable.strings` files.
 - **Theme:** Use semantic colors only (`.primary`, `.secondary`, `.regularMaterial`); never hardcode white/black.
 - **Testability:** Pure functions must not touch global state. `AppSettings` accepts an injected `UserDefaults`; `AppModel` accepts an injected date/timezone (`autoRefresh: false`) — use these in tests.
@@ -97,5 +97,5 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 `.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
 
 - Regenerates the project with `xcodegen`, builds, then runs the **unit tests** with coverage.
-- Enforces a coverage gate (`CheapSeek.app` ≥ 30%).
+- Enforces a coverage gate (`CheapSeek.app` ≥ 20%).
 - UI tests are **not** run in CI (macOS XCUITest needs an interactive GUI session); run them locally with `./test/test.sh --ui`.
