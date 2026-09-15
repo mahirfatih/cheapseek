@@ -5169,75 +5169,103 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <text x="745" y="68" class="t-dim" font-size="9" font-weight="600" text-anchor="middle">04 / Display</text>
 
         <!-- Flow paths -->
-        <path data-edge-from="clock" data-edge-to="peakcalc" data-edge-label="UTC now" data-edge-key="0" data-edge-id="clock-to-peak" data-composition-points="156,271;259,271" d="M 156 271 L 259 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="defaults" data-edge-to="appsettings" data-edge-label="preferences" data-edge-key="1" data-edge-id="defaults-to-config" data-composition-points="156,385;259,385" d="M 156 385 L 259 385" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
-        <path data-edge-from="peakcalc" data-edge-to="appmodel" data-edge-label="isPeak · schedule" data-edge-key="2" data-edge-id="peak-to-model" data-composition-points="371,271;474,271" d="M 371 271 L 474 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
-        <path data-edge-from="appsettings" data-edge-to="appmodel" data-edge-label="timezone · interval" data-edge-key="3" data-edge-id="config-to-model" data-composition-points="371,385;422.5,385;422.5,271;474,271" d="M 371 385 L 422.5 385 L 422.5 271 L 474 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="appmodel" data-edge-to="menubar" data-edge-label="isPeak" data-edge-key="4" data-edge-id="model-to-menubar" data-composition-points="586,271;689,271" d="M 586 271 L 689 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
-        <path data-edge-from="appmodel" data-edge-to="popup" data-edge-label="status · countdown" data-edge-key="5" data-edge-id="model-to-popup" data-composition-points="586,271;637.5,271;637.5,385;689,385" d="M 586 271 L 637.5 271 L 637.5 385 L 689 385" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="clock" data-edge-to="peakcalc" data-edge-label="UTC now" data-edge-key="0" data-edge-id="clock-to-peak" data-composition-points="156,157;259,157" d="M 156 157 L 259 157" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="defaults" data-edge-to="appsettings" data-edge-label="preferences" data-edge-key="1" data-edge-id="defaults-to-config" data-composition-points="156,271;259,271" d="M 156 271 L 259 271" class="a-dashed" stroke-width="1.4" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="deepseekconfig" data-edge-to="appmodel" data-edge-label="schedule · prices" data-edge-key="2" data-edge-id="deepseekconfig-to-model" data-composition-points="371,385;371,440;474,440;474,271" d="M 371 385 L 371 440 L 474 440 L 474 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="peakcalc" data-edge-to="appmodel" data-edge-label="isPeak · schedule" data-edge-key="3" data-edge-id="peak-to-model" data-composition-points="371,157;422.5,157;422.5,271;474,271" d="M 371 157 L 422.5 157 L 422.5 271 L 474 271" class="a-emphasis" stroke-width="1.8" marker-end="url(#arrowhead-emphasis)"/>
+        <path data-edge-from="appsettings" data-edge-to="appmodel" data-edge-label="timezone · interval" data-edge-key="4" data-edge-id="config-to-model" data-composition-points="371,271;474,271" d="M 371 271 L 474 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="appmodel" data-edge-to="menubar" data-edge-label="isPeak" data-edge-key="5" data-edge-id="model-to-menubar" data-composition-points="586,271;637.5,271;637.5,157;689,157" d="M 586 271 L 637.5 271 L 637.5 157 L 689 157" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="appmodel" data-edge-to="popup" data-edge-label="status · countdown" data-edge-key="6" data-edge-id="model-to-popup" data-composition-points="586,271;689,271" d="M 586 271 L 689 271" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
+        <path data-edge-from="popup" data-edge-to="formatter" data-edge-label="countdown" data-edge-key="7" data-edge-id="popup-to-formatter" data-composition-points="745,300;745,356" d="M 745 300 L 745 356" class="a-default" stroke-width="1.4" marker-end="url(#arrowhead)"/>
 
         <!-- Nodes -->
-        <g id="node-clock" data-node-id="clock" data-node-label="System Clock" tabindex="0" role="button" aria-label="Focus System Clock, UTC · Date(), 01 / Input" aria-pressed="false" data-node-kind="external" data-node-sublabel="UTC · Date()" data-node-tag="time" data-node-context="01 / Input">
-          <title>System Clock · UTC · Date() · 01 / Input · time</title>
-          <rect x="44" y="242" width="112" height="58" rx="6" class="c-mask"/>
-          <rect x="44" y="242" width="112" height="58" rx="6" class="c-external" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(50 248) scale(0.6875)">
+        <g id="node-clock" data-node-id="clock" data-node-label="Clock" tabindex="0" role="button" aria-label="Focus Clock, async ticker · UTC, 01 / Input" aria-pressed="false" data-node-kind="external" data-node-sublabel="async ticker · UTC" data-node-tag="time" data-node-context="01 / Input">
+          <title>Clock · async ticker · UTC · 01 / Input · time</title>
+          <rect x="44" y="128" width="112" height="58" rx="6" class="c-mask"/>
+          <rect x="44" y="128" width="112" height="58" rx="6" class="c-external" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="external" class="semantic-sigil s-external" transform="translate(50 134) scale(0.6875)">
             <rect x="2.5" y="5" width="8.5" height="8" rx="1.5"/>
             <path d="M8 2.5h5.5V8M13.5 2.5 7.5 8.5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="100" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">System Clock</text>
-          <text data-detail="context" x="100" y="279" class="t-muted" font-size="7" text-anchor="middle">UTC · Date()</text>
-        <text data-detail="fine" x="100" y="289" class="t-external" font-size="7" text-anchor="middle">time</text>
+          <text data-node-label="" data-detail-anchor="" x="100" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Clock</text>
+          <text data-detail="context" x="100" y="165" class="t-muted" font-size="7" text-anchor="middle">async ticker · UTC</text>
+        <text data-detail="fine" x="100" y="175" class="t-external" font-size="7" text-anchor="middle">time</text>
         </g>
 
         <g id="node-defaults" data-node-id="defaults" data-node-label="UserDefaults" tabindex="0" role="button" aria-label="Focus UserDefaults, preferences, 01 / Input" aria-pressed="false" data-node-kind="database" data-node-sublabel="preferences" data-node-tag="persistent" data-node-context="01 / Input">
           <title>UserDefaults · preferences · 01 / Input · persistent</title>
-          <rect x="44" y="356" width="112" height="58" rx="6" class="c-mask"/>
-          <rect x="44" y="356" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(50 362) scale(0.6875)">
+          <rect x="44" y="242" width="112" height="58" rx="6" class="c-mask"/>
+          <rect x="44" y="242" width="112" height="58" rx="6" class="c-database" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="database" class="semantic-sigil s-database" transform="translate(50 248) scale(0.6875)">
             <ellipse cx="8" cy="4" rx="5" ry="2"/>
             <path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="100" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">UserDefaults</text>
-          <text data-detail="context" x="100" y="393" class="t-muted" font-size="7" text-anchor="middle">preferences</text>
-        <text data-detail="fine" x="100" y="403" class="t-database" font-size="7" text-anchor="middle">persistent</text>
+          <text data-node-label="" data-detail-anchor="" x="100" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">UserDefaults</text>
+          <text data-detail="context" x="100" y="279" class="t-muted" font-size="7" text-anchor="middle">preferences</text>
+        <text data-detail="fine" x="100" y="289" class="t-database" font-size="7" text-anchor="middle">persistent</text>
         </g>
 
         <g id="node-peakcalc" data-node-id="peakcalc" data-node-label="PeakCalculator" tabindex="0" role="button" aria-label="Focus PeakCalculator, peak windows, 02 / Evaluation" aria-pressed="false" data-node-kind="backend" data-node-sublabel="peak windows" data-node-context="02 / Evaluation">
           <title>PeakCalculator · peak windows · 02 / Evaluation</title>
+          <rect x="259" y="128" width="112" height="58" rx="6" class="c-mask"/>
+          <rect x="259" y="128" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 134) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
+          <text data-node-label="" data-detail-anchor="" x="315" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PeakCalculator</text>
+          <text data-detail="context" x="315" y="165" class="t-muted" font-size="7" text-anchor="middle">peak windows</text>
+        </g>
+
+        <g id="node-appsettings" data-node-id="appsettings" data-node-label="AppSettings" tabindex="0" role="button" aria-label="Focus AppSettings, timezone · interval, 02 / Evaluation" aria-pressed="false" data-node-kind="backend" data-node-sublabel="timezone · interval" data-node-context="02 / Evaluation">
+          <title>AppSettings · timezone · interval · 02 / Evaluation</title>
           <rect x="259" y="242" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="259" y="242" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 248) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="315" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PeakCalculator</text>
-          <text data-detail="context" x="315" y="279" class="t-muted" font-size="7" text-anchor="middle">peak windows</text>
+          <text data-node-label="" data-detail-anchor="" x="315" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">AppSettings</text>
+          <text data-detail="context" x="315" y="279" class="t-muted" font-size="7" text-anchor="middle">timezone · interval</text>
         </g>
 
-        <g id="node-appsettings" data-node-id="appsettings" data-node-label="AppSettings" tabindex="0" role="button" aria-label="Focus AppSettings, timezone · interval, 02 / Evaluation" aria-pressed="false" data-node-kind="backend" data-node-sublabel="timezone · interval" data-node-context="02 / Evaluation">
-          <title>AppSettings · timezone · interval · 02 / Evaluation</title>
+        <g id="node-deepseekconfig" data-node-id="deepseekconfig" data-node-label="DeepSeekConfig" tabindex="0" role="button" aria-label="Focus DeepSeekConfig, bundled config, 02 / Evaluation" aria-pressed="false" data-node-kind="backend" data-node-sublabel="bundled config" data-node-tag="Configuration.plist" data-node-context="02 / Evaluation">
+          <title>DeepSeekConfig · bundled config · 02 / Evaluation · Configuration.plist</title>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="259" y="356" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(265 362) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">AppSettings</text>
-          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">timezone · interval</text>
+          <text data-node-label="" data-detail-anchor="" x="315" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">DeepSeekConfig</text>
+          <text data-detail="context" x="315" y="393" class="t-muted" font-size="7" text-anchor="middle">bundled config</text>
+        <text data-detail="fine" x="315" y="403" class="t-backend" font-size="7" text-anchor="middle">Configuration.plist</text>
         </g>
 
-        <g id="node-appmodel" data-node-id="appmodel" data-node-label="AppModel" tabindex="0" role="button" aria-label="Focus AppModel, @Published state, 03 / State" aria-pressed="false" data-node-kind="backend" data-node-sublabel="@Published state" data-node-context="03 / State">
-          <title>AppModel · @Published state · 03 / State</title>
+        <g id="node-appmodel" data-node-id="appmodel" data-node-label="AppModel" tabindex="0" role="button" aria-label="Focus AppModel, @Observable state, 03 / State" aria-pressed="false" data-node-kind="backend" data-node-sublabel="@Observable state" data-node-context="03 / State">
+          <title>AppModel · @Observable state · 03 / State</title>
           <rect x="474" y="242" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="474" y="242" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(480 248) scale(0.6875)">
             <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
           <text data-node-label="" data-detail-anchor="" x="530" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">AppModel</text>
-          <text data-detail="context" x="530" y="279" class="t-muted" font-size="7" text-anchor="middle">@Published state</text>
+          <text data-detail="context" x="530" y="279" class="t-muted" font-size="7" text-anchor="middle">@Observable state</text>
         </g>
 
         <g id="node-menubar" data-node-id="menubar" data-node-label="Menu Bar" tabindex="0" role="button" aria-label="Focus Menu Bar, icon · coding, 04 / Display" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="icon · coding" data-node-context="04 / Display">
           <title>Menu Bar · icon · coding · 04 / Display</title>
+          <rect x="689" y="128" width="112" height="58" rx="6" class="c-mask"/>
+          <rect x="689" y="128" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(695 134) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
+          <text data-node-label="" data-detail-anchor="" x="745" y="149" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Menu Bar</text>
+          <text data-detail="context" x="745" y="165" class="t-muted" font-size="7" text-anchor="middle">icon · coding</text>
+        </g>
+
+        <g id="node-popup" data-node-id="popup" data-node-label="PopupView" tabindex="0" role="button" aria-label="Focus PopupView, schedule · countdown, 04 / Display" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="schedule · countdown" data-node-context="04 / Display">
+          <title>PopupView · schedule · countdown · 04 / Display</title>
           <rect x="689" y="242" width="112" height="58" rx="6" class="c-mask"/>
           <rect x="689" y="242" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
           <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(695 248) scale(0.6875)">
@@ -5246,54 +5274,61 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
             <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
             <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="745" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">Menu Bar</text>
-          <text data-detail="context" x="745" y="279" class="t-muted" font-size="7" text-anchor="middle">icon · coding</text>
+          <text data-node-label="" data-detail-anchor="" x="745" y="263" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PopupView</text>
+          <text data-detail="context" x="745" y="279" class="t-muted" font-size="7" text-anchor="middle">schedule · countdown</text>
         </g>
 
-        <g id="node-popup" data-node-id="popup" data-node-label="PopupView" tabindex="0" role="button" aria-label="Focus PopupView, schedule · countdown, 04 / Display" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="schedule · countdown" data-node-context="04 / Display">
-          <title>PopupView · schedule · countdown · 04 / Display</title>
+        <g id="node-formatter" data-node-id="formatter" data-node-label="CountdownFormatter" tabindex="0" role="button" aria-label="Focus CountdownFormatter, localized countdown, 04 / Display" aria-pressed="false" data-node-kind="backend" data-node-sublabel="localized countdown" data-node-context="04 / Display">
+          <title>CountdownFormatter · localized countdown · 04 / Display</title>
           <rect x="689" y="356" width="112" height="58" rx="6" class="c-mask"/>
-          <rect x="689" y="356" width="112" height="58" rx="6" class="c-frontend" stroke-width="1.5"/>
-          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(695 362) scale(0.6875)">
-            <rect x="2" y="3" width="12" height="10" rx="2"/>
-            <path d="M2 6.5h12"/>
-            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
-            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          <rect x="689" y="356" width="112" height="58" rx="6" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(695 362) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
           </g>
-          <text data-node-label="" data-detail-anchor="" x="745" y="377" class="t-primary" font-size="10" font-weight="600" text-anchor="middle">PopupView</text>
-          <text data-detail="context" x="745" y="393" class="t-muted" font-size="7" text-anchor="middle">schedule · countdown</text>
+          <text data-node-label="" data-detail-anchor="" x="745" y="377" class="t-primary" font-size="9.6" font-weight="600" text-anchor="middle">CountdownFormatter</text>
+          <text data-detail="context" x="745" y="393" class="t-muted" font-size="7" text-anchor="middle">localized countdown</text>
         </g>
 
         <!-- Flow labels -->
         <g data-detail="context" data-edge-from="clock" data-edge-to="peakcalc" data-edge-label="UTC now" data-edge-key="0" data-edge-id="clock-to-peak">
-          <rect x="184.35" y="250" width="46.3" height="27" rx="4" class="c-mask"/>
-          <text x="207.5" y="261" class="t-backend" font-size="8" text-anchor="middle">UTC now</text>
-        <text data-detail="fine" x="207.5" y="272" class="t-dim" font-size="7" text-anchor="middle">time</text>
+          <rect x="184.35" y="136" width="46.3" height="27" rx="4" class="c-mask"/>
+          <text x="207.5" y="147" class="t-backend" font-size="8" text-anchor="middle">UTC now</text>
+        <text data-detail="fine" x="207.5" y="158" class="t-dim" font-size="7" text-anchor="middle">time</text>
         </g>
         <g data-detail="context" data-edge-from="defaults" data-edge-to="appsettings" data-edge-label="preferences" data-edge-key="1" data-edge-id="defaults-to-config">
-          <rect x="174.55" y="364" width="65.9" height="27" rx="4" class="c-mask"/>
-          <text x="207.5" y="375" class="t-messagebus" font-size="8" text-anchor="middle">preferences</text>
-        <text data-detail="fine" x="207.5" y="386" class="t-dim" font-size="7" text-anchor="middle">persistent</text>
+          <rect x="174.55" y="250" width="65.9" height="27" rx="4" class="c-mask"/>
+          <text x="207.5" y="261" class="t-messagebus" font-size="8" text-anchor="middle">preferences</text>
+        <text data-detail="fine" x="207.5" y="272" class="t-dim" font-size="7" text-anchor="middle">persistent</text>
         </g>
-        <g data-detail="context" data-edge-from="peakcalc" data-edge-to="appmodel" data-edge-label="isPeak · schedule" data-edge-key="2" data-edge-id="peak-to-model">
-          <rect x="374.85" y="228" width="95.3" height="27" rx="4" class="c-mask"/>
-          <text x="422.5" y="239" class="t-backend" font-size="8" text-anchor="middle">isPeak · schedule</text>
-        <text data-detail="fine" x="422.5" y="250" class="t-dim" font-size="7" text-anchor="middle">state</text>
+        <g data-detail="context" data-edge-from="deepseekconfig" data-edge-to="appmodel" data-edge-label="schedule · prices" data-edge-key="2" data-edge-id="deepseekconfig-to-model">
+          <rect x="374.85" y="419" width="95.3" height="27" rx="4" class="c-mask"/>
+          <text x="422.5" y="430" class="t-muted" font-size="8" text-anchor="middle">schedule · prices</text>
+        <text data-detail="fine" x="422.5" y="441" class="t-dim" font-size="7" text-anchor="middle">config</text>
         </g>
-        <g data-detail="context" data-edge-from="appsettings" data-edge-to="appmodel" data-edge-label="timezone · interval" data-edge-key="3" data-edge-id="config-to-model">
-          <rect x="369.95" y="307" width="105.1" height="27" rx="4" class="c-mask"/>
-          <text x="422.5" y="318" class="t-muted" font-size="8" text-anchor="middle">timezone · interval</text>
-        <text data-detail="fine" x="422.5" y="329" class="t-dim" font-size="7" text-anchor="middle">configuration</text>
+        <g data-detail="context" data-edge-from="peakcalc" data-edge-to="appmodel" data-edge-label="isPeak · schedule" data-edge-key="3" data-edge-id="peak-to-model">
+          <rect x="382.35" y="204" width="95.3" height="27" rx="4" class="c-mask"/>
+          <text x="430" y="215" class="t-backend" font-size="8" text-anchor="middle">isPeak · schedule</text>
+        <text data-detail="fine" x="430" y="226" class="t-dim" font-size="7" text-anchor="middle">state</text>
         </g>
-        <g data-detail="context" data-edge-from="appmodel" data-edge-to="menubar" data-edge-label="isPeak" data-edge-key="4" data-edge-id="model-to-menubar">
-          <rect x="616.8" y="228" width="41.4" height="27" rx="4" class="c-mask"/>
-          <text x="637.5" y="239" class="t-muted" font-size="8" text-anchor="middle">isPeak</text>
-        <text data-detail="fine" x="637.5" y="250" class="t-dim" font-size="7" text-anchor="middle">view</text>
+        <g data-detail="context" data-edge-from="appsettings" data-edge-to="appmodel" data-edge-label="timezone · interval" data-edge-key="4" data-edge-id="config-to-model">
+          <rect x="362.45" y="303" width="105.1" height="27" rx="4" class="c-mask"/>
+          <text x="415" y="314" class="t-muted" font-size="8" text-anchor="middle">timezone · interval</text>
+        <text data-detail="fine" x="415" y="325" class="t-dim" font-size="7" text-anchor="middle">configuration</text>
         </g>
-        <g data-detail="context" data-edge-from="appmodel" data-edge-to="popup" data-edge-label="status · countdown" data-edge-key="5" data-edge-id="model-to-popup">
-          <rect x="587.4" y="329" width="100.2" height="27" rx="4" class="c-mask"/>
-          <text x="637.5" y="340" class="t-muted" font-size="8" text-anchor="middle">status · countdown</text>
-        <text data-detail="fine" x="637.5" y="351" class="t-dim" font-size="7" text-anchor="middle">view</text>
+        <g data-detail="context" data-edge-from="appmodel" data-edge-to="menubar" data-edge-label="isPeak" data-edge-key="5" data-edge-id="model-to-menubar">
+          <rect x="579.3" y="199" width="41.4" height="27" rx="4" class="c-mask"/>
+          <text x="600" y="210" class="t-muted" font-size="8" text-anchor="middle">isPeak</text>
+        <text data-detail="fine" x="600" y="221" class="t-dim" font-size="7" text-anchor="middle">view</text>
+        </g>
+        <g data-detail="context" data-edge-from="appmodel" data-edge-to="popup" data-edge-label="status · countdown" data-edge-key="6" data-edge-id="model-to-popup">
+          <rect x="609.9" y="303" width="100.2" height="27" rx="4" class="c-mask"/>
+          <text x="660" y="314" class="t-muted" font-size="8" text-anchor="middle">status · countdown</text>
+        <text data-detail="fine" x="660" y="325" class="t-dim" font-size="7" text-anchor="middle">view</text>
+        </g>
+        <g data-detail="context" data-edge-from="popup" data-edge-to="formatter" data-edge-label="countdown" data-edge-key="7" data-edge-id="popup-to-formatter">
+          <rect x="716.95" y="303" width="56.1" height="27" rx="4" class="c-mask"/>
+          <text x="745" y="314" class="t-muted" font-size="8" text-anchor="middle">countdown</text>
+        <text data-detail="fine" x="745" y="325" class="t-dim" font-size="7" text-anchor="middle">view</text>
         </g>
 
         <!-- Legend -->
@@ -5509,7 +5544,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         </div>
         <ul>
           <li>&bull; Clock → PeakCalculator → AppModel → Display</li>
-          <li>&bull; State is published one way (@Published)</li>
+          <li>&bull; State is published one way (@Observable)</li>
           <li>&bull; Menu bar and popup read the same source</li>
         </ul>
       </div>
