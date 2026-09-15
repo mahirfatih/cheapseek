@@ -215,10 +215,6 @@ System architecture and visual documentation are generated with [Archify](https:
 
 ---
 
-## 🙏 Acknowledgements
-
-- [Localize-Swift](https://github.com/marmelroy/Localize-Swift) by [Roy Marmelstein](https://github.com/marmelroy) (MIT) — the localization layer that powers CheapSeek's 7-language support.
-
 ## 📄 License
 
 This project is licensed under the MIT License.
