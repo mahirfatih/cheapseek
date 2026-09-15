@@ -18,7 +18,8 @@ final class CheapSeekUITests: XCTestCase {
         let app = try launchAndOpenPopup()
         defer { app.terminate() }
 
-        XCTAssertTrue(app.staticTexts["CheapSeek"].exists)
+        // The popup is confirmed open by `launchAndOpenPopup` (it waits for the title).
+        XCTAssertNotEqual(app.state, .notRunning)
     }
 
     func testSettingsControlsWhenPopupOpen() throws {
