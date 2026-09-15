@@ -6,6 +6,10 @@ struct PricingInfoView: View {
     let timeZone: TimeZone
     var scrollable: Bool = true
 
+    private var locale: Locale {
+        AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
+    }
+
     var body: some View {
         if scrollable {
             ScrollView { content }
@@ -15,22 +19,28 @@ struct PricingInfoView: View {
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            legend
+        VStack(alignment: .leading, spacing: Spacing.lg) {
+            PricingLegend(config: config, timeZone: timeZone, locale: locale)
             Divider()
             Text("per_million_tokens".localized())
                 .font(.caption)
                 .foregroundStyle(.secondary)
             ForEach(config.models, id: \.id) { model in
-                modelCard(model)
+                PricingModelCard(model: model, locale: locale)
             }
             Divider()
-            links
+            LinksSection(config: config)
         }
         .padding()
     }
+}
 
-    private var legend: some View {
+private struct PricingLegend: View {
+    let config: DeepSeekConfig
+    let timeZone: TimeZone
+    let locale: Locale
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("peak_label".localized())
@@ -62,53 +72,93 @@ struct PricingInfoView: View {
         }
     }
 
-    private func modelCard(_ model: ModelPricing) -> some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(model.name)
-                    .font(.headline)
-                Spacer()
+    private var windowsUTCString: String {
+        config.peakWindows
+            .map { String(format: "%02d:00–%02d:00", $0.startHour, $0.endHour) }
+            .joined(separator: ", ")
+    }
+
+    private var windowsLocalString: String {
+        config.peakWindows.map(windowText).joined(separator: ", ")
+    }
+
+    private func windowText(_ window: PeakWindow) -> String {
+        var utcCalendar = Calendar(identifier: .gregorian)
+        utcCalendar.timeZone = .gmt
+        var components = utcCalendar.dateComponents([.year, .month, .day], from: Date())
+        components.hour = window.startHour
+        components.minute = 0
+        guard let start = utcCalendar.date(from: components) else { return "" }
+        let end = start.addingTimeInterval(TimeInterval((window.endHour - window.startHour) * 3600))
+
+        var format = Date.FormatStyle()
+            .hour(.twoDigits(amPM: .omitted))
+            .minute(.twoDigits)
+        format.timeZone = timeZone
+        format.locale = locale
+        return "\(start.formatted(format))–\(end.formatted(format))"
+    }
+}
+
+private struct PricingModelCard: View {
+    let model: ModelPricing
+    let locale: Locale
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            Text(model.name)
+                .font(.headline)
+
+            Grid(horizontalSpacing: Spacing.md, verticalSpacing: Spacing.xs) {
+                GridRow {
+                    Text("")
+                    Text("off_peak_label".localized())
+                        .foregroundStyle(.green)
+                        .gridColumnAlignment(.trailing)
+                    Text("peak_label".localized())
+                        .foregroundStyle(.red)
+                        .gridColumnAlignment(.trailing)
+                }
+                .font(.caption)
+
+                GridRow {
+                    Text("input_cache_hit".localized())
+                    Text(price(model.inputCacheHit.offPeak)).foregroundStyle(.green)
+                    Text(price(model.inputCacheHit.peak)).foregroundStyle(.red)
+                }
+                GridRow {
+                    Text("input_cache_miss".localized())
+                    Text(price(model.inputCacheMiss.offPeak)).foregroundStyle(.green)
+                    Text(price(model.inputCacheMiss.peak)).foregroundStyle(.red)
+                }
+                GridRow {
+                    Text("output_tokens".localized())
+                    Text(price(model.output.offPeak)).foregroundStyle(.green)
+                    Text(price(model.output.peak)).foregroundStyle(.red)
+                }
             }
-            HStack {
-                Text("").frame(maxWidth: .infinity, alignment: .leading)
-                Text("off_peak_label".localized())
-                    .font(.caption)
-                    .foregroundStyle(.green)
-                    .frame(width: 76, alignment: .trailing)
-                Text("peak_label".localized())
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .frame(width: 76, alignment: .trailing)
-            }
-            priceRow("input_cache_hit".localized(), model.inputCacheHit)
-            priceRow("input_cache_miss".localized(), model.inputCacheMiss)
-            priceRow("output_tokens".localized(), model.output)
+            .font(.subheadline)
+            .monospacedDigit()
         }
-        .padding(12)
+        .padding(Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10))
     }
 
-    private func priceRow(_ label: String, _ price: Price) -> some View {
-        HStack {
-            Text(label)
-                .font(.subheadline)
-                .frame(maxWidth: .infinity, alignment: .leading)
-            Text(priceString(price.offPeak))
-                .font(.subheadline)
-                .foregroundStyle(.green)
-                .monospacedDigit()
-                .frame(width: 76, alignment: .trailing)
-            Text(priceString(price.peak))
-                .font(.subheadline)
-                .foregroundStyle(.red)
-                .monospacedDigit()
-                .frame(width: 76, alignment: .trailing)
-        }
+    private func price(_ value: Double) -> String {
+        value.formatted(
+            .currency(code: "USD")
+                .locale(locale)
+                .precision(.fractionLength(2...3))
+        )
     }
+}
 
-    private var links: some View {
-        VStack(alignment: .leading, spacing: 8) {
+private struct LinksSection: View {
+    let config: DeepSeekConfig
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.sm) {
             if let url = URL(string: config.pricingURL) {
                 Link("view_pricing_page".localized(), destination: url)
             }
@@ -125,38 +175,5 @@ struct PricingInfoView: View {
                     .truncationMode(.middle)
             }
         }
-    }
-
-    private var windowsUTCString: String {
-        config.peakWindows
-            .map { String(format: "%02d:00–%02d:00", $0.startHour, $0.endHour) }
-            .joined(separator: ", ")
-    }
-
-    private var windowsLocalString: String {
-        config.peakWindows.map(windowText).joined(separator: ", ")
-    }
-
-    private func windowText(_ window: PeakWindow) -> String {
-        var utcCalendar = Calendar(identifier: .gregorian)
-        utcCalendar.timeZone = TimeZone(identifier: "UTC")!
-        var components = utcCalendar.dateComponents([.year, .month, .day], from: Date())
-        components.hour = window.startHour
-        components.minute = 0
-        guard let start = utcCalendar.date(from: components) else { return "" }
-        let end = start.addingTimeInterval(TimeInterval((window.endHour - window.startHour) * 3600))
-
-        let formatter = DateFormatter()
-        formatter.timeZone = timeZone
-        formatter.dateFormat = "HH:mm"
-        return "\(formatter.string(from: start))–\(formatter.string(from: end))"
-    }
-
-    private func priceString(_ value: Double) -> String {
-        let roundedToCents = (value * 100).rounded() / 100
-        if abs(roundedToCents - value) < 0.0001 {
-            return String(format: "$%.2f", value)
-        }
-        return String(format: "$%.3f", value)
     }
 }

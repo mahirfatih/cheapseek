@@ -1,8 +1,9 @@
 import Foundation
 import ServiceManagement
-import Localize_Swift
+import Observation
 
-final class AppSettings: ObservableObject {
+@Observable
+final class AppSettings {
     private enum Keys {
         static let timeZone = "settings.timeZone"
         static let notifications = "settings.notificationsEnabled"
@@ -13,70 +14,40 @@ final class AppSettings: ObservableObject {
     static let defaultUpdateInterval: Double = 60
     static let updateIntervalRange: ClosedRange<Double> = 30...300
 
-    @Published var timeZoneIdentifier: String {
-        didSet {
-            defaults.set(timeZoneIdentifier, forKey: Keys.timeZone)
-        }
+    var timeZoneIdentifier: String {
+        didSet { defaults.set(timeZoneIdentifier, forKey: Keys.timeZone) }
     }
 
-    @Published var notificationsEnabled: Bool {
-        didSet {
-            defaults.set(notificationsEnabled, forKey: Keys.notifications)
-        }
+    var notificationsEnabled: Bool {
+        didSet { defaults.set(notificationsEnabled, forKey: Keys.notifications) }
     }
 
-    @Published var updateInterval: Double {
-        didSet {
-            defaults.set(updateInterval, forKey: Keys.updateInterval)
-        }
+    var updateInterval: Double {
+        didSet { defaults.set(updateInterval, forKey: Keys.updateInterval) }
     }
 
-    @Published private(set) var launchAtLogin: Bool = false
-    @Published private(set) var loginItemError: Bool = false
+    private(set) var launchAtLogin = false
+    private(set) var loginItemError = false
 
     private let defaults: UserDefaults
-    private var languageObserver: NSObjectProtocol?
 
     var timeZone: TimeZone {
-        if timeZoneIdentifier.isEmpty {
-            return .current
-        }
+        if timeZoneIdentifier.isEmpty { return .current }
         return TimeZone(identifier: timeZoneIdentifier) ?? .current
     }
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
 
-        if let tz = defaults.string(forKey: Keys.timeZone) {
-            timeZoneIdentifier = tz
-        } else {
-            timeZoneIdentifier = Self.systemTimeZoneIdentifier
-        }
-
+        timeZoneIdentifier = defaults.string(forKey: Keys.timeZone) ?? Self.systemTimeZoneIdentifier
         notificationsEnabled = defaults.object(forKey: Keys.notifications) as? Bool ?? false
 
-        let storedInterval = defaults.double(forKey: Keys.updateInterval)
-        if storedInterval > 0 {
-            updateInterval = min(max(storedInterval, Self.updateIntervalRange.lowerBound), Self.updateIntervalRange.upperBound)
-        } else {
-            updateInterval = Self.defaultUpdateInterval
-        }
+        let stored = defaults.double(forKey: Keys.updateInterval)
+        updateInterval = stored > 0
+            ? min(max(stored, Self.updateIntervalRange.lowerBound), Self.updateIntervalRange.upperBound)
+            : Self.defaultUpdateInterval
 
         refreshLaunchAtLogin()
-
-        languageObserver = NotificationCenter.default.addObserver(
-            forName: Notification.Name(LCLLanguageChangeNotification),
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            self?.objectWillChange.send()
-        }
-    }
-
-    deinit {
-        if let languageObserver {
-            NotificationCenter.default.removeObserver(languageObserver)
-        }
     }
 
     func setLaunchAtLogin(_ enabled: Bool) {
