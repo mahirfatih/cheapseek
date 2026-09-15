@@ -67,9 +67,13 @@ struct PopupView: View {
                 Divider()
 
                 HStack {
-                    Button("settings".localized()) {
-                        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                        NSApp.activate(ignoringOtherApps: true)
+                    if #available(macOS 14.0, *) {
+                        OpenSettingsButton()
+                    } else {
+                        Button("settings".localized()) {
+                            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                            NSApp.activate(ignoringOtherApps: true)
+                        }
                     }
                     Spacer()
                     Button("quit".localized()) {
@@ -93,6 +97,18 @@ struct PopupView: View {
                 .foregroundStyle(segment.isPeak ? .red : .green)
         }
         .font(.subheadline)
+    }
+}
+
+@available(macOS 14.0, *)
+private struct OpenSettingsButton: View {
+    @Environment(\.openSettings) private var openSettings
+
+    var body: some View {
+        Button("settings".localized()) {
+            openSettings()
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 }
 
