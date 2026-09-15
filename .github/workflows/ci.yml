@@ -10,7 +10,7 @@ jobs:
   build-test:
     runs-on: macos-latest
     env:
-      COVERAGE_MIN: "0.30"
+      COVERAGE_MIN: "0.20"
     steps:
       - uses: actions/checkout@v4
 

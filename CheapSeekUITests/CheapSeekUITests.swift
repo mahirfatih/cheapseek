@@ -11,12 +11,10 @@ final class CheapSeekUITests: XCTestCase {
         app.launch()
 
         XCTAssertNotEqual(app.state, .notRunning, "CheapSeek should be running after launch")
-        app.terminate()
     }
 
     func testStatusItemOpensPopup() throws {
         let app = try launchAndOpenPopup()
-        defer { app.terminate() }
 
         // The popup is confirmed open by `launchAndOpenPopup` (it waits for the title).
         XCTAssertNotEqual(app.state, .notRunning)
@@ -24,7 +22,6 @@ final class CheapSeekUITests: XCTestCase {
 
     func testSettingsControlsWhenPopupOpen() throws {
         let app = try launchAndOpenPopup()
-        defer { app.terminate() }
 
         let settingsButton = app.buttons["Settings"]
         guard settingsButton.waitForExistence(timeout: 5) else {
@@ -48,14 +45,12 @@ final class CheapSeekUITests: XCTestCase {
         app.launch()
 
         guard let statusItem = locateStatusItem(), statusItem.waitForExistence(timeout: 5) else {
-            app.terminate()
             throw XCTSkip("Menu bar status item is not exposed to accessibility on this system.")
         }
 
         statusItem.click()
 
         guard app.staticTexts["CheapSeek"].waitForExistence(timeout: 5) else {
-            app.terminate()
             throw XCTSkip("Status item clicked but the popup did not open (macOS menu bar automation limitation).")
         }
 

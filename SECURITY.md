@@ -2,7 +2,7 @@
 
 **Scope:** `CheapSeek` macOS client (menu bar app).
 **Architecture:** 100% on-device. No network calls, no telemetry, no accounts, no shared container.
-**Date:** 2026-09-15 · **Last re-verified:** 2026-09-15 (54 unit tests pass; 1 UI launch test passes) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
+**Date:** 2026-09-15 · **Last re-verified:** 2026-09-15 (59 unit tests pass; 1 UI launch test passes) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
 
 ## OWASP Top 10 (2021) — Desktop Client Applicability
 
