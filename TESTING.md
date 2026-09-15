@@ -1,0 +1,118 @@
+# Testing Guide
+
+This repository is a **single-platform macOS menu bar app** (Swift/SwiftUI + Foundation). There is no network extension, database, or device-only subsystem, so the test strategy is straightforward: **XCTest** for all business logic, and a small **XCUITest** suite for app launch plus best-effort menu bar interaction.
+
+## Quick Start
+
+```bash
+./test/test.sh --list            # show the plan without running
+./test/test.sh                   # xcodegen generate + unit tests
+./test/test.sh --ui              # include the UI tests
+./test/test.sh --coverage        # unit tests + xccov coverage summary
+./test/test.sh --no-gen          # skip project generation
+```
+
+Raw `xcodebuild` output is written to `logs/Test_<timestamp>.log` and result bundles to `test/TestResults/` (`logs/` and `*.xcresult` are in `.gitignore`, never committed).
+
+Manual single-command run:
+
+```bash
+xcodebuild -project CheapSeek.xcodeproj \
+  -scheme CheapSeek \
+  -destination 'platform=macOS' \
+  -only-testing:CheapSeekTests test
+```
+
+---
+
+## Test Pyramid
+
+```
+        ┌─────────┐
+        │  Manual │  Menu bar rendering, Settings interactions, SMAppService
+        ├─────────┤
+        │   UI    │  CheapSeekUITests (app launch; menu bar popup best-effort)
+        ├─────────┤
+        │  Unit   │  PeakCalculatorTests, CountdownFormatterTests,
+        │         │  AppSettingsTests, AppModelTests, LocalizationTests
+        └─────────┘
+```
+
+## Suites & Strategy
+
+| Suite | Focus | Dependency Strategy |
+| :--- | :--- | :--- |
+| `PeakCalculatorTests` (32) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, DST day). | Pure functions — no mocks |
+| `CountdownFormatterTests` (5) | Hours/minutes/seconds formatting, exact hour, negative clamp. | Compares against the localized unit keys — language-independent |
+| `AppSettingsTests` (4) | Defaults, `updateInterval` clamping, timezone resolution, persistence. | Injected `UserDefaults` suite (hermetic) |
+| `AppModelTests` (3) | `isPeak`/`schedule` from injected date + timezone, `refresh()`. | Injected clock/timezone via `autoRefresh: false` |
+| `LocalizationTests` (2) | All 7 `.lproj` files have identical key sets; every expected key present in every language. | Direct source-file parsing — no bundle state |
+
+> There is no unit test for the SwiftUI views (`PopupView`, `SettingsView`): SwiftUI view bodies are not meaningfully unit-testable. Rendering is covered by SwiftUI previews (light/dark) and manual verification.
+
+## UI Tests (`CheapSeekUITests`, XCUITest)
+
+Runs against the real app and covers:
+
+- `testAppLaunches` — launches the app and asserts it is running.
+- `testStatusItemOpensPopup` — locates the menu bar status item, clicks it, and asserts the popup title appears.
+- `testSettingsControlsWhenPopupOpen` — opens the popup, clicks **Settings**, and asserts the Settings controls.
+
+macOS does not reliably expose third-party menu bar (``MenuBarExtra`) status items to the accessibility tree, and the `.window` popup is not always reachable. When the status item or popup cannot be found, the affected tests **skip (`XCTSkip`)** instead of failing, so the suite stays green while documenting the limitation. `testAppLaunches` is always deterministic.
+
+UI tests are intended to run **locally**; see CI below.
+
+## CI
+
+`.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
+
+- Installs XcodeGen, then `xcodegen generate` (`project.yml` is canonical).
+- Builds the app.
+- Runs the **unit tests only** (`-only-testing:CheapSeekTests`) with `-enableCodeCoverage YES`.
+- Enforces a **coverage gate**: `CheapSeek.app` line coverage ≥ `0.30`.
+- Uploads the `.xcresult` bundle as an artifact.
+
+> UI tests are excluded from CI: macOS XCUITest requires an interactive GUI session and accessibility permissions, which GitHub-hosted runners do not provide reliably. Run `./test/test.sh --ui` locally instead.
+
+## Command Reference (Same as CI)
+
+```bash
+# Local equivalent of a CI job (unit tests + coverage)
+./test/test.sh --coverage
+
+# Everything, including UI tests (local only)
+./test/test.sh --ui
+```
+
+## Deliberately Out of Scope
+
+- **Menu bar (`MenuBarExtra`) UI automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS — covered by `XCTSkip` and manual verification.
+- **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
+- **Menu bar tint rendering:** macOS may render the label as a monochrome template, so red/green is verified manually.
+- **SwiftUI snapshot tests:** SwiftUI previews + manual visual verification were deemed sufficient.
+
+## Coverage Expectations
+
+| Module | Target Coverage |
+| :--- | :--- |
+| `PeakCalculator.swift` | **90%+** |
+| `CountdownFormatter.swift` | **100%** |
+| `AppSettings.swift` | **70%+** |
+| `AppModel.swift` | **70%+** |
+| SwiftUI views (`PopupView`, `SettingsView`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
+
+## Measured Coverage (2026-09-15, local macOS run)
+
+`CheapSeek.app` line coverage: **36.79%** (CI gate ≥ 30% ✅ — views are intentionally untested by unit tests)
+
+| File | Line Coverage |
+| :--- | :--- |
+| `CountdownFormatter.swift` | **100.00%** |
+| `PeakCalculator.swift` | 96.84% |
+| `CheapSeekApp.swift` | 95.24% |
+| `AppModel.swift` | 78.65% |
+| `AppSettings.swift` | 78.08% |
+| `PopupView.swift` | 0.00% (SwiftUI view) |
+| `SettingsView.swift` | 0.00% (SwiftUI view) |
+
+*Re-measure with `./test/test.sh --coverage`. Views are excluded from strict line-coverage gating.*
