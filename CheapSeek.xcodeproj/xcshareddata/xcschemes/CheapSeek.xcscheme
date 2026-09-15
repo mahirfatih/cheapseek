@@ -50,6 +50,17 @@
                ReferencedContainer = "container:CheapSeek.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4F45120BDA2249601EB716C8"
+               BuildableName = "CheapSeekUITests.xctest"
+               BlueprintName = "CheapSeekUITests"
+               ReferencedContainer = "container:CheapSeek.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
