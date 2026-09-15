@@ -45,6 +45,22 @@ targets:
         GENERATE_INFOPLIST_FILE: true
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "13.0"
+  CheapSeekUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    sources:
+      - CheapSeekUITests
+    dependencies:
+      - target: CheapSeek
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.mahirfatih.CheapSeekUITests
+        TEST_TARGET_NAME: CheapSeek
+        MARKETING_VERSION: "1.0.0"
+        CURRENT_PROJECT_VERSION: "1"
+        GENERATE_INFOPLIST_FILE: true
+        SWIFT_VERSION: "5.9"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
 schemes:
   CheapSeek:
     build:
@@ -54,3 +70,4 @@ schemes:
       config: Debug
       targets:
         - CheapSeekTests
+        - CheapSeekUITests
