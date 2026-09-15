@@ -2,50 +2,51 @@
   "schema_version": 2,
   "diagram_type": "workflow",
   "meta": {
-    "title": "CheapSeek — Çalışma Akışı ve Yaşam Döngüsü",
+    "title": "CheapSeek — Workflow & Lifecycle",
+    "locale": "en",
     "output": "cheapseek-workflow.html",
     "quality_profile": "showcase"
   },
   "lanes": [
-    { "id": "runtime", "label": "macOS Çalışma Zamanı" },
-    { "id": "app", "label": "Uygulama Akışı" },
-    { "id": "state", "label": "Kalıcılık ve Dil" }
+    { "id": "runtime", "label": "macOS Runtime" },
+    { "id": "app", "label": "App Flow" },
+    { "id": "state", "label": "Persistence & Language" }
   ],
   "phases": [
-    { "id": "launch", "label": "Başlat", "fromCol": 0, "toCol": 0 },
-    { "id": "evaluate", "label": "Değerlendir", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
-    { "id": "present", "label": "Göster", "fromCol": 2, "toCol": 2 },
-    { "id": "interact", "label": "Etkileşim", "fromCol": 3, "toCol": 3, "variant": "dashed" }
+    { "id": "launch", "label": "Launch", "fromCol": 0, "toCol": 0 },
+    { "id": "evaluate", "label": "Evaluate", "fromCol": 1, "toCol": 1, "variant": "emphasis" },
+    { "id": "present", "label": "Present", "fromCol": 2, "toCol": 2 },
+    { "id": "interact", "label": "Interact", "fromCol": 3, "toCol": 3, "variant": "dashed" }
   ],
   "groups": [
-    { "id": "tick-loop", "label": "Zamanlayıcı döngüsü", "lane": "app", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
-    { "id": "settings-flow", "label": "Ayarlar ve dil", "lane": "state", "fromCol": 2, "toCol": 3, "variant": "dashed" }
+    { "id": "tick-loop", "label": "Timer loop", "lane": "app", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "settings-flow", "label": "Settings & language", "lane": "state", "fromCol": 2, "toCol": 3, "variant": "dashed" }
   ],
   "mainPath": ["login", "boot", "evaluate", "render", "settings"],
   "nodes": [
-    { "id": "login", "lane": "runtime", "col": 0, "width": 130, "type": "external", "label": "Başlatma", "sublabel": "oturum / açılış" },
-    { "id": "loginitem", "lane": "runtime", "col": 3, "width": 130, "type": "external", "label": "SMAppService", "sublabel": "girişte başlat" },
+    { "id": "login", "lane": "runtime", "col": 0, "width": 130, "type": "external", "label": "Launch", "sublabel": "session / startup" },
+    { "id": "loginitem", "lane": "runtime", "col": 3, "width": 130, "type": "external", "label": "SMAppService", "sublabel": "launch at login" },
     { "id": "boot", "lane": "app", "col": 0, "width": 130, "type": "frontend", "label": "CheapSeekApp", "sublabel": "@main MenuBarExtra" },
-    { "id": "evaluate", "lane": "app", "col": 1, "width": 130, "type": "backend", "label": "PeakCalculator", "sublabel": "isPeak · program", "tag": "UTC" },
-    { "id": "render", "lane": "app", "col": 2, "width": 130, "type": "frontend", "label": "Menü Çubuğu", "sublabel": "ikon · coding" },
-    { "id": "settings", "lane": "app", "col": 3, "width": 130, "type": "frontend", "label": "Ayarlar", "sublabel": "dil · saat dilimi" },
-    { "id": "persist", "lane": "state", "col": 2, "width": 130, "type": "database", "label": "UserDefaults", "sublabel": "tercihler" },
-    { "id": "language", "lane": "state", "col": 3, "width": 130, "type": "messagebus", "label": "Localize-Swift", "sublabel": "dil değişimi" }
+    { "id": "evaluate", "lane": "app", "col": 1, "width": 130, "type": "backend", "label": "PeakCalculator", "sublabel": "isPeak · schedule", "tag": "UTC" },
+    { "id": "render", "lane": "app", "col": 2, "width": 130, "type": "frontend", "label": "Menu Bar", "sublabel": "icon · coding" },
+    { "id": "settings", "lane": "app", "col": 3, "width": 130, "type": "frontend", "label": "Settings", "sublabel": "language · timezone" },
+    { "id": "persist", "lane": "state", "col": 2, "width": 130, "type": "database", "label": "UserDefaults", "sublabel": "preferences" },
+    { "id": "language", "lane": "state", "col": 3, "width": 130, "type": "messagebus", "label": "Localize-Swift", "sublabel": "language change" }
   ],
   "edges": [
-    { "id": "login-boot", "from": "login", "to": "boot", "label": "aç", "role": "main", "variant": "emphasis" },
-    { "id": "boot-evaluate", "from": "boot", "to": "evaluate", "label": "ilk durum", "role": "main" },
+    { "id": "login-boot", "from": "login", "to": "boot", "label": "open", "role": "main", "variant": "emphasis" },
+    { "id": "boot-evaluate", "from": "boot", "to": "evaluate", "label": "initial state", "role": "main" },
     { "id": "evaluate-render", "from": "evaluate", "to": "render", "label": "isPeak", "role": "main", "variant": "emphasis" },
-    { "id": "render-settings", "from": "render", "to": "settings", "label": "tıkla", "role": "main" },
-    { "id": "settings-persist", "from": "settings", "to": "persist", "label": "kaydet", "role": "main" },
+    { "id": "render-settings", "from": "render", "to": "settings", "label": "tap", "role": "main" },
+    { "id": "settings-persist", "from": "settings", "to": "persist", "label": "save", "role": "main" },
     { "id": "settings-loginitem", "from": "settings", "to": "loginitem", "label": "register", "role": "branch" },
     { "id": "settings-language", "from": "settings", "to": "language", "label": "setCurrentLanguage", "role": "branch" },
-    { "id": "language-render", "from": "language", "to": "render", "label": "dil değişimi", "role": "branch", "variant": "dashed" },
-    { "id": "loginitem-login", "from": "loginitem", "to": "login", "label": "sonraki oturum", "role": "branch", "variant": "dashed" }
+    { "id": "language-render", "from": "language", "to": "render", "label": "language change", "role": "branch", "variant": "dashed" },
+    { "id": "loginitem-login", "from": "loginitem", "to": "login", "label": "next session", "role": "branch", "variant": "dashed" }
   ],
   "cards": [
-    { "dot": "cyan", "title": "Açılış ve Döngü", "items": ["Açılışta ilk durum hesaplanır", "Zamanlayıcı her aralıkta yeniler"] },
-    { "dot": "emerald", "title": "Etkileşim", "items": ["Popup durum ve geri sayımı gösterir", "Ayarlar tercihleri kalıcı yazar"] },
-    { "dot": "violet", "title": "Yaşam Döngüsü", "items": ["Dil değişimi görünümleri yeniler", "Girişte başlatma SMAppService ile"] }
+    { "dot": "cyan", "title": "Launch & Loop", "items": ["Initial state is computed on launch", "The timer refreshes on every interval"] },
+    { "dot": "emerald", "title": "Interaction", "items": ["The popup shows status and countdown", "Settings persist preferences"] },
+    { "dot": "violet", "title": "Lifecycle", "items": ["Language change refreshes views", "Launch at login via SMAppService"] }
   ]
 }
