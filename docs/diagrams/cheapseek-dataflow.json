@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "CheapSeek — Data Flow",
+    "locale": "en",
+    "output": "cheapseek-dataflow.html",
+    "viewBox": [1040, 520],
+    "quality_profile": "showcase"
+  },
+  "stages": [
+    { "label": "Input" },
+    { "label": "Evaluation" },
+    { "label": "State" },
+    { "label": "Display" }
+  ],
+  "nodes": [
+    { "id": "clock", "type": "external", "label": "System Clock", "sublabel": "UTC · Date()", "stage": 0, "row": 1, "tag": "time" },
+    { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "preferences", "stage": 0, "row": 2, "tag": "persistent" },
+    { "id": "peakcalc", "type": "backend", "label": "PeakCalculator", "sublabel": "peak windows", "stage": 1, "row": 1 },
+    { "id": "appsettings", "type": "backend", "label": "AppSettings", "sublabel": "timezone · interval", "stage": 1, "row": 2 },
+    { "id": "appmodel", "type": "backend", "label": "AppModel", "sublabel": "@Published state", "stage": 2, "row": 1 },
+    { "id": "menubar", "type": "frontend", "label": "Menu Bar", "sublabel": "icon · coding", "stage": 3, "row": 1 },
+    { "id": "popup", "type": "frontend", "label": "PopupView", "sublabel": "schedule · countdown", "stage": 3, "row": 2 }
+  ],
+  "flows": [
+    { "id": "clock-to-peak", "from": "clock", "to": "peakcalc", "label": "UTC now", "classification": "time", "variant": "emphasis" },
+    { "id": "defaults-to-config", "from": "defaults", "to": "appsettings", "label": "preferences", "classification": "persistent", "variant": "dashed" },
+    { "id": "peak-to-model", "from": "peakcalc", "to": "appmodel", "label": "isPeak · schedule", "classification": "state", "variant": "emphasis", "route": "straight", "labelDy": -22 },
+    { "id": "config-to-model", "from": "appsettings", "to": "appmodel", "label": "timezone · interval", "classification": "configuration" },
+    { "id": "model-to-menubar", "from": "appmodel", "to": "menubar", "label": "isPeak", "classification": "view", "route": "straight", "labelDy": -22 },
+    { "id": "model-to-popup", "from": "appmodel", "to": "popup", "label": "status · countdown", "classification": "view", "labelDy": 22 }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "Main Data Path", "items": ["Clock → PeakCalculator → AppModel → Display", "State is published one way (@Published)", "Menu bar and popup read the same source"] },
+    { "dot": "emerald", "title": "Compute Core", "items": ["PeakCalculator produces half-open UTC windows", "Countdown is formatted by CountdownFormatter", "All logic is tested independent of the UI"] },
+    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences are stored in UserDefaults", "Language resolves from 7 .lproj files", "No network calls or telemetry"] }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "CheapSeek — macOS Menu Bar App",
+    "locale": "en",
+    "output": "cheapseek-architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "entry", "type": "frontend", "label": "App Entry", "sublabel": "CheapSeekApp", "pos": [40, 165], "size": [150, 64], "tag": "MenuBarExtra + Settings" },
+    { "id": "popup", "type": "frontend", "label": "Popup Window", "sublabel": "PopupView", "pos": [260, 70], "size": [150, 64] },
+    { "id": "model", "type": "backend", "label": "State Model", "sublabel": "AppModel", "pos": [480, 70], "size": [150, 64], "tag": "ObservableObject" },
+    { "id": "engine", "type": "backend", "label": "Peak Engine", "sublabel": "PeakCalculator", "pos": [700, 70], "size": [150, 64], "tag": "pure UTC logic" },
+    { "id": "loginitem", "type": "external", "label": "SMAppService", "sublabel": "launch at login", "pos": [920, 450], "size": [150, 64] },
+    { "id": "settings", "type": "frontend", "label": "Settings", "sublabel": "SettingsView", "pos": [260, 260], "size": [150, 64] },
+    { "id": "config", "type": "backend", "label": "Settings Store", "sublabel": "AppSettings", "pos": [480, 260], "size": [150, 64] },
+    { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "local preferences", "pos": [700, 260], "size": [150, 64] },
+    { "id": "localize", "type": "external", "label": "Localize-Swift", "sublabel": "7 × .lproj", "pos": [260, 450], "size": [150, 64], "tag": "3.2.0 vendored" }
+  ],
+  "connections": [
+    { "id": "entry-popup", "from": "entry", "to": "popup", "label": "opens", "variant": "emphasis" },
+    { "id": "entry-settings", "from": "entry", "to": "settings", "label": "Settings scene" },
+    { "id": "popup-model", "from": "popup", "to": "model", "label": "observes" },
+    { "id": "model-engine", "from": "model", "to": "engine", "label": "isPeak · schedule", "labelDy": 56 },
+    { "id": "model-config", "from": "model", "to": "config", "label": "timezone · interval", "labelDy": 56 },
+    { "id": "settings-config", "from": "settings", "to": "config", "label": "writes" },
+    { "id": "settings-localize", "from": "settings", "to": "localize", "label": "setCurrentLanguage", "labelDy": 44 },
+    { "id": "config-defaults", "from": "config", "to": "defaults", "label": "persist" },
+    { "id": "config-loginitem", "from": "config", "to": "loginitem", "label": "register", "fromSide": "bottom", "toSide": "left", "via": [[555, 482], [920, 482]] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator uses only Foundation", "Testable independent of the UI"] },
+    { "dot": "cyan", "title": "One-Way Flow", "items": ["AppModel publishes @Published state", "Menu bar and popup read the same source"] },
+    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences stored in UserDefaults", "No network calls or telemetry"] }
+  ]
+}
