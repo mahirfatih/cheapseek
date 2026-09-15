@@ -3,6 +3,7 @@ import Localize_Swift
 
 struct PopupView: View {
     let model: AppModel
+    @Environment(\.openSettings) private var openSettings
     @State private var showInfo = false
 
     var body: some View {
@@ -16,7 +17,7 @@ struct PopupView: View {
     }
 
     private var infoContent: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: Spacing.md) {
             HStack {
                 Text("pricing".localized())
                     .font(.headline)
@@ -27,6 +28,7 @@ struct PopupView: View {
                     Image(systemName: "chevron.left")
                 }
                 .buttonStyle(.borderless)
+                .help("close".localized())
             }
             PricingInfoView(config: model.config, timeZone: model.timeZone)
         }
@@ -40,16 +42,14 @@ struct PopupView: View {
             let now = context.date
             let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
             let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
+            let targetStatus = PeakStatus(isPeak: targetIsPeak)
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: Spacing.md) {
                 Text("app_title".localized())
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                Text((model.isPeak ? "status_peak" : "status_offpeak").localized())
-                    .font(.headline)
-                    .bold()
-                    .foregroundStyle(model.isPeak ? .red : .green)
+                PeakStatusBadge(status: PeakStatus(isPeak: model.isPeak))
 
                 HStack {
                     Text("now_label".localized())
@@ -59,6 +59,7 @@ struct PopupView: View {
                         .monospacedDigit()
                 }
                 .font(.subheadline)
+                .accessibilityElement(children: .combine)
 
                 HStack {
                     Text("timezone_label".localized())
@@ -69,6 +70,7 @@ struct PopupView: View {
                         .truncationMode(.middle)
                 }
                 .font(.subheadline)
+                .accessibilityElement(children: .combine)
 
                 Divider()
 
@@ -90,21 +92,18 @@ struct PopupView: View {
                     Text(countdown)
                         .bold()
                         .monospacedDigit()
-                    Text((targetIsPeak ? "to_peak" : "to_offpeak").localized())
-                        .foregroundStyle(targetIsPeak ? .red : .green)
+                    Text(targetStatus.title)
+                        .foregroundStyle(targetStatus.color)
                 }
                 .font(.subheadline)
+                .accessibilityElement(children: .combine)
 
                 Divider()
 
                 HStack {
-                    if #available(macOS 14.0, *) {
-                        OpenSettingsButton()
-                    } else {
-                        Button("settings".localized()) {
-                            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                            NSApp.activate(ignoringOtherApps: true)
-                        }
+                    Button("settings".localized()) {
+                        openSettings()
+                        NSApp.activate()
                     }
                     Button {
                         showInfo = true
@@ -126,27 +125,17 @@ struct PopupView: View {
     }
 
     private func scheduleRow(_ segment: (start: Date, end: Date, isPeak: Bool)) -> some View {
-        HStack {
+        let status = PeakStatus(isPeak: segment.isPeak)
+        return HStack {
             Text("\(segment.start.formatted(date: .omitted, time: .shortened)) – \(segment.end.formatted(date: .omitted, time: .shortened))")
                 .monospacedDigit()
             Spacer()
-            Text((segment.isPeak ? "status_peak" : "status_offpeak").localized())
+            Text(status.title)
                 .font(.caption)
-                .foregroundStyle(segment.isPeak ? .red : .green)
+                .foregroundStyle(status.color)
         }
         .font(.subheadline)
-    }
-}
-
-@available(macOS 14.0, *)
-private struct OpenSettingsButton: View {
-    @Environment(\.openSettings) private var openSettings
-
-    var body: some View {
-        Button("settings".localized()) {
-            openSettings()
-            NSApp.activate(ignoringOtherApps: true)
-        }
+        .accessibilityElement(children: .combine)
     }
 }
 
