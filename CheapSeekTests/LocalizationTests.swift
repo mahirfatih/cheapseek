@@ -3,7 +3,7 @@ import XCTest
 
 final class LocalizationTests: XCTestCase {
 
-    private let languages = ["en", "tr", "de", "es", "pt", "fr", "it"]
+    private let languages = AppLanguage.allCases.map(\.rawValue)
 
     private let expectedKeys: Set<String> = [
         "app_title", "status_peak", "status_offpeak", "now_label", "timezone_label",

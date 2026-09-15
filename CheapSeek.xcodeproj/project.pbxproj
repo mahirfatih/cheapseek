@@ -22,6 +22,7 @@
 		AD944C9DE6FC59A68B4686E1 /* CountdownFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */; };
 		BD7DC30CE6E327D9147AD4CF /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 149221745A4677F8E75AA64A /* SettingsView.swift */; };
 		DF0A46B608893FBD260EA8CB /* CheapSeekUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */; };
+		E8BFC00ED122F05A7354A1CE /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096CD96CC89D1404EE66324E /* AppLanguage.swift */; };
 		F5000755D99EF9C67BDF3A79 /* CountdownFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA2FEAD9502E8B116D4E49CD /* CountdownFormatter.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 
 /* Begin PBXFileReference section */
 		01538CFDB18105679C47FA3D /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		096CD96CC89D1404EE66324E /* AppLanguage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguage.swift; sourceTree = "<group>"; };
 		0B859CFE0CD8C6722A379041 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		11B349D3761B3271E73A5DB8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 		12B2B985E9C83F1D341164FB /* CheapSeek.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CheapSeek.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -122,6 +124,7 @@
 		60DFD048B3983881A691B223 /* CheapSeek */ = {
 			isa = PBXGroup;
 			children = (
+				096CD96CC89D1404EE66324E /* AppLanguage.swift */,
 				CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */,
 				3484E7F470640E5E6846B2E1 /* AppSettings.swift */,
 				7CAAB9EBBC7C228A2A44D2D2 /* Assets.xcassets */,
@@ -270,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E8BFC00ED122F05A7354A1CE /* AppLanguage.swift in Sources */,
 				196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */,
 				88B85725DEBA6711CD63A328 /* AppSettings.swift in Sources */,
 				920B76F5946AC47A459DEEA1 /* CheapSeekApp.swift in Sources */,
