@@ -15,7 +15,7 @@ final class LocalizationTests: XCTestCase {
         "off_peak_window", "full_price", "half_price", "your_time",
         "input_cache_hit", "input_cache_miss", "output_tokens", "per_million_tokens",
         "pricing_page", "api_docs", "api_usage", "close",
-        "menubar_coding", "notifications_soon"
+        "menu_bar.status.cheap", "menu_bar.status.peak", "notifications_soon"
     ]
 
     private var cheapSeekDir: URL {

@@ -38,5 +38,6 @@
 "api_docs" = "Документация API";
 "api_usage" = "Использование API";
 "close" = "Закрыть";
-"menubar_coding" = "код";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "Скоро";

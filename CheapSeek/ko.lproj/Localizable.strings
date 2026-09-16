@@ -38,5 +38,6 @@
 "api_docs" = "API 문서";
 "api_usage" = "API 사용량";
 "close" = "닫기";
-"menubar_coding" = "코딩";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "곧 지원";

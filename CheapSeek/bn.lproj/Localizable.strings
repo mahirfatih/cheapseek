@@ -38,5 +38,6 @@
 "api_docs" = "API ডকুমেন্টেশন";
 "api_usage" = "API ব্যবহার";
 "close" = "বন্ধ করুন";
-"menubar_coding" = "কোডিং";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "শীঘ্রই আসছে";

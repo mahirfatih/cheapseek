@@ -38,5 +38,6 @@
 "api_docs" = "API 文档";
 "api_usage" = "API 用量";
 "close" = "关闭";
-"menubar_coding" = "编程";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "即将推出";

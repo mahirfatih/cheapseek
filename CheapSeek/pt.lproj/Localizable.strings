@@ -38,5 +38,6 @@
 "api_docs" = "Documentação da API";
 "api_usage" = "Utilização da API";
 "close" = "Fechar";
-"menubar_coding" = "código";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "Em breve";
