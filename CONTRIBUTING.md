@@ -53,7 +53,7 @@ Keep one logical change per commit.
 - **Concurrency:** UI updates on the main actor; `AppModel` is `@Observable` and refreshed by an async `Clock` (no `Timer` or Combine)
 - **Localization:** Every user-facing string **must** use `"key".localized()`. Keys live in all 17 `*.lproj/Localizable.strings` files.
 - **Theme:** Use semantic colors only (`.primary`, `.secondary`, `.regularMaterial`); never hardcode white/black.
-- **Testability:** Pure functions must not touch global state. `AppSettings` accepts an injected `UserDefaults`; `AppModel` accepts an injected date/timezone (`autoRefresh: false`) — use these in tests.
+- **Testability:** Pure functions must not touch global state. `AppSettings` accepts an injected `UserDefaults`; `AppModel` accepts an injected clock/timezone, `HistoryStore`, and `NotificationManager` (`autoStart: false` in tests) — use these in tests.
 - **Privacy:** No analytics, crash reporters, networking, or third-party SDKs.
 
 ## Adding New Languages
@@ -97,5 +97,5 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 `.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
 
 - Regenerates the project with `xcodegen`, builds, then runs the **unit tests** with coverage.
-- Enforces a coverage gate (`CheapSeek.app` ≥ 20%).
+- Enforces a coverage gate (`CheapSeek.app` ≥ 25%).
 - UI tests are **not** run in CI (macOS XCUITest needs an interactive GUI session); run them locally with `./test/test.sh --ui`.

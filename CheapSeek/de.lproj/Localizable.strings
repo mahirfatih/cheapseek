@@ -57,3 +57,8 @@
 "notification.offpeak_start.body" = "It's cheap now — go code.";
 "notification.peak_start.title" = "Peak pricing started";
 "notification.peak_start.body" = "Peak pricing is active. Consider waiting.";
+"history.title" = "History";
+"history.last7days" = "Last 7 days";
+"history.peak" = "Peak";
+"history.offpeak" = "Off-Peak";
+"history.empty" = "No data yet";

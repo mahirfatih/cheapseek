@@ -8,7 +8,7 @@ struct CheapSeekApp: App {
     init() {
         let settings = AppSettings()
         let config = DeepSeekConfig.load()
-        let model = AppModel(settings: settings, config: config, notifications: NotificationManager())
+        let model = AppModel(settings: settings, config: config, notifications: NotificationManager(), history: HistoryStore())
         _settings = State(initialValue: settings)
         _model = State(initialValue: model)
     }

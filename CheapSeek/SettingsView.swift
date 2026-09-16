@@ -138,6 +138,7 @@ struct SettingsView: View {
         }
         .onChange(of: settings.timeZoneIdentifier) { _, _ in
             model.refreshNotifications()
+            model.refreshHistory()
         }
         .onChange(of: settings.notifyOnOffPeakStart) { _, _ in
             model.refreshNotifications()
