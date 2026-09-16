@@ -18,7 +18,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (65, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (70, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -27,7 +27,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ## ✨ Features
 
-- 🟢 **Live status in your menu bar** — green `coding` when cheap, red `$` when expensive
+- 🟢 **Live status in your menu bar** — `leaf` + `cheap` when off-peak, `flame` + `peak` when expensive (text + symbol, readable even when macOS renders the status item as a monochrome template)
 - 🧮 **Accurate peak logic** — UTC weekdays `01:00–04:00` & `06:00–10:00`, weekends always off-peak
 - 🕐 **Timezone-aware** — peak hours computed in UTC, displayed in your local (configurable) timezone
 - 📅 **Today's full schedule** — every peak/off-peak window for the day
@@ -179,7 +179,7 @@ CheapSeek/
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
-│   ├── en.lproj/Localizable.strings     # English (42 keys)
+│   ├── en.lproj/Localizable.strings     # English (43 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
 │   ├── es.lproj/Localizable.strings     # Español
@@ -202,6 +202,7 @@ CheapSeek/
 │   ├── AppSettingsTests.swift           # Defaults, clamping, persistence
 │   ├── AppModelTests.swift              # State computation with injected date/timezone
 │   ├── CountdownFormatterTests.swift    # Localized countdown units
+│   ├── MenuBarLabelTests.swift          # Menu bar status text + symbol
 │   ├── LocalizationTests.swift          # 17-language key parity & completeness
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
@@ -232,7 +233,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (4), `AppModelTests` (4), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **65 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (4), `AppModelTests` (4), `MenuBarLabelTests` (5), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **70 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 20%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
@@ -270,7 +271,7 @@ System architecture and visual documentation are generated with [Archify](https:
 
 ### Known limitations
 
-- **Menu bar tint** — macOS may render the status item as a monochrome template, so the red/green tint is not guaranteed; the full status is always visible in the popup.
+- **Menu bar appearance** — macOS may render the status item as a monochrome template; the indicator therefore uses short text (`cheap`/`peak`) plus distinct SF Symbols (`leaf`/`flame.fill`) instead of color, so it stays readable in light, dark, and template mode. The full status remains visible in the popup.
 - **Launch at login** — depends on a properly signed build (ad-hoc signing may be rejected by `SMAppService`).
 - **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 - **Notifications** — the Settings toggle only persists the preference; actual peak/off-peak transition notifications are planned but not yet implemented.
