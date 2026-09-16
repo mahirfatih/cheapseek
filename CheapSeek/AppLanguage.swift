@@ -12,6 +12,14 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     case zhHans = "zh-Hans"
     case zhHant = "zh-Hant"
     case hi
+    case bn
+    case ru
+    case id
+    case ms
+    case ja
+    case ko
+    case vi
+    case sw
 
     var id: String { rawValue }
 
@@ -27,6 +35,14 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .zhHans: return "简体中文"
         case .zhHant: return "繁體中文"
         case .hi: return "हिन्दी"
+        case .bn: return "বাংলা"
+        case .ru: return "Русский"
+        case .id: return "Bahasa Indonesia"
+        case .ms: return "Bahasa Melayu"
+        case .ja: return "日本語"
+        case .ko: return "한국어"
+        case .vi: return "Tiếng Việt"
+        case .sw: return "Kiswahili"
         }
     }
 
@@ -41,6 +57,14 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .it: return "🇮🇹"
         case .zhHans, .zhHant: return "🇨🇳"
         case .hi: return "🇮🇳"
+        case .bn: return "🇧🇩"
+        case .ru: return "🇷🇺"
+        case .id: return "🇮🇩"
+        case .ms: return "🇲🇾"
+        case .ja: return "🇯🇵"
+        case .ko: return "🇰🇷"
+        case .vi: return "🇻🇳"
+        case .sw: return "🇹🇿"
         }
     }
 
@@ -56,6 +80,14 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .zhHans: return "zh-Hans"
         case .zhHant: return "zh-Hant"
         case .hi: return "hi_IN"
+        case .bn: return "bn_BD"
+        case .ru: return "ru_RU"
+        case .id: return "id_ID"
+        case .ms: return "ms_MY"
+        case .ja: return "ja_JP"
+        case .ko: return "ko_KR"
+        case .vi: return "vi_VN"
+        case .sw: return "sw_TZ"
         }
     }
 
