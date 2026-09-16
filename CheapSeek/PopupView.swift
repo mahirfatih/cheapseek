@@ -16,6 +16,7 @@ struct PopupView: View {
                 statusContent
             }
         }
+        .id(model.languageRevision)
     }
 
     private var infoContent: some View {
@@ -41,107 +42,113 @@ struct PopupView: View {
     }
 
     private var statusContent: some View {
-        TimelineView(.periodic(from: .now, by: 1)) { context in
-            let now = context.date
-            let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
-            let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
-            let targetStatus = PeakStatus(isPeak: targetIsPeak)
-            let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
-            let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                let now = context.date
+                let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
+                let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
+                let targetStatus = PeakStatus(isPeak: targetIsPeak)
+                let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
+                let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
 
-            VStack(alignment: .leading, spacing: Spacing.md) {
-                Text("app_title".localized())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                PeakStatusBadge(status: currentStatus)
-
-                HStack {
-                    Text("now_label".localized())
+                VStack(alignment: .leading, spacing: Spacing.md) {
+                    Text("app_title".localized())
+                        .font(.caption)
                         .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(now, format: timeFormat)
-                        .monospacedDigit()
-                }
-                .font(.subheadline)
-                .accessibilityElement(children: .combine)
 
-                HStack {
-                    Text("timezone_label".localized())
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text(timeZoneName)
-                        .lineLimit(1)
-                        .truncationMode(.middle)
-                        .help(model.timeZone.identifier)
-                }
-                .font(.subheadline)
-                .accessibilityElement(children: .combine)
+                    PeakStatusBadge(status: currentStatus)
 
-                Divider()
-
-                Text("today_schedule".localized())
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-                ForEach(Array(schedule.enumerated()), id: \.offset) { _, segment in
-                    scheduleRow(segment)
-                }
-
-                Divider()
-
-                HStack {
-                    Text("next_change".localized())
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                    Text("in_label".localized())
-                    Text(countdown)
-                        .bold()
-                        .monospacedDigit()
-                    Text(targetIsPeak ? "to_peak".localized() : "to_offpeak".localized())
-                        .foregroundStyle(targetStatus.color)
-                }
-                .font(.subheadline)
-                .accessibilityElement(children: .combine)
-
-                Divider()
-
-                DisclosureGroup(isExpanded: $showHistory) {
-                    HistoryChartView(days: model.historyDays, timeZone: model.timeZone)
-                } label: {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("history.title".localized())
-                            .font(.subheadline)
-                        Text("history.last7days".localized())
-                            .font(.caption)
+                    HStack {
+                        Text("now_label".localized())
                             .foregroundStyle(.secondary)
+                        Spacer()
+                        Text(now, format: timeFormat)
+                            .monospacedDigit()
                     }
-                }
+                    .font(.subheadline)
+                    .accessibilityElement(children: .combine)
 
-                Divider()
+                    HStack {
+                        Text("timezone_label".localized())
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text(timeZoneName)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                            .help(model.timeZone.identifier)
+                    }
+                    .font(.subheadline)
+                    .accessibilityElement(children: .combine)
 
-                HStack {
-                    Button("settings".localized()) {
-                        openSettings()
-                        NSApp.activate()
+                    Divider()
+
+                    Text("today_schedule".localized())
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    ForEach(Array(schedule.enumerated()), id: \.offset) { _, segment in
+                        scheduleRow(segment)
                     }
-                    Button {
-                        showInfo = true
-                    } label: {
-                        Image(systemName: "info.circle")
+
+                    Divider()
+
+                    HStack {
+                        Text("next_change".localized())
+                            .foregroundStyle(.secondary)
+                        Spacer()
+                        Text("in_label".localized())
+                        Text(countdown)
+                            .bold()
+                            .monospacedDigit()
+                        Text(targetIsPeak ? "to_peak".localized() : "to_offpeak".localized())
+                            .foregroundStyle(targetStatus.color)
                     }
-                    .buttonStyle(.borderless)
-                    .help("info".localized())
-                    .accessibilityLabel("info".localized())
-                    Spacer()
-                    Button("quit".localized()) {
-                        NSApplication.shared.terminate(nil)
-                    }
+                    .font(.subheadline)
+                    .accessibilityElement(children: .combine)
                 }
             }
-            .padding()
-            .frame(width: 280)
-            .background(.regularMaterial)
+
+            Divider()
+
+            historySection
+
+            Divider()
+
+            HStack {
+                Button("settings".localized()) {
+                    openSettings()
+                    NSApp.activate()
+                }
+                Button {
+                    showInfo = true
+                } label: {
+                    Image(systemName: "info.circle")
+                }
+                .buttonStyle(.borderless)
+                .help("info".localized())
+                .accessibilityLabel("info".localized())
+                Spacer()
+                Button("quit".localized()) {
+                    NSApplication.shared.terminate(nil)
+                }
+            }
+        }
+        .padding()
+        .frame(width: 280)
+        .background(.regularMaterial)
+    }
+
+    private var historySection: some View {
+        DisclosureGroup(isExpanded: $showHistory) {
+            HistoryChartView(days: model.historyDays, timeZone: model.timeZone)
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("history.title".localized())
+                    .font(.subheadline)
+                Text("history.last7days".localized())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 

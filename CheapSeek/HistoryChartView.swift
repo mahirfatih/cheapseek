@@ -57,8 +57,16 @@ struct HistoryChartView: View {
             }
         }
         .chartLegend(position: .bottom, alignment: .leading, spacing: 4)
+        .environment(\.calendar, calendar)
+        .environment(\.timeZone, timeZone)
         .frame(height: 120)
         .accessibilityLabel("history.last7days".localized())
+    }
+
+    private var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar
     }
 
     private var locale: Locale {

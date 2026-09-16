@@ -18,6 +18,7 @@ struct CheapSeekApp: App {
             PopupView(model: model)
         } label: {
             MenuBarLabel(model: model)
+                .id(model.languageRevision)
         }
         .menuBarExtraStyle(.window)
 

@@ -81,7 +81,11 @@ final class NotificationManager {
     func refreshAuthorizationStatus() {
         activeClient.authorizationStatus { [weak self] status in
             DispatchQueue.main.async {
-                self?.authorizationStatus = status
+                guard let self else { return }
+                self.authorizationStatus = status
+                if status == .denied {
+                    self.activeClient.removeAllPending()
+                }
             }
         }
     }
