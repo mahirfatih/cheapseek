@@ -6,7 +6,7 @@
     "locale": "en",
     "output": "cheapseek-architecture.html",
     "quality_profile": "showcase",
-    "viewBox": [1280, 720]
+    "viewBox": [1280, 900]
   },
   "components": [
     { "id": "formatter", "type": "backend", "label": "Countdown", "sublabel": "CountdownFormatter", "pos": [300, 60], "size": [150, 64] },
@@ -25,7 +25,8 @@
     { "id": "notify", "type": "backend", "label": "Notifications", "sublabel": "NotificationManager", "pos": [300, 630], "size": [150, 64], "tag": "planner + quiet hours" },
     { "id": "notificationcenter", "type": "external", "label": "Notification Center", "sublabel": "local alerts", "pos": [560, 630], "size": [150, 64] },
     { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "local preferences", "pos": [820, 630], "size": [150, 64] },
-    { "id": "loginitem", "type": "external", "label": "SMAppService", "sublabel": "launch at login", "pos": [1080, 630], "size": [150, 64] }
+    { "id": "loginitem", "type": "external", "label": "SMAppService", "sublabel": "launch at login", "pos": [1080, 630], "size": [150, 64] },
+    { "id": "history", "type": "database", "label": "History", "sublabel": "HistoryStore · Aggregator", "pos": [820, 800], "size": [150, 64], "tag": "local JSON" }
   ],
   "connections": [
     { "id": "entry-popup", "from": "entry", "to": "popup", "label": "opens" },
@@ -38,6 +39,7 @@
     { "id": "model-popup", "from": "model", "to": "popup", "label": "status" },
     { "id": "model-notify", "from": "model", "to": "notify", "label": "plan · schedule", "labelAt": [430, 552] },
     { "id": "notify-notificationcenter", "from": "notify", "to": "notificationcenter", "label": "deliver" },
+    { "id": "history-defaults", "from": "history", "to": "defaults", "label": "persist" },
     { "id": "popup-formatter", "from": "popup", "to": "formatter", "label": "countdown" },
     { "id": "popup-pricing", "from": "popup", "to": "pricing", "label": "info", "labelAt": [505, 300] },
     { "id": "settings-config", "from": "settings", "to": "config", "label": "writes", "labelAt": [895, 377] },
@@ -47,8 +49,8 @@
     { "id": "design-settings", "from": "design", "to": "settings", "label": "tokens", "variant": "dashed" }
   ],
   "cards": [
-    { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator, CountdownFormatter, and NotificationPlanner use only Foundation", "Testable independent of the UI"] },
+    { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator, CountdownFormatter, NotificationPlanner, and HistoryAggregator use only Foundation", "Testable independent of the UI"] },
     { "dot": "cyan", "title": "One-Way Flow", "items": ["AppModel publishes @Observable state", "Menu bar and popup read the same source"] },
-    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences stored in UserDefaults", "Notifications are scheduled locally by macOS", "No network calls or telemetry"] }
+    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences and history stored in UserDefaults", "Notifications are scheduled locally by macOS", "No network calls or telemetry"] }
   ]
 }

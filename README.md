@@ -18,7 +18,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (87, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (101, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -38,6 +38,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - 🌗 **Light & dark mode** — follows your system appearance automatically
 - 🪶 **Minimal** — release build under 1 MB
 - 🔔 **Local notifications** — an optional 5-minute warning before peak and/or an alert when off-peak starts, scheduled entirely on-device with quiet-hours support
+- 📊 **7-day history** — a collapsible stacked-bar chart of peak vs. off-peak minutes for the last 7 days, built from on-device state changes (no network)
 - 🔒 **No tracking, no telemetry, no network calls**
 
 ---
@@ -81,6 +82,7 @@ graph TD
 4. **Settings change** — `SettingsView` writes `AppSettings` (UserDefaults); timezone/interval updates propagate to `AppModel` through the Observation framework, and the views re-render live.
 5. **Launch at login** — toggled via `SMAppService.mainApp` (`register()` / `unregister()`).
 6. **Notifications** — on launch and on any notification/timezone setting change, `AppModel` asks `NotificationPlanner` for the upcoming transitions over a 7-day horizon; `NotificationManager` cancels pending requests and re-schedules them as local notifications, skipping quiet hours. If permission is denied it clears pending requests and the Settings screen points the user to System Settings.
+7. **History** — `Clock` calls back on every tick; `AppModel` records the current state through `HistoryStore` only when it changes (one JSON blob in `UserDefaults`, pruned to 7 days with a boundary anchor). `HistoryAggregator` turns the samples into per-day peak/off-peak minutes, and `HistoryChartView` renders them for the selected timezone.
 
 ---
 
@@ -172,6 +174,9 @@ CheapSeek/
 │   ├── AppSettings.swift                # UserDefaults-backed settings, notifications prefs + SMAppService
 │   ├── NotificationManager.swift        # Permission state + schedules transition notifications
 │   ├── NotificationPlanner.swift        # Pure peak/off-peak notification planning + quiet hours
+│   ├── HistoryStore.swift               # Event-based, on-device peak/off-peak history (UserDefaults)
+│   ├── HistoryAggregator.swift          # Pure per-day peak/off-peak minute aggregation
+│   ├── HistoryChartView.swift           # SwiftUI Charts stacked bar (last 7 days)
 │   ├── PeakCalculator.swift             # Pure UTC peak/off-peak logic
 │   ├── PeakStatus.swift                 # PeakStatus enum + reusable PeakStatusBadge
 │   ├── DesignSystem.swift               # Shared spacing/layout tokens
@@ -185,7 +190,7 @@ CheapSeek/
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
-│   ├── en.lproj/Localizable.strings     # English (59 keys)
+│   ├── en.lproj/Localizable.strings     # English (64 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
 │   ├── es.lproj/Localizable.strings     # Español
@@ -211,6 +216,8 @@ CheapSeek/
 │   ├── MenuBarLabelTests.swift          # Menu bar status text + symbol
 │   ├── NotificationManagerTests.swift   # Scheduling via a mock notification center
 │   ├── NotificationPlannerTests.swift   # Transition planning + quiet hours
+│   ├── HistoryAggregatorTests.swift     # Daily aggregation, timezones, DST
+│   ├── HistoryStoreTests.swift          # Event-based recording, retention, persistence
 │   ├── LocalizationTests.swift          # 17-language key parity & completeness
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
@@ -241,7 +248,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (6), `AppModelTests` (4), `MenuBarLabelTests` (5), `NotificationManagerTests` (5), `NotificationPlannerTests` (10), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **87 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (6), `AppModelTests` (4), `MenuBarLabelTests` (5), `NotificationManagerTests` (5), `NotificationPlannerTests` (10), `HistoryAggregatorTests` (8), `HistoryStoreTests` (6), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **101 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 20%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
@@ -274,7 +281,7 @@ System architecture and visual documentation are generated with [Archify](https:
 | _(no entitlements)_ | The app uses **no entitlements** and is not sandboxed | `project.yml` |
 | `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | `1.0.0` / `1` | `project.yml` |
 
-> **Privacy:** CheapSeek makes **no network requests** and sends **no telemetry or analytics**. All state is stored locally in `UserDefaults` (timezone, notifications preferences, quiet hours, refresh interval, language). Peak pricing is computed entirely on-device from the current UTC time, and notifications are scheduled locally by macOS.
+> **Privacy:** CheapSeek makes **no network requests** and sends **no telemetry or analytics**. All state is stored locally in `UserDefaults` (timezone, notifications preferences, quiet hours, refresh interval, language, and the peak/off-peak history samples). Peak pricing is computed entirely on-device from the current UTC time, and notifications are scheduled locally by macOS.
 
 **Version:** `CFBundleShortVersionString 1.0.0` (`CFBundleVersion 1`), set via `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml`.
 
@@ -284,6 +291,7 @@ System architecture and visual documentation are generated with [Archify](https:
 - **Launch at login** — depends on a properly signed build (ad-hoc signing may be rejected by `SMAppService`).
 - **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 - **Notifications** — local alerts are scheduled for the upcoming 7 days and refreshed when notification or timezone settings change; a notification only fires while the app is running or had already scheduled it. Delivery depends on macOS notification permission, and ad-hoc signed dev builds may not show the authorization prompt reliably. Quiet hours suppress alerts whose delivery time falls inside the configured window.
+- **History** — samples are recorded only while the app is running, on state changes; time while the app was closed is attributed to the last known state. The chart therefore becomes more meaningful the longer the app runs.
 
 ---
 
