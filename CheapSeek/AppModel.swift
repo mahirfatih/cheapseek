@@ -6,16 +6,24 @@ import Localize_Swift
 final class AppModel {
     let config: DeepSeekConfig
     let settings: AppSettings
+    let notifications: NotificationManager
 
     private let clock: Clock
 
     private(set) var languageRevision = 0
     @ObservationIgnored private var languageObserver: NSObjectProtocol?
 
-    init(settings: AppSettings, config: DeepSeekConfig = .fallback, clock: Clock = Clock(), autoStart: Bool = true) {
+    init(
+        settings: AppSettings,
+        config: DeepSeekConfig = .fallback,
+        clock: Clock = Clock(),
+        notifications: NotificationManager = .disabled,
+        autoStart: Bool = true
+    ) {
         self.settings = settings
         self.config = config
         self.clock = clock
+        self.notifications = notifications
         if autoStart {
             clock.start(interval: settings.updateInterval)
         }
@@ -26,6 +34,8 @@ final class AppModel {
         ) { [weak self] _ in
             self?.languageRevision &+= 1
         }
+        notifications.refreshAuthorizationStatus()
+        refreshNotifications()
     }
 
     deinit {
@@ -46,5 +56,10 @@ final class AppModel {
     func setUpdateInterval(_ interval: Double) {
         let range = AppSettings.updateIntervalRange
         clock.start(interval: min(max(interval, range.lowerBound), range.upperBound))
+    }
+
+    /// Recomputes and reschedules transition notifications for the current settings.
+    func refreshNotifications() {
+        notifications.reschedule(now: now, schedule: config.schedule, settings: settings)
     }
 }

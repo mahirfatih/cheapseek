@@ -15,7 +15,16 @@ final class LocalizationTests: XCTestCase {
         "off_peak_window", "full_price", "half_price", "your_time",
         "input_cache_hit", "input_cache_miss", "output_tokens", "per_million_tokens",
         "pricing_page", "api_docs", "api_usage", "close",
-        "menu_bar.status.cheap", "menu_bar.status.peak", "notifications_soon"
+        "menu_bar.status.cheap", "menu_bar.status.peak",
+        "settings.notifications.enable", "settings.notifications.permission_hint",
+        "settings.notifications.open_settings", "settings.notifications.offpeak_start",
+        "settings.notifications.peak_start", "settings.notifications.before_peak",
+        "settings.notifications.before_peak_value", "settings.notifications.before_peak_off",
+        "settings.notifications.quiet_hours", "settings.notifications.quiet_start",
+        "settings.notifications.quiet_end",
+        "notification.peak_soon.title", "notification.peak_soon.body",
+        "notification.offpeak_start.title", "notification.offpeak_start.body",
+        "notification.peak_start.title", "notification.peak_start.body"
     ]
 
     private var cheapSeekDir: URL {
