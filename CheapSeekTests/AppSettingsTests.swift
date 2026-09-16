@@ -58,4 +58,36 @@ final class AppSettingsTests: XCTestCase {
         XCTAssertTrue(reloaded.notificationsEnabled)
         XCTAssertEqual(reloaded.updateInterval, 120)
     }
+
+    func testNotificationDefaults() {
+        let settings = AppSettings(defaults: makeDefaults())
+
+        XCTAssertEqual(settings.notifyBeforePeakMinutes, 5)
+        XCTAssertTrue(settings.notifyOnOffPeakStart)
+        XCTAssertFalse(settings.notifyOnPeakStart)
+        XCTAssertFalse(settings.quietHoursEnabled)
+        XCTAssertEqual(settings.quietHoursStart, 23 * 60)
+        XCTAssertEqual(settings.quietHoursEnd, 7 * 60)
+    }
+
+    func testNotificationPreferencesPersistAndClamp() {
+        let defaults = makeDefaults()
+        let settings = AppSettings(defaults: defaults)
+
+        settings.notifyBeforePeakMinutes = 15
+        settings.notifyOnPeakStart = true
+        settings.quietHoursEnabled = true
+        settings.quietHoursStart = 4 * 60
+        settings.quietHoursEnd = 10 * 60
+
+        let reloaded = AppSettings(defaults: defaults)
+        XCTAssertEqual(reloaded.notifyBeforePeakMinutes, 15)
+        XCTAssertTrue(reloaded.notifyOnPeakStart)
+        XCTAssertTrue(reloaded.quietHoursEnabled)
+        XCTAssertEqual(reloaded.quietHoursStart, 4 * 60)
+        XCTAssertEqual(reloaded.quietHoursEnd, 10 * 60)
+
+        XCTAssertEqual(AppSettings.normalizedMinutes(-30), 1410)
+        XCTAssertEqual(AppSettings.normalizedMinutes(1500), 60)
+    }
 }
