@@ -36,7 +36,7 @@
 "per_million_tokens" = "Preise gelten pro 1M Token";
 "view_pricing_page" = "Preisseite anzeigen";
 "api_docs" = "API-Dokumentation";
-"base_url" = "Basis-URL";
+"view_api_usage" = "API-Nutzung ansehen";
 "close" = "Schließen";
 "menubar_coding" = "coding";
 "notifications_soon" = "Bald verfügbar";

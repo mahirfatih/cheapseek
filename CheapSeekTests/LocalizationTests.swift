@@ -14,7 +14,7 @@ final class LocalizationTests: XCTestCase {
         "pricing", "info", "peak_label", "off_peak_label", "peak_window",
         "off_peak_window", "full_price", "half_price", "your_time",
         "input_cache_hit", "input_cache_miss", "output_tokens", "per_million_tokens",
-        "view_pricing_page", "api_docs", "base_url", "close",
+        "view_pricing_page", "api_docs", "view_api_usage", "close",
         "menubar_coding", "notifications_soon"
     ]
 

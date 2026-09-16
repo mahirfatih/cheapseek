@@ -172,14 +172,8 @@ private struct LinksSection: View {
             if let url = URL(string: config.docsURL) {
                 Link("api_docs".localized(), destination: url)
             }
-            HStack {
-                Text("base_url".localized())
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Text(config.baseURL)
-                    .font(.caption)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
+            if let url = URL(string: config.usageURL) {
+                Link("view_api_usage".localized(), destination: url)
             }
         }
     }

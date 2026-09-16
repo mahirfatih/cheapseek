@@ -36,7 +36,7 @@
 "per_million_tokens" = "价格按每 100 万 token 计算";
 "view_pricing_page" = "查看价格页面";
 "api_docs" = "API 文档";
-"base_url" = "基础 URL";
+"view_api_usage" = "查看 API 用量";
 "close" = "关闭";
 "menubar_coding" = "编程";
 "notifications_soon" = "即将推出";

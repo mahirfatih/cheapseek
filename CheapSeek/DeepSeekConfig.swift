@@ -19,7 +19,7 @@ struct ModelPricing: Codable, Equatable {
 struct DeepSeekConfig: Codable, Equatable {
     let pricingURL: String
     let docsURL: String
-    let baseURL: String
+    let usageURL: String
     let weekdayOnly: Bool
     let offPeakFactor: Double
     let peakWindows: [PeakWindow]
@@ -71,7 +71,7 @@ struct DeepSeekConfig: Codable, Equatable {
     static let fallback = DeepSeekConfig(
         pricingURL: "https://api-docs.deepseek.com/quick_start/pricing/",
         docsURL: "https://api-docs.deepseek.com/",
-        baseURL: "https://api.deepseek.com",
+        usageURL: "https://platform.deepseek.com/usage",
         weekdayOnly: true,
         offPeakFactor: 0.5,
         peakWindows: [PeakWindow(startHour: 1, endHour: 4), PeakWindow(startHour: 6, endHour: 10)],

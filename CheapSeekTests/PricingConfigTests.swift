@@ -16,6 +16,12 @@ final class PricingConfigTests: XCTestCase {
         XCTAssertEqual(config.models.last?.id, "deepseek-v4-pro")
     }
 
+    func testConfigExposesUsageURL() {
+        let config = DeepSeekConfig.load(from: Bundle(for: AppModel.self))
+        XCTAssertEqual(config.usageURL, "https://platform.deepseek.com/usage")
+        XCTAssertEqual(DeepSeekConfig.fallback.usageURL, "https://platform.deepseek.com/usage")
+    }
+
     func testFallbackScheduleMatchesDeepSeekDefaults() {
         let schedule = DeepSeekConfig.fallback.schedule
         XCTAssertEqual(schedule.windows, [

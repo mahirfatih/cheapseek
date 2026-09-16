@@ -36,7 +36,7 @@
 "per_million_tokens" = "價格以每 100 萬 token 計算";
 "view_pricing_page" = "查看價格頁面";
 "api_docs" = "API 文件";
-"base_url" = "基礎 URL";
+"view_api_usage" = "查看 API 用量";
 "close" = "關閉";
 "menubar_coding" = "編程";
 "notifications_soon" = "即將推出";

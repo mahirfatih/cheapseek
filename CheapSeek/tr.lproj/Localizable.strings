@@ -36,7 +36,7 @@
 "per_million_tokens" = "Fiyatlar 1M token başınadır";
 "view_pricing_page" = "Fiyat sayfasını görüntüle";
 "api_docs" = "API dokümantasyonu";
-"base_url" = "Temel URL";
+"view_api_usage" = "API kullanımını görüntüle";
 "close" = "Kapat";
 "menubar_coding" = "kod";
 "notifications_soon" = "Yakında";
