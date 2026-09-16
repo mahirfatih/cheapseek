@@ -255,4 +255,38 @@ final class PeakCalculatorTests: XCTestCase {
             }
         }
     }
+
+    func testSchedulesForNonUTCTimeZoneTileLocalDay() {
+        let newYork = TimeZone(identifier: "America/New_York")!
+        var localCalendar = Calendar(identifier: .gregorian)
+        localCalendar.timeZone = newYork
+
+        // Monday 2026-01-05 12:00 local (EST, UTC-5).
+        var components = DateComponents()
+        components.year = 2026
+        components.month = 1
+        components.day = 5
+        components.hour = 12
+        let referenceDate = localCalendar.date(from: components)!
+
+        let segments = PeakCalculator.schedules(for: newYork, referenceDate: referenceDate)
+        let dayStart = localCalendar.startOfDay(for: referenceDate)
+        let dayEnd = localCalendar.date(byAdding: .day, value: 1, to: dayStart)!
+
+        XCTAssertFalse(segments.isEmpty)
+        XCTAssertEqual(segments.first?.0, dayStart)
+        XCTAssertEqual(segments.last?.1, dayEnd)
+
+        var covered = 0.0
+        for (index, segment) in segments.enumerated() {
+            XCTAssertEqual(segment.2, PeakCalculator.isPeak(at: segment.0),
+                           "Segment \(index) peak flag does not match isPeak at start")
+            covered += segment.1.timeIntervalSince(segment.0)
+            if index < segments.count - 1 {
+                XCTAssertEqual(segment.1, segments[index + 1].0,
+                               "Segment \(index) is not contiguous with the next")
+            }
+        }
+        XCTAssertEqual(covered, dayEnd.timeIntervalSince(dayStart), accuracy: 0.001)
+    }
 }

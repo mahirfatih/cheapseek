@@ -88,7 +88,10 @@ private struct PricingLegend: View {
         var components = utcCalendar.dateComponents([.year, .month, .day], from: Date())
         components.hour = window.startHour
         components.minute = 0
-        guard let start = utcCalendar.date(from: components) else { return "" }
+        // GMT never observes DST, so a fixed hour offset between start and end is exact.
+        guard let start = utcCalendar.date(from: components) else {
+            return fallbackWindowText(window)
+        }
         let end = start.addingTimeInterval(TimeInterval((window.endHour - window.startHour) * 3600))
 
         var format = Date.FormatStyle()
@@ -97,6 +100,10 @@ private struct PricingLegend: View {
         format.timeZone = timeZone
         format.locale = locale
         return "\(start.formatted(format))–\(end.formatted(format))"
+    }
+
+    private func fallbackWindowText(_ window: PeakWindow) -> String {
+        String(format: "%02d:00–%02d:00", window.startHour, window.endHour)
     }
 }
 

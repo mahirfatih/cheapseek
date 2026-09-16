@@ -43,13 +43,13 @@ xcodebuild -project CheapSeek.xcodeproj \
 
 | Suite | Focus | Dependency Strategy |
 | :--- | :--- | :--- |
-| `PeakCalculatorTests` (32) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, DST day). | Pure functions — no mocks |
-| `CountdownFormatterTests` (5) | Hours/minutes/seconds formatting, exact hour, negative clamp. | Compares against the localized unit keys — language-independent |
+| `PeakCalculatorTests` (33) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
+| `CountdownFormatterTests` (7) | Hours/minutes/seconds formatting, exact hour, negative clamp, hour-truncation spec. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (4) | Defaults, `updateInterval` clamping, timezone resolution, persistence. | Injected `UserDefaults` suite (hermetic) |
 | `AppModelTests` (4) | `isPeak`/`schedule` from injected date + timezone, `refresh()`, language-change revision. | Injected clock/timezone via `autoRefresh: false` |
-| `LocalizationTests` (2) | All 7 `.lproj` files have identical key sets; every expected key present in every language. | Direct source-file parsing — no bundle state |
+| `LocalizationTests` (3) | All 10 `.lproj` files have identical key sets; every expected key present in every language; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (5) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation. | Injected `PeakSchedule` — no mocks |
-| `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages, `LSUIElement`, 7 languages present. | Source + `project.yml` assertions — no mocks |
+| `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages, `LSUIElement`, 10 languages present. | Source + `project.yml` assertions — no mocks |
 
 > There is no unit test for the SwiftUI views (`PopupView`, `SettingsView`): SwiftUI view bodies are not meaningfully unit-testable. Rendering is covered by SwiftUI previews (light/dark) and manual verification.
 
@@ -66,7 +66,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `test_noAnalyticsOrTelemetrySDKs` | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | No Keychain / `SecItem` usage (UserDefaults-only persistence) |
 | `testA06_noRemotePackageDependencies` | No remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
-| `testLocalizations_allSevenLanguagesPresent` | All 7 `.lproj` packs exist |
+| `testLocalizations_allLanguagesPresent` | All 10 `.lproj` packs exist |
 
 ## UI Tests (`CheapSeekUITests`, XCUITest)
 

@@ -30,6 +30,7 @@ struct PopupView: View {
                 }
                 .buttonStyle(.borderless)
                 .help("close".localized())
+                .accessibilityLabel("close".localized())
             }
             PricingInfoView(config: model.config, timeZone: model.timeZone)
         }
@@ -44,19 +45,21 @@ struct PopupView: View {
             let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
             let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
             let targetStatus = PeakStatus(isPeak: targetIsPeak)
+            let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
+            let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
 
             VStack(alignment: .leading, spacing: Spacing.md) {
                 Text("app_title".localized())
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                PeakStatusBadge(status: PeakStatus(isPeak: model.isPeak))
+                PeakStatusBadge(status: currentStatus)
 
                 HStack {
                     Text("now_label".localized())
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(now, format: .dateTime.hour().minute().second())
+                    Text(now, format: timeFormat)
                         .monospacedDigit()
                 }
                 .font(.subheadline)
@@ -66,9 +69,10 @@ struct PopupView: View {
                     Text("timezone_label".localized())
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text(model.timeZone.identifier)
+                    Text(timeZoneName)
                         .lineLimit(1)
                         .truncationMode(.middle)
+                        .help(model.timeZone.identifier)
                 }
                 .font(.subheadline)
                 .accessibilityElement(children: .combine)
@@ -79,7 +83,7 @@ struct PopupView: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
-                ForEach(Array(model.schedule.enumerated()), id: \.offset) { _, segment in
+                ForEach(Array(schedule.enumerated()), id: \.offset) { _, segment in
                     scheduleRow(segment)
                 }
 
@@ -93,7 +97,7 @@ struct PopupView: View {
                     Text(countdown)
                         .bold()
                         .monospacedDigit()
-                    Text(targetStatus.title)
+                    Text(targetIsPeak ? "to_peak".localized() : "to_offpeak".localized())
                         .foregroundStyle(targetStatus.color)
                 }
                 .font(.subheadline)
@@ -113,6 +117,7 @@ struct PopupView: View {
                     }
                     .buttonStyle(.borderless)
                     .help("info".localized())
+                    .accessibilityLabel("info".localized())
                     Spacer()
                     Button("quit".localized()) {
                         NSApplication.shared.terminate(nil)
@@ -125,10 +130,36 @@ struct PopupView: View {
         }
     }
 
+    private var locale: Locale {
+        AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
+    }
+
+    private var timeFormat: Date.FormatStyle {
+        var format = Date.FormatStyle()
+            .hour(.twoDigits(amPM: .omitted))
+            .minute(.twoDigits)
+            .second(.twoDigits)
+        format.timeZone = model.timeZone
+        format.locale = locale
+        return format
+    }
+
+    private var timeShortFormat: Date.FormatStyle {
+        var format = Date.FormatStyle(date: .omitted, time: .shortened)
+        format.timeZone = model.timeZone
+        format.locale = locale
+        return format
+    }
+
+    private var timeZoneName: String {
+        model.timeZone.localizedName(for: .shortStandard, locale: locale)
+            ?? model.timeZone.identifier
+    }
+
     private func scheduleRow(_ segment: (start: Date, end: Date, isPeak: Bool)) -> some View {
         let status = PeakStatus(isPeak: segment.isPeak)
         return HStack {
-            Text("\(segment.start.formatted(date: .omitted, time: .shortened)) – \(segment.end.formatted(date: .omitted, time: .shortened))")
+            Text("\(segment.start.formatted(timeShortFormat)) – \(segment.end.formatted(timeShortFormat))")
                 .monospacedDigit()
             Spacer()
             Text(status.title)

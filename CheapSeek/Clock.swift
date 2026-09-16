@@ -20,7 +20,7 @@ final class Clock {
                 try? await Task.sleep(for: .seconds(seconds))
                 if Task.isCancelled { return }
                 guard let self else { return }
-                self.now = Date()
+                await MainActor.run { self.now = Date() }
             }
         }
     }

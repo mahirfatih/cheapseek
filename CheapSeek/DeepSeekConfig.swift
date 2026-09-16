@@ -34,13 +34,38 @@ struct DeepSeekConfig: Codable, Equatable {
     }
 
     static func load(from bundle: Bundle = .main) -> DeepSeekConfig {
-        guard let url = bundle.url(forResource: "Configuration", withExtension: "plist"),
-              let data = try? Data(contentsOf: url),
-              let config = try? PropertyListDecoder().decode(DeepSeekConfig.self, from: data) else {
-            logger.warning("Configuration.plist missing or invalid; falling back to built-in defaults.")
+        guard let url = bundle.url(forResource: "Configuration", withExtension: "plist") else {
+            logger.warning("Configuration.plist missing; falling back to built-in defaults.")
             return .fallback
         }
-        return config
+        do {
+            let data = try Data(contentsOf: url)
+            let config = try PropertyListDecoder().decode(DeepSeekConfig.self, from: data)
+            guard config.isValid else {
+                logger.error("Configuration.plist failed validation; falling back to built-in defaults.")
+                return .fallback
+            }
+            return config
+        } catch {
+            logger.error("Configuration.plist unreadable (\(error.localizedDescription)); falling back to built-in defaults.")
+            return .fallback
+        }
+    }
+
+    private var isValid: Bool {
+        guard !models.isEmpty else { return false }
+        guard (0...1).contains(offPeakFactor) else { return false }
+        for window in peakWindows {
+            guard (0...24).contains(window.startHour),
+                  (0...24).contains(window.endHour),
+                  window.startHour < window.endHour else { return false }
+        }
+        for model in models {
+            for price in [model.inputCacheHit, model.inputCacheMiss, model.output] {
+                guard price.offPeak >= 0, price.peak >= 0 else { return false }
+            }
+        }
+        return true
     }
 
     static let fallback = DeepSeekConfig(

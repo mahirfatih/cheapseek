@@ -88,6 +88,7 @@ struct PeakCalculator {
 
         while cursor < dayEnd {
             let (transition, _) = nextTransition(from: cursor, schedule: schedule)
+            guard transition > cursor else { break }
             let segmentEnd = min(transition, dayEnd)
             segments.append((cursor, segmentEnd, state))
             cursor = segmentEnd
