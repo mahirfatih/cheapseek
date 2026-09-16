@@ -10,7 +10,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     case fr
     case it
     case zhHans = "zh-Hans"
-    case zhHant = "zh-Hant"
     case hi
     case bn
     case ru
@@ -33,7 +32,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .fr: return "Français"
         case .it: return "Italiano"
         case .zhHans: return "简体中文"
-        case .zhHant: return "繁體中文"
         case .hi: return "हिन्दी"
         case .bn: return "বাংলা"
         case .ru: return "Русский"
@@ -55,7 +53,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .pt: return "🇵🇹"
         case .fr: return "🇫🇷"
         case .it: return "🇮🇹"
-        case .zhHans, .zhHant: return "🇨🇳"
+        case .zhHans: return "🇨🇳"
         case .hi: return "🇮🇳"
         case .bn: return "🇧🇩"
         case .ru: return "🇷🇺"
@@ -78,7 +76,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         case .fr: return "fr_FR"
         case .it: return "it_IT"
         case .zhHans: return "zh-Hans"
-        case .zhHant: return "zh-Hant"
         case .hi: return "hi_IN"
         case .bn: return "bn_BD"
         case .ru: return "ru_RU"

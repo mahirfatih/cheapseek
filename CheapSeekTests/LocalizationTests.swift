@@ -60,7 +60,6 @@ final class LocalizationTests: XCTestCase {
                            "\(language.rawValue) locale resolves to \(locale.identifier)")
         }
         XCTAssertEqual(AppLanguage.zhHans.locale.language.script?.identifier, "Hans")
-        XCTAssertEqual(AppLanguage.zhHant.locale.language.script?.identifier, "Hant")
         XCTAssertEqual(AppLanguage.hi.locale.language.languageCode?.identifier, "hi")
     }
 

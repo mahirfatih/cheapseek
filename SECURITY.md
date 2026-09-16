@@ -67,7 +67,7 @@
 | `test_noAnalyticsOrTelemetrySDKs` | MASVS-PRIVACY | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | MASVS-STORAGE | No Keychain / `SecItem` — UserDefaults-only persistence |
 | `testA06_noRemotePackageDependencies` | A06 | No remote SPM packages; only the vendored Localize-Swift |
-| `testLocalizations_allLanguagesPresent` | i18n integrity | All 18 `.lproj` packs exist |
+| `testLocalizations_allLanguagesPresent` | i18n integrity | All 17 `.lproj` packs exist |
 
 ## Findings Closed This Sprint
 

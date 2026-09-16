@@ -51,7 +51,7 @@ Keep one logical change per commit.
 - **Language:** Swift 5.9 / SwiftUI, macOS 14+
 - **Architecture:** Pure logic (`PeakCalculator`, `CountdownFormatter`) separated from state (`AppModel`, `AppSettings`) and views (`PopupView`, `SettingsView`)
 - **Concurrency:** UI updates on the main actor; `AppModel` is `@Observable` and refreshed by an async `Clock` (no `Timer` or Combine)
-- **Localization:** Every user-facing string **must** use `"key".localized()`. Keys live in all 18 `*.lproj/Localizable.strings` files.
+- **Localization:** Every user-facing string **must** use `"key".localized()`. Keys live in all 17 `*.lproj/Localizable.strings` files.
 - **Theme:** Use semantic colors only (`.primary`, `.secondary`, `.regularMaterial`); never hardcode white/black.
 - **Testability:** Pure functions must not touch global state. `AppSettings` accepts an injected `UserDefaults`; `AppModel` accepts an injected date/timezone (`autoRefresh: false`) — use these in tests.
 - **Privacy:** No analytics, crash reporters, networking, or third-party SDKs.
@@ -82,7 +82,7 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 | `CheapSeek/` | App source (main target) |
 | `CheapSeek/Configuration.plist` | Bundled config: peak hours, model pricing, links |
 | `CheapSeek/DeepSeekConfig.swift` | Loads and decodes the bundled config (with fallback) |
-| `CheapSeek/AppLanguage.swift` | Single source of truth for the 18 supported languages |
+| `CheapSeek/AppLanguage.swift` | Single source of truth for the 17 supported languages |
 | `CheapSeek/Assets.xcassets/` | App icon + accent color |
 | `CheapSeekTests/` | XCTest suite (unit + security regression + config) |
 | `CheapSeekUITests/` | XCUITest suite (launch + best-effort menu bar checks) |
