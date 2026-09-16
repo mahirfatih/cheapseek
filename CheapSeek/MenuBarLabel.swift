@@ -6,15 +6,27 @@ struct MenuBarLabel: View {
 
     var body: some View {
         let _ = model.languageRevision
-        if model.isPeak {
-            Image(systemName: "dollarsign.circle.fill")
-                .foregroundStyle(.red)
-                .accessibilityLabel("status_peak".localized())
-        } else {
-            Text("menubar_coding".localized())
-                .foregroundStyle(.green)
+        let status = PeakStatus(isPeak: model.isPeak)
+        HStack(spacing: 3) {
+            Image(systemName: Self.symbolName(for: status))
+            Text(Self.text(for: status))
                 .font(.system(size: 12, design: .monospaced))
-                .accessibilityLabel("status_offpeak".localized())
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(status.title)
+    }
+
+    static func text(for status: PeakStatus) -> String {
+        switch status {
+        case .peak: return "menu_bar.status.peak".localized()
+        case .offPeak: return "menu_bar.status.cheap".localized()
+        }
+    }
+
+    static func symbolName(for status: PeakStatus) -> String {
+        switch status {
+        case .peak: return "flame.fill"
+        case .offPeak: return "leaf"
         }
     }
 }
