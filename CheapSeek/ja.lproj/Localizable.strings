@@ -38,5 +38,6 @@
 "api_docs" = "API ドキュメント";
 "api_usage" = "API 使用量";
 "close" = "閉じる";
-"menubar_coding" = "コーディング";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "近日対応";

@@ -21,7 +21,7 @@
     { "id": "appsettings", "type": "backend", "label": "AppSettings", "sublabel": "timezone · interval", "stage": 1, "row": 1 },
     { "id": "deepseekconfig", "type": "backend", "label": "DeepSeekConfig", "sublabel": "bundled config", "stage": 1, "row": 2, "tag": "Configuration.plist" },
     { "id": "appmodel", "type": "backend", "label": "AppModel", "sublabel": "@Observable state", "stage": 2, "row": 1 },
-    { "id": "menubar", "type": "frontend", "label": "Menu Bar", "sublabel": "icon · coding", "stage": 3, "row": 0 },
+    { "id": "menubar", "type": "frontend", "label": "Menu Bar", "sublabel": "text + symbol", "stage": 3, "row": 0 },
     { "id": "popup", "type": "frontend", "label": "PopupView", "sublabel": "schedule · countdown", "stage": 3, "row": 1 },
     { "id": "formatter", "type": "backend", "label": "CountdownFormatter", "sublabel": "localized countdown", "stage": 3, "row": 2 }
   ],

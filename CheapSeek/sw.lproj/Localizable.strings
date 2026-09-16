@@ -38,5 +38,6 @@
 "api_docs" = "Nyaraka za API";
 "api_usage" = "Matumizi ya API";
 "close" = "Funga";
-"menubar_coding" = "kuandika";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "Inakuja hivi karibuni";

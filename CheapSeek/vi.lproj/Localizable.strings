@@ -38,5 +38,6 @@
 "api_docs" = "Tài liệu API";
 "api_usage" = "Mức sử dụng API";
 "close" = "Đóng";
-"menubar_coding" = "mã";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "Sắp ra mắt";

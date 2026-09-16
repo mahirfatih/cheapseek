@@ -38,5 +38,6 @@
 "api_docs" = "API Belgeleri";
 "api_usage" = "API kullanımı";
 "close" = "Kapat";
-"menubar_coding" = "kod";
+"menu_bar.status.cheap" = "ekonomik";
+"menu_bar.status.peak" = "yoğun";
 "notifications_soon" = "Yakında";

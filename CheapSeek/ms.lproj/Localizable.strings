@@ -38,5 +38,6 @@
 "api_docs" = "Dokumentasi API";
 "api_usage" = "Penggunaan API";
 "close" = "Tutup";
-"menubar_coding" = "kod";
+"menu_bar.status.cheap" = "cheap";
+"menu_bar.status.peak" = "peak";
 "notifications_soon" = "Akan datang";
