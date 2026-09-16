@@ -7,10 +7,12 @@ final class AppModel {
     let config: DeepSeekConfig
     let settings: AppSettings
     let notifications: NotificationManager
+    let history: HistoryStore
 
     private let clock: Clock
 
     private(set) var languageRevision = 0
+    private(set) var historyDays: [DayDistribution] = []
     @ObservationIgnored private var languageObserver: NSObjectProtocol?
 
     init(
@@ -18,12 +20,17 @@ final class AppModel {
         config: DeepSeekConfig = .fallback,
         clock: Clock = Clock(),
         notifications: NotificationManager = .disabled,
+        history: HistoryStore = .inMemory,
         autoStart: Bool = true
     ) {
         self.settings = settings
         self.config = config
         self.clock = clock
         self.notifications = notifications
+        self.history = history
+        clock.onTick = { [weak self] date in
+            self?.recordHistory(at: date)
+        }
         if autoStart {
             clock.start(interval: settings.updateInterval)
         }
@@ -36,6 +43,7 @@ final class AppModel {
         }
         notifications.refreshAuthorizationStatus()
         refreshNotifications()
+        recordHistory(at: now)
     }
 
     deinit {
@@ -61,5 +69,30 @@ final class AppModel {
     /// Recomputes and reschedules transition notifications for the current settings.
     func refreshNotifications() {
         notifications.reschedule(now: now, schedule: config.schedule, settings: settings)
+    }
+
+    var hasHistory: Bool {
+        historyDays.contains { $0.totalMinutes > 0 }
+    }
+
+    /// Reaggregates history, e.g. after a timezone change.
+    func refreshHistory() {
+        historyDays = HistoryAggregator.dailyDistribution(
+            samples: history.samples,
+            now: now,
+            timeZone: timeZone
+        )
+    }
+
+    private func recordHistory(at date: Date) {
+        history.record(
+            isPeak: PeakCalculator.isPeak(at: date, schedule: config.schedule),
+            at: date
+        )
+        historyDays = HistoryAggregator.dailyDistribution(
+            samples: history.samples,
+            now: now,
+            timeZone: timeZone
+        )
     }
 }

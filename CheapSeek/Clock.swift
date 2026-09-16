@@ -7,6 +7,7 @@ final class Clock {
     private(set) var now: Date
 
     @ObservationIgnored private var task: Task<Void, Never>?
+    @ObservationIgnored var onTick: ((Date) -> Void)?
 
     init(now: Date = Date()) {
         self.now = now
@@ -20,7 +21,11 @@ final class Clock {
                 try? await Task.sleep(for: .seconds(seconds))
                 if Task.isCancelled { return }
                 guard let self else { return }
-                await MainActor.run { self.now = Date() }
+                await MainActor.run {
+                    let date = Date()
+                    self.now = date
+                    self.onTick?(date)
+                }
             }
         }
     }
