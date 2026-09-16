@@ -23,7 +23,7 @@
 
 | MASVS Domain | Level | Notes |
 | :--- | :--- | :--- |
-| MASVS-STORAGE | **L1** | Only preferences are stored, in the app's `UserDefaults` (`settings.timeZone`, `settings.notificationsEnabled`, `settings.updateInterval`, and Localize's language key). No secrets. |
+| MASVS-STORAGE | **L1** | Only preferences are stored, in the app's `UserDefaults` (`settings.timeZone`, `settings.notificationsEnabled`, `settings.updateInterval`, the notification/quiet-hours keys, and Localize's language key). No secrets. |
 | MASVS-CRYPTO | L1 | No custom cryptography; none required. |
 | MASVS-NETWORK | **L1+** | No networking at all — strictly stronger than the baseline requirement. |
 | MASVS-PRIVACY | **L1** | Zero analytics, zero crash reporters, zero third-party SDKs. No data leaves the machine. |
@@ -32,7 +32,7 @@
 ## Threat Model (Core Journeys)
 
 1. **Local preference tampering**
-   - **Asset:** User preferences (timezone, interval, language, notifications).
+   - **Asset:** User preferences (timezone, interval, language, notification/quiet-hours settings).
    - **Adversary:** A local process/user editing `UserDefaults`.
    - **Control:** Low impact — values are non-sensitive and validated on load (unknown timezone → system default; interval clamped).
 
