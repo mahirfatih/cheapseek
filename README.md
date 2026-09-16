@@ -13,7 +13,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 ## 🛠️ Tech Stack & Architecture
 
 - **Language & Framework:** Swift 5.9 / SwiftUI, macOS 14+, `MenuBarExtra` popup (`.window` style)
-- **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`), state (`AppModel`, `AppSettings`, `Clock`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `MenuBarLabel`)
+- **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`), state (`AppModel`, `AppSettings`, `Clock`, `HistoryStore`, `NotificationManager`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `MenuBarLabel`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
@@ -27,7 +27,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ## ✨ Features
 
-- 🟢 **Live status in your menu bar** — `leaf` + `cheap` when off-peak, `flame` + `peak` when expensive (text + symbol, readable even when macOS renders the status item as a monochrome template)
+- 🟢 **Live status in your menu bar** — `leaf` + `cheap` when off-peak, `flame.fill` + `peak` when expensive (text + symbol, readable even when macOS renders the status item as a monochrome template)
 - 🧮 **Accurate peak logic** — UTC weekdays `01:00–04:00` & `06:00–10:00`, weekends always off-peak
 - 🕐 **Timezone-aware** — peak hours computed in UTC, displayed in your local (configurable) timezone
 - 📅 **Today's full schedule** — every peak/off-peak window for the day
@@ -43,6 +43,15 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ---
 
+## 🆕 What's new
+
+- **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
+- **Local peak/off-peak notifications** — an optional warning before peak, an off-peak-start alert, and quiet hours, scheduled entirely on-device.
+- **7-day history chart** — a collapsible stacked-bar chart of daily peak vs. off-peak minutes in the popup.
+- **17 languages**, no tracking, and no network calls.
+
+---
+
 ## 🏗️ Architecture
 
 ```mermaid
@@ -54,6 +63,7 @@ graph TD
         Model["AppModel<br/>@Observable state"]
         Config["AppSettings<br/>UserDefaults + SMAppService"]
         Notify["NotificationManager<br/>+ NotificationPlanner"]
+        History["HistoryStore<br/>+ HistoryAggregator"]
         Core["PeakCalculator<br/>UTC peak/off-peak"]
         Fmt["CountdownFormatter"]
         L10n["Localize-Swift<br/>17 .lproj"]
@@ -68,6 +78,9 @@ graph TD
     Model -->|"isPeak · schedule"| Core
     Model -->|"timeZone · interval"| Config
     Model -->|"plan · schedule"| Notify
+    Model -->|"samples"| History
+    History -->|"chart"| Popup
+    History -->|"persist"| Store["UserDefaults"]
     Config -->|"persist"| Store["UserDefaults"]
     Config -->|"register"| SM["SMAppService"]
     L10n -->|"localized()"| Popup
@@ -102,8 +115,9 @@ No hardcoded bundle identifiers or provisioning profiles are required. On launch
 
 1. **Language** — defaults to the system language; if unsupported, falls back to English. Changes apply instantly (no relaunch).
 2. **Timezone** — defaults to the system timezone; pick any IANA identifier.
-3. **Refresh interval** — 30–300s (default 60s).
-4. **Launch at login** — via `SMAppService`.
+3. **Notifications** — enable peak/off-peak alerts, a warning before peak, transition alerts, and quiet hours.
+4. **Refresh interval** — 30–300s (default 60s).
+5. **Launch at login** — via `SMAppService`.
 
 ### 3. Run & Build
 
@@ -186,7 +200,7 @@ CheapSeek/
 │   ├── DeepSeekConfig.swift             # Loads Configuration.plist (peak hours, prices, links)
 │   ├── Configuration.plist              # Bundled config: peak windows, model pricing, links
 │   ├── PrivacyInfo.xcprivacy            # Privacy manifest (UserDefaults reason CA92.1)
-│   ├── PopupView.swift                  # Menu bar popup (status, schedule, countdown, actions)
+│   ├── PopupView.swift                  # Menu bar popup (status, schedule, countdown, history, actions)
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
@@ -250,7 +264,7 @@ CheapSeek/
 
 - Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (6), `AppModelTests` (4), `MenuBarLabelTests` (5), `NotificationManagerTests` (5), `NotificationPlannerTests` (10), `HistoryAggregatorTests` (8), `HistoryStoreTests` (6), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **101 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 20%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
+- CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 25%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
