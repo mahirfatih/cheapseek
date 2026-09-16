@@ -5,6 +5,7 @@ struct PopupView: View {
     let model: AppModel
     @Environment(\.openSettings) private var openSettings
     @State private var showInfo = false
+    @State private var showHistory = true
 
     var body: some View {
         let _ = model.languageRevision
@@ -102,6 +103,20 @@ struct PopupView: View {
                 }
                 .font(.subheadline)
                 .accessibilityElement(children: .combine)
+
+                Divider()
+
+                DisclosureGroup(isExpanded: $showHistory) {
+                    HistoryChartView(days: model.historyDays, timeZone: model.timeZone)
+                } label: {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("history.title".localized())
+                            .font(.subheadline)
+                        Text("history.last7days".localized())
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
 
                 Divider()
 
