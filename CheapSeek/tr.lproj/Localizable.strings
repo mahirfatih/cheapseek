@@ -57,3 +57,8 @@
 "notification.offpeak_start.body" = "Artık ekonomik — koda dön.";
 "notification.peak_start.title" = "Yoğun saat başladı";
 "notification.peak_start.body" = "Yoğun tarife etkin. Beklemeyi düşünün.";
+"history.title" = "Geçmiş";
+"history.last7days" = "Son 7 gün";
+"history.peak" = "Yoğun";
+"history.offpeak" = "Yoğun Değil";
+"history.empty" = "Henüz veri yok";
