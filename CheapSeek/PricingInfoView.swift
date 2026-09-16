@@ -166,14 +166,14 @@ private struct LinksSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
+            if let url = URL(string: config.usageURL) {
+                Link("api_usage".localized(), destination: url)
+            }
             if let url = URL(string: config.pricingURL) {
-                Link("view_pricing_page".localized(), destination: url)
+                Link("pricing_page".localized(), destination: url)
             }
             if let url = URL(string: config.docsURL) {
                 Link("api_docs".localized(), destination: url)
-            }
-            if let url = URL(string: config.usageURL) {
-                Link("view_api_usage".localized(), destination: url)
             }
         }
     }

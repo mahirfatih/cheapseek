@@ -34,9 +34,9 @@
 "input_cache_miss" = "इनपुट · कैश मिस";
 "output_tokens" = "आउटपुट";
 "per_million_tokens" = "कीमतें प्रति 1M टोकन हैं";
-"view_pricing_page" = "मूल्य पृष्ठ देखें";
+"pricing_page" = "मूल्य पृष्ठ";
 "api_docs" = "API दस्तावेज़";
-"view_api_usage" = "API उपयोग देखें";
+"api_usage" = "API उपयोग";
 "close" = "बंद करें";
 "menubar_coding" = "कोडिंग";
 "notifications_soon" = "जल्द आ रहा है";

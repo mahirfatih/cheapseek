@@ -34,9 +34,9 @@
 "input_cache_miss" = "輸入 · 快取未命中";
 "output_tokens" = "輸出";
 "per_million_tokens" = "價格以每 100 萬 token 計算";
-"view_pricing_page" = "查看價格頁面";
+"pricing_page" = "價格頁面";
 "api_docs" = "API 文件";
-"view_api_usage" = "查看 API 用量";
+"api_usage" = "API 用量";
 "close" = "關閉";
 "menubar_coding" = "編程";
 "notifications_soon" = "即將推出";

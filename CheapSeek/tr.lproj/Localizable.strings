@@ -34,9 +34,9 @@
 "input_cache_miss" = "Giriş · önbellek kaçırma";
 "output_tokens" = "Çıktı";
 "per_million_tokens" = "Fiyatlar 1M token başınadır";
-"view_pricing_page" = "Fiyat sayfasını görüntüle";
-"api_docs" = "API dokümantasyonu";
-"view_api_usage" = "API kullanımını görüntüle";
+"pricing_page" = "Fiyatlandırma Sayfası";
+"api_docs" = "API Belgeleri";
+"api_usage" = "API kullanımı";
 "close" = "Kapat";
 "menubar_coding" = "kod";
 "notifications_soon" = "Yakında";

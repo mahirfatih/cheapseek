@@ -34,9 +34,9 @@
 "input_cache_miss" = "输入 · 缓存未命中";
 "output_tokens" = "输出";
 "per_million_tokens" = "价格按每 100 万 token 计算";
-"view_pricing_page" = "查看价格页面";
+"pricing_page" = "价格页面";
 "api_docs" = "API 文档";
-"view_api_usage" = "查看 API 用量";
+"api_usage" = "API 用量";
 "close" = "关闭";
 "menubar_coding" = "编程";
 "notifications_soon" = "即将推出";
