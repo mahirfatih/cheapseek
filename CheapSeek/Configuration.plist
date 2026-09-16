@@ -6,8 +6,8 @@
     <string>https://api-docs.deepseek.com/quick_start/pricing/</string>
     <key>docsURL</key>
     <string>https://api-docs.deepseek.com/</string>
-    <key>baseURL</key>
-    <string>https://api.deepseek.com</string>
+    <key>usageURL</key>
+    <string>https://platform.deepseek.com/usage</string>
     <key>weekdayOnly</key>
     <true/>
     <key>offPeakFactor</key>

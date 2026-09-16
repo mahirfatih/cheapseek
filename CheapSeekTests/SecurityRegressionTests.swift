@@ -58,7 +58,7 @@ final class SecurityRegressionTests: XCTestCase {
         XCTAssertFalse(projectYML.contains("from: "))
     }
 
-    func testLocalizations_allSevenLanguagesPresent() {
+    func testLocalizations_allLanguagesPresent() {
         let resources = repoRoot.appendingPathComponent("CheapSeek")
         for language in AppLanguage.allCases {
             let lproj = resources.appendingPathComponent("\(language.rawValue).lproj")

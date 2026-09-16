@@ -16,9 +16,9 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`), state (`AppModel`, `AppSettings`, `Clock`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `MenuBarLabel`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
-- **Localization:** 7 languages (EN / TR / DE / ES / PT / FR / IT) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
+- **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (60, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (65, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -32,7 +32,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - 🕐 **Timezone-aware** — peak hours computed in UTC, displayed in your local (configurable) timezone
 - 📅 **Today's full schedule** — every peak/off-peak window for the day
 - ⏳ **Next transition countdown** — "Next change in 3h 42m (to PEAK)", ticking live every second
-- 🌍 **7 languages** — English 🇺🇸, Turkish 🇹🇷, German 🇩🇪, Spanish 🇪🇸, Portuguese 🇵🇹, French 🇫🇷, Italian 🇮🇹
+- 🌍 **17 languages** — English 🇺🇸, Turkish 🇹🇷, German 🇩🇪, Spanish 🇪🇸, Portuguese 🇵🇹, French 🇫🇷, Italian 🇮🇹, Chinese (Simplified) 🇨🇳, Hindi 🇮🇳, Bengali 🇧🇩, Russian 🇷🇺, Indonesian 🇮🇩, Malay 🇲🇾, Japanese 🇯🇵, Korean 🇰🇷, Vietnamese 🇻🇳, Swahili 🇹🇿
 - ⚙️ **Settings** — language, timezone, notifications toggle (stored; delivery planned), launch at login, refresh interval (30–300s)
 - 💰 **Pricing info** — DeepSeek model rates (peak/off-peak, per 1M tokens) with links to the pricing page and API docs
 - 🌗 **Light & dark mode** — follows your system appearance automatically
@@ -53,7 +53,7 @@ graph TD
         Config["AppSettings<br/>UserDefaults + SMAppService"]
         Core["PeakCalculator<br/>UTC peak/off-peak"]
         Fmt["CountdownFormatter"]
-        L10n["Localize-Swift<br/>7 .lproj"]
+        L10n["Localize-Swift<br/>17 .lproj"]
     end
 
     Entry -->|"opens popup"| Popup
@@ -171,7 +171,7 @@ CheapSeek/
 │   ├── DesignSystem.swift               # Shared spacing/layout tokens
 │   ├── MenuBarLabel.swift               # Menu bar icon/label with accessibility
 │   ├── CountdownFormatter.swift         # Localized countdown formatting
-│   ├── AppLanguage.swift                # Single source of truth for the 7 languages
+│   ├── AppLanguage.swift                # Single source of truth for the 17 languages
 │   ├── DeepSeekConfig.swift             # Loads Configuration.plist (peak hours, prices, links)
 │   ├── Configuration.plist              # Bundled config: peak windows, model pricing, links
 │   ├── PrivacyInfo.xcprivacy            # Privacy manifest (UserDefaults reason CA92.1)
@@ -179,20 +179,30 @@ CheapSeek/
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
-│   ├── en.lproj/Localizable.strings     # English (40 keys)
+│   ├── en.lproj/Localizable.strings     # English (42 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
 │   ├── es.lproj/Localizable.strings     # Español
 │   ├── pt.lproj/Localizable.strings     # Português
 │   ├── fr.lproj/Localizable.strings     # Français
-│   └── it.lproj/Localizable.strings     # Italiano
+│   ├── it.lproj/Localizable.strings     # Italiano
+│   ├── zh-Hans.lproj/Localizable.strings # 简体中文
+│   ├── hi.lproj/Localizable.strings     # हिन्दी
+│   ├── bn.lproj/Localizable.strings     # বাংলা
+│   ├── ru.lproj/Localizable.strings     # Русский
+│   ├── id.lproj/Localizable.strings     # Bahasa Indonesia
+│   ├── ms.lproj/Localizable.strings     # Bahasa Melayu
+│   ├── ja.lproj/Localizable.strings     # 日本語
+│   ├── ko.lproj/Localizable.strings     # 한국어
+│   ├── vi.lproj/Localizable.strings     # Tiếng Việt
+│   └── sw.lproj/Localizable.strings     # Kiswahili
 ├── Packages/Localize-Swift/             # Vendored Localize-Swift 3.2.0 (local SPM package)
 ├── CheapSeekTests/                      # Unit tests
 │   ├── PeakCalculatorTests.swift        # Peak logic, boundaries, weekends, DST
 │   ├── AppSettingsTests.swift           # Defaults, clamping, persistence
 │   ├── AppModelTests.swift              # State computation with injected date/timezone
 │   ├── CountdownFormatterTests.swift    # Localized countdown units
-│   ├── LocalizationTests.swift          # 7-language key parity & completeness
+│   ├── LocalizationTests.swift          # 17-language key parity & completeness
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
@@ -222,7 +232,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (32), `CountdownFormatterTests` (5), `AppSettingsTests` (4), `AppModelTests` (4), `LocalizationTests` (2), `PricingConfigTests` (5), `SecurityRegressionTests` (8) — **60 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (4), `AppModelTests` (4), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **65 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 20%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).

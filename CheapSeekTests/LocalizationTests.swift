@@ -14,7 +14,8 @@ final class LocalizationTests: XCTestCase {
         "pricing", "info", "peak_label", "off_peak_label", "peak_window",
         "off_peak_window", "full_price", "half_price", "your_time",
         "input_cache_hit", "input_cache_miss", "output_tokens", "per_million_tokens",
-        "view_pricing_page", "api_docs", "base_url", "close"
+        "pricing_page", "api_docs", "api_usage", "close",
+        "menubar_coding", "notifications_soon"
     ]
 
     private var cheapSeekDir: URL {
@@ -50,6 +51,16 @@ final class LocalizationTests: XCTestCase {
             let missing = expectedKeys.subtracting(found)
             XCTAssertTrue(missing.isEmpty, "\(lang) missing keys: \(missing.sorted())")
         }
+    }
+
+    func testEveryLanguageResolvesToAValidLocale() {
+        for language in AppLanguage.allCases {
+            let locale = language.locale
+            XCTAssertEqual(locale.language.languageCode?.identifier, language.rawValue.prefix(2).description,
+                           "\(language.rawValue) locale resolves to \(locale.identifier)")
+        }
+        XCTAssertEqual(AppLanguage.zhHans.locale.language.script?.identifier, "Hans")
+        XCTAssertEqual(AppLanguage.hi.locale.language.languageCode?.identifier, "hi")
     }
 
     private func keys(in file: URL) -> Set<String> {

@@ -20,7 +20,7 @@
     { "id": "model", "type": "backend", "label": "State Model", "sublabel": "AppModel", "pos": [300, 440], "size": [150, 64], "tag": "@Observable" },
     { "id": "engine", "type": "backend", "label": "Peak Engine", "sublabel": "PeakCalculator", "pos": [560, 440], "size": [150, 64], "tag": "pure UTC logic" },
     { "id": "config", "type": "backend", "label": "Settings Store", "sublabel": "AppSettings", "pos": [820, 440], "size": [150, 64] },
-    { "id": "localize", "type": "external", "label": "Localize-Swift", "sublabel": "7 × .lproj", "pos": [1080, 440], "size": [150, 64], "tag": "3.2.0 vendored" },
+    { "id": "localize", "type": "external", "label": "Localize-Swift", "sublabel": "17 × .lproj", "pos": [1080, 440], "size": [150, 64], "tag": "3.2.0 vendored" },
     { "id": "deepseekconfig", "type": "backend", "label": "Config Loader", "sublabel": "DeepSeekConfig", "pos": [40, 630], "size": [150, 64], "tag": "Configuration.plist" },
     { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "local preferences", "pos": [820, 630], "size": [150, 64] },
     { "id": "loginitem", "type": "external", "label": "SMAppService", "sublabel": "launch at login", "pos": [1080, 630], "size": [150, 64] }

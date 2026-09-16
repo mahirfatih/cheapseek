@@ -2,7 +2,7 @@
 
 **Scope:** `CheapSeek` macOS client (menu bar app).
 **Architecture:** 100% on-device. No network calls, no telemetry, no accounts, no shared container.
-**Date:** 2026-09-15 · **Last re-verified:** 2026-09-15 (60 unit tests pass; 1 UI launch test passes) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
+**Date:** 2026-09-15 · **Last re-verified:** 2026-09-16 (65 unit tests pass; 3 UI tests pass/skip) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `LocalizationTests` (run per build via `test/test.sh`).
 
 ## OWASP Top 10 (2021) — Desktop Client Applicability
 
@@ -67,7 +67,7 @@
 | `test_noAnalyticsOrTelemetrySDKs` | MASVS-PRIVACY | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | MASVS-STORAGE | No Keychain / `SecItem` — UserDefaults-only persistence |
 | `testA06_noRemotePackageDependencies` | A06 | No remote SPM packages; only the vendored Localize-Swift |
-| `testLocalizations_allSevenLanguagesPresent` | i18n integrity | All 7 `.lproj` packs exist |
+| `testLocalizations_allLanguagesPresent` | i18n integrity | All 17 `.lproj` packs exist |
 
 ## Findings Closed This Sprint
 

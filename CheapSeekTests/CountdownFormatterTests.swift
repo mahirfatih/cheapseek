@@ -26,4 +26,13 @@ final class CountdownFormatterTests: XCTestCase {
     func testNegativeClampsToZero() {
         XCTAssertEqual(CountdownFormatter.string(from: -5), "0\(secondUnit)")
     }
+
+    func testHoursDropsRemainingSeconds() {
+        // Spec: above one hour only hours + whole minutes are shown.
+        XCTAssertEqual(CountdownFormatter.string(from: 7199), "1\(hourUnit) 59\(minuteUnit)")
+    }
+
+    func testMinutesDropsZeroSeconds() {
+        XCTAssertEqual(CountdownFormatter.string(from: 360), "6\(minuteUnit) 0\(secondUnit)")
+    }
 }

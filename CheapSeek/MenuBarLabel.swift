@@ -11,7 +11,7 @@ struct MenuBarLabel: View {
                 .foregroundStyle(.red)
                 .accessibilityLabel("status_peak".localized())
         } else {
-            Text("coding")
+            Text("menubar_coding".localized())
                 .foregroundStyle(.green)
                 .font(.system(size: 12, design: .monospaced))
                 .accessibilityLabel("status_offpeak".localized())

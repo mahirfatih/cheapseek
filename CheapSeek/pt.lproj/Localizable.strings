@@ -34,7 +34,9 @@
 "input_cache_miss" = "Entrada · falha de cache";
 "output_tokens" = "Saída";
 "per_million_tokens" = "Os preços são por 1M de tokens";
-"view_pricing_page" = "Ver página de preços";
+"pricing_page" = "Página de preços";
 "api_docs" = "Documentação da API";
-"base_url" = "URL base";
+"api_usage" = "Utilização da API";
 "close" = "Fechar";
+"menubar_coding" = "código";
+"notifications_soon" = "Em breve";

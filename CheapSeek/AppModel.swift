@@ -29,6 +29,7 @@ final class AppModel {
     }
 
     deinit {
+        clock.stop()
         if let languageObserver {
             NotificationCenter.default.removeObserver(languageObserver)
         }

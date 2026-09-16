@@ -34,7 +34,9 @@
 "input_cache_miss" = "Input · cache miss";
 "output_tokens" = "Output";
 "per_million_tokens" = "Prices are per 1M tokens";
-"view_pricing_page" = "View pricing page";
-"api_docs" = "API docs";
-"base_url" = "Base URL";
+"pricing_page" = "Pricing Page";
+"api_docs" = "API Docs";
+"api_usage" = "API usage";
 "close" = "Close";
+"menubar_coding" = "coding";
+"notifications_soon" = "Coming soon";

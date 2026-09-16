@@ -6,7 +6,6 @@ struct SettingsView: View {
     let config: DeepSeekConfig
     let model: AppModel
 
-    @State private var selectedLanguage: String = Localize.currentLanguage()
     @State private var showInfo = false
 
     init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel) {
@@ -55,6 +54,10 @@ struct SettingsView: View {
                 }
 
                 Toggle("notifications".localized(), isOn: $settings.notificationsEnabled)
+                    .disabled(true)
+                Text("notifications_soon".localized())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
                 Toggle("launch_at_login".localized(), isOn: launchAtLoginBinding)
                 if settings.loginItemError {
@@ -66,12 +69,12 @@ struct SettingsView: View {
                 HStack {
                     Text("update_interval".localized())
                     Spacer()
-                    Text("update_interval_value".localizedFormat(Int(settings.updateInterval)))
+                    Text("update_interval_value".localizedFormat(Int(settings.updateInterval.rounded())))
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
-                Slider(value: $settings.updateInterval, in: 30...300, step: 10)
+                Slider(value: $settings.updateInterval, in: AppSettings.updateIntervalRange, step: 10)
             }
         }
         .padding()
@@ -104,9 +107,8 @@ struct SettingsView: View {
 
     private var languageBinding: Binding<String> {
         Binding(
-            get: { selectedLanguage },
+            get: { Localize.currentLanguage() },
             set: { code in
-                selectedLanguage = code
                 Localize.setCurrentLanguage(code)
             }
         )
