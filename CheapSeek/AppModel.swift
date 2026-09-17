@@ -39,7 +39,9 @@ final class AppModel {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            self?.languageRevision &+= 1
+            guard let self else { return }
+            self.languageRevision &+= 1
+            self.refreshNotifications()
         }
         notifications.refreshAuthorizationStatus()
         refreshNotifications()

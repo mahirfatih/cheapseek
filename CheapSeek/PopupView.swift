@@ -16,6 +16,7 @@ struct PopupView: View {
                 statusContent
             }
         }
+        .id(model.languageRevision)
     }
 
     private var infoContent: some View {

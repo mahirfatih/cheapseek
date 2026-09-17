@@ -43,4 +43,14 @@ final class MenuBarLabelTests: XCTestCase {
         XCTAssertFalse(PeakStatus(isPeak: false).title.isEmpty)
         XCTAssertFalse(PeakStatus(isPeak: true).title.isEmpty)
     }
+
+    func testStatusTitlesFollowSelectedLanguage() {
+        Localize.setCurrentLanguage("en")
+        XCTAssertEqual(PeakStatus.offPeak.title, "Off-Peak")
+        XCTAssertEqual(PeakStatus.peak.title, "Peak Hours")
+
+        Localize.setCurrentLanguage("tr")
+        XCTAssertEqual(PeakStatus.offPeak.title, "Yoğun Olmayan Saatler")
+        XCTAssertEqual(PeakStatus.peak.title, "Yoğun Saatler")
+    }
 }

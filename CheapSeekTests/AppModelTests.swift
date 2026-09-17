@@ -1,6 +1,27 @@
 import XCTest
 import Localize_Swift
+import UserNotifications
 @testable import CheapSeek
+
+private final class MockNotificationCenterClient: NotificationCenterClient {
+    var status: UNAuthorizationStatus = .authorized
+    private(set) var addedRequests: [UNNotificationRequest] = []
+    private(set) var removeAllCount = 0
+
+    func requestAuthorization(completion: @escaping (Bool) -> Void) { completion(true) }
+
+    func authorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+        completion(status)
+    }
+
+    func add(_ requests: [UNNotificationRequest]) {
+        addedRequests.append(contentsOf: requests)
+    }
+
+    func removeAllPending() {
+        removeAllCount += 1
+    }
+}
 
 final class AppModelTests: XCTestCase {
 
@@ -70,5 +91,39 @@ final class AppModelTests: XCTestCase {
 
         wait(for: [exp], timeout: 1)
         XCTAssertGreaterThan(model.languageRevision, before)
+    }
+
+    func testLanguageChangeReschedulesNotifications() {
+        let suite = "AppModelTests-\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        let settings = AppSettings(defaults: defaults)
+        settings.timeZoneIdentifier = "UTC"
+        settings.notificationsEnabled = true
+        settings.notifyOnOffPeakStart = true
+        settings.notifyOnPeakStart = true
+
+        let client = MockNotificationCenterClient()
+        let model = AppModel(
+            settings: settings,
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 22, 0)),
+            notifications: NotificationManager(makeClient: { client }),
+            autoStart: false
+        )
+
+        let before = client.removeAllCount
+        let exp = expectation(description: "notifications rescheduled")
+
+        NotificationCenter.default.post(
+            name: Notification.Name(rawValue: LCLLanguageChangeNotification),
+            object: nil
+        )
+        DispatchQueue.main.async { exp.fulfill() }
+
+        wait(for: [exp], timeout: 1)
+        XCTAssertGreaterThan(model.languageRevision, 0)
+        XCTAssertGreaterThan(client.removeAllCount, before)
+        XCTAssertFalse(client.addedRequests.isEmpty)
     }
 }
