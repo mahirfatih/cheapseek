@@ -11,6 +11,14 @@ final class TimeZoneLabelTests: XCTestCase {
         XCTAssertTrue(label.contains("GMT+3"), "Label should show the offset, got \(label)")
     }
 
+    func testUnderscoresAreReplacedWithSpaces() {
+        let timeZone = TimeZone(identifier: "America/Los_Angeles")!
+        let label = TimeZoneLabel.string(for: timeZone)
+
+        XCTAssertFalse(label.contains("_"), "Label should not contain underscores, got \(label)")
+        XCTAssertTrue(label.contains("America/Los Angeles"), "Label should show a readable city, got \(label)")
+    }
+
     func testOffsetOnlyZoneDoesNotDuplicateIdentifier() {
         let timeZone = TimeZone(secondsFromGMT: 3 * 3600)!
         let label = TimeZoneLabel.string(for: timeZone)

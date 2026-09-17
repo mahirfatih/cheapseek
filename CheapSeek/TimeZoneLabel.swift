@@ -5,9 +5,15 @@ import Foundation
 /// offset-only name like `GMT+3`.
 enum TimeZoneLabel {
     static func string(for timeZone: TimeZone, at date: Date = Date()) -> String {
-        let identifier = timeZone.identifier
-        guard identifier.contains("/") else { return identifier }
-        return "\(identifier) · \(offset(for: timeZone, at: date))"
+        let name = displayName(for: timeZone)
+        guard name.contains("/") else { return name }
+        return "\(name) · \(offset(for: timeZone, at: date))"
+    }
+
+    /// Human-readable identifier with underscores replaced by spaces,
+    /// e.g. `America/Los_Angeles` → `America/Los Angeles`.
+    static func displayName(for timeZone: TimeZone) -> String {
+        timeZone.identifier.replacingOccurrences(of: "_", with: " ")
     }
 
     /// Current UTC offset including daylight saving, e.g. `GMT+3` or `GMT+5:30`.
