@@ -2,6 +2,24 @@ import Foundation
 import ServiceManagement
 import Observation
 
+/// Seam over `SMAppService` so launch-at-login can be tested without touching
+/// the real login-item state.
+protocol LoginItemService {
+    func register() throws
+    func unregister() throws
+    var isEnabled: Bool { get }
+}
+
+struct SystemLoginItemService: LoginItemService {
+    func register() throws { try SMAppService.mainApp.register() }
+    func unregister() throws { try SMAppService.mainApp.unregister() }
+
+    var isEnabled: Bool {
+        let status = SMAppService.mainApp.status
+        return status == .enabled || status == .requiresApproval
+    }
+}
+
 @Observable
 final class AppSettings {
     private enum Keys {
@@ -70,14 +88,16 @@ final class AppSettings {
     private(set) var loginItemError = false
 
     private let defaults: UserDefaults
+    private let loginItem: LoginItemService
 
     var timeZone: TimeZone {
         if timeZoneIdentifier.isEmpty { return .current }
         return TimeZone(identifier: timeZoneIdentifier) ?? .current
     }
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, loginItem: LoginItemService = SystemLoginItemService()) {
         self.defaults = defaults
+        self.loginItem = loginItem
 
         timeZoneIdentifier = defaults.string(forKey: Keys.timeZone) ?? Self.systemTimeZoneIdentifier
         notificationsEnabled = defaults.object(forKey: Keys.notifications) as? Bool ?? false
@@ -111,9 +131,9 @@ final class AppSettings {
     func setLaunchAtLogin(_ enabled: Bool) {
         do {
             if enabled {
-                try SMAppService.mainApp.register()
+                try loginItem.register()
             } else {
-                try SMAppService.mainApp.unregister()
+                try loginItem.unregister()
             }
             loginItemError = false
         } catch {
@@ -123,7 +143,6 @@ final class AppSettings {
     }
 
     private func refreshLaunchAtLogin() {
-        let status = SMAppService.mainApp.status
-        launchAtLogin = (status == .enabled || status == .requiresApproval)
+        launchAtLogin = loginItem.isEnabled
     }
 }

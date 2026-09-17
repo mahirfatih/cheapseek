@@ -11,20 +11,30 @@ protocol NotificationCenterClient: AnyObject {
     func removeAllPending()
 }
 
+/// Seam over the real `UNUserNotificationCenter` so the client wrapper can be
+/// exercised with a fake center; only `SystemUserNotificationCenterAdapter`
+/// touches the system API.
+protocol UserNotificationCenterAdapter: AnyObject {
+    func requestAuthorization(options: UNAuthorizationOptions, completion: @escaping (Bool) -> Void)
+    func authorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void)
+    func add(_ request: UNNotificationRequest)
+    func removeAllPending()
+}
+
 /// Wraps `UNUserNotificationCenter` for the running app.
 final class SystemNotificationCenterClient: NotificationCenterClient {
-    private let center = UNUserNotificationCenter.current()
+    private let center: UserNotificationCenterAdapter
+
+    init(center: UserNotificationCenterAdapter = SystemUserNotificationCenterAdapter()) {
+        self.center = center
+    }
 
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
-        center.requestAuthorization(options: [.alert, .sound]) { granted, _ in
-            completion(granted)
-        }
+        center.requestAuthorization(options: [.alert, .sound], completion: completion)
     }
 
     func authorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
-        center.getNotificationSettings { settings in
-            completion(settings.authorizationStatus)
-        }
+        center.authorizationStatus(completion: completion)
     }
 
     func add(_ requests: [UNNotificationRequest]) {
@@ -34,7 +44,7 @@ final class SystemNotificationCenterClient: NotificationCenterClient {
     }
 
     func removeAllPending() {
-        center.removeAllPendingNotificationRequests()
+        center.removeAllPending()
     }
 }
 

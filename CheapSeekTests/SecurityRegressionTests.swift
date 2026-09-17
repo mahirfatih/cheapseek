@@ -13,6 +13,16 @@ final class SecurityRegressionTests: XCTestCase {
         try! String(contentsOf: repoRoot.appendingPathComponent("project.yml"), encoding: .utf8)
     }
 
+    /// The `CheapSeek:` application target block only — test targets may use remote
+    /// packages (e.g. ViewInspector), the shipped app must stay dependency-free.
+    private var appTargetYML: String {
+        let marker = "\n  CheapSeek:\n"
+        guard let start = projectYML.range(of: marker)?.upperBound else { return "" }
+        let remainder = projectYML[start...]
+        let end = remainder.range(of: "\n  CheapSeekTests:")?.lowerBound ?? remainder.endIndex
+        return String(remainder[..<end])
+    }
+
     private var appSources: String {
         let dir = repoRoot.appendingPathComponent("CheapSeek")
         let files = try! FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
@@ -54,8 +64,13 @@ final class SecurityRegressionTests: XCTestCase {
     }
 
     func testA06_noRemotePackageDependencies() {
-        XCTAssertFalse(projectYML.contains("url:"))
-        XCTAssertFalse(projectYML.contains("from: "))
+        // The app target must not pull remote SPM packages; only the vendored
+        // local Localize-Swift is allowed. Test targets may use remote packages.
+        let appTarget = appTargetYML
+        XCTAssertFalse(appTarget.isEmpty, "Could not locate the CheapSeek app target in project.yml")
+        XCTAssertFalse(appTarget.contains("url:"))
+        XCTAssertFalse(appTarget.contains("from: "))
+        XCTAssertFalse(appTarget.contains("ViewInspector"))
     }
 
     func testLocalizations_allLanguagesPresent() {

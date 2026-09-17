@@ -7,7 +7,7 @@ struct HistoryChartView: View {
     let days: [DayDistribution]
     let timeZone: TimeZone
 
-    private var hasData: Bool { days.contains { $0.totalMinutes > 0 } }
+    var hasData: Bool { days.contains { $0.totalMinutes > 0 } }
 
     var body: some View {
         if hasData {
@@ -20,8 +20,8 @@ struct HistoryChartView: View {
         }
     }
 
-    private var offPeakLabel: String { "history.offpeak".localized() }
-    private var peakLabel: String { "history.peak".localized() }
+    var offPeakLabel: String { "history.offpeak".localized() }
+    var peakLabel: String { "history.peak".localized() }
 
     private var chart: some View {
         Chart {
@@ -63,17 +63,17 @@ struct HistoryChartView: View {
         .accessibilityLabel("history.last7days".localized())
     }
 
-    private var calendar: Calendar {
+    var calendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = timeZone
         return calendar
     }
 
-    private var locale: Locale {
+    var locale: Locale {
         AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
     }
 
-    private var weekdayFormat: Date.FormatStyle {
+    var weekdayFormat: Date.FormatStyle {
         var format = Date.FormatStyle().weekday(.narrow)
         format.locale = locale
         format.timeZone = timeZone

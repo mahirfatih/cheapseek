@@ -11,7 +11,9 @@ struct PopupView: View {
         let _ = model.languageRevision
         Group {
             if showInfo {
-                infoContent
+                PopupInfoContent(config: model.config, timeZone: model.timeZone) {
+                    showInfo = false
+                }
             } else {
                 statusContent
             }
@@ -19,144 +21,108 @@ struct PopupView: View {
         .id(model.languageRevision)
     }
 
-    private var infoContent: some View {
-        VStack(alignment: .leading, spacing: Spacing.md) {
-            HStack {
-                Text("pricing".localized())
-                    .font(.headline)
-                Spacer()
-                Button {
-                    showInfo = false
-                } label: {
-                    Image(systemName: "chevron.left")
-                }
-                .buttonStyle(.borderless)
-                .help("close".localized())
-                .accessibilityLabel("close".localized())
-            }
-            PricingInfoView(config: model.config, timeZone: model.timeZone)
-        }
-        .padding()
-        .frame(width: 340)
-        .background(.regularMaterial)
-    }
-
     private var statusContent: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             TimelineView(.periodic(from: .now, by: 1)) { context in
-                let now = context.date
-                let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
-                let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
-                let targetStatus = PeakStatus(isPeak: targetIsPeak)
-                let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
-                let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
-
-                VStack(alignment: .leading, spacing: Spacing.md) {
-                    Text("app_title".localized())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    PeakStatusBadge(status: currentStatus)
-
-                    HStack {
-                        Text("now_label".localized())
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(now, format: timeFormat)
-                            .monospacedDigit()
-                    }
-                    .font(.subheadline)
-                    .accessibilityElement(children: .combine)
-
-                    HStack {
-                        Text("timezone_label".localized())
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text(timeZoneName)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                            .help(TimeZoneLabel.displayName(for: model.timeZone))
-                    }
-                    .font(.subheadline)
-                    .accessibilityElement(children: .combine)
-
-                    Divider()
-
-                    Text("today_schedule".localized())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    ForEach(Array(schedule.enumerated()), id: \.offset) { _, segment in
-                        scheduleRow(segment)
-                    }
-
-                    Divider()
-
-                    HStack {
-                        Text("next_change".localized())
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                        Text("in_label".localized())
-                        Text(countdown)
-                            .bold()
-                            .monospacedDigit()
-                        Text(targetIsPeak ? "to_peak".localized() : "to_offpeak".localized())
-                            .foregroundStyle(targetStatus.color)
-                    }
-                    .font(.subheadline)
-                    .accessibilityElement(children: .combine)
-                }
+                PopupStatusBody(model: model, now: context.date)
             }
 
             Divider()
 
-            historySection
+            PopupHistorySection(model: model, isExpanded: $showHistory)
 
             Divider()
 
-            HStack {
-                Button("settings".localized()) {
+            PopupActionButtons(
+                onSettings: {
                     openSettings()
                     NSApp.activate()
-                }
-                Button {
+                },
+                onInfo: {
                     showInfo = true
-                } label: {
-                    Image(systemName: "info.circle")
                 }
-                .buttonStyle(.borderless)
-                .help("info".localized())
-                .accessibilityLabel("info".localized())
-                Spacer()
-                Button("quit".localized()) {
-                    NSApplication.shared.terminate(nil)
-                }
-            }
+            )
         }
         .padding()
         .frame(width: 280)
         .background(.regularMaterial)
     }
+}
 
-    private var historySection: some View {
-        DisclosureGroup(isExpanded: $showHistory) {
-            HistoryChartView(days: model.historyDays, timeZone: model.timeZone)
-        } label: {
-            VStack(alignment: .leading, spacing: 2) {
-                Text("history.title".localized())
-                    .font(.subheadline)
-                Text("history.last7days".localized())
-                    .font(.caption)
+/// The per-tick status block, extracted so it can be inspected with a fixed date.
+struct PopupStatusBody: View {
+    let model: AppModel
+    let now: Date
+
+    var body: some View {
+        let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
+        let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
+        let targetStatus = PeakStatus(isPeak: targetIsPeak)
+        let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
+        let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
+
+        return VStack(alignment: .leading, spacing: Spacing.md) {
+            Text("app_title".localized())
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            PeakStatusBadge(status: currentStatus)
+
+            HStack {
+                Text("now_label".localized())
                     .foregroundStyle(.secondary)
+                Spacer()
+                Text(now, format: timeFormat)
+                    .monospacedDigit()
             }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
+
+            HStack {
+                Text("timezone_label".localized())
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text(timeZoneName)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .help(TimeZoneLabel.displayName(for: model.timeZone))
+            }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
+
+            Divider()
+
+            Text("today_schedule".localized())
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            ForEach(Array(schedule.enumerated()), id: \.offset) { _, segment in
+                scheduleRow(segment)
+            }
+
+            Divider()
+
+            HStack {
+                Text("next_change".localized())
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Text("in_label".localized())
+                Text(countdown)
+                    .bold()
+                    .monospacedDigit()
+                Text(targetIsPeak ? "to_peak".localized() : "to_offpeak".localized())
+                    .foregroundStyle(targetStatus.color)
+            }
+            .font(.subheadline)
+            .accessibilityElement(children: .combine)
         }
     }
 
-    private var locale: Locale {
+    var locale: Locale {
         AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
     }
 
-    private var timeFormat: Date.FormatStyle {
+    var timeFormat: Date.FormatStyle {
         var format = Date.FormatStyle()
             .hour(.twoDigits(amPM: .omitted))
             .minute(.twoDigits)
@@ -166,18 +132,18 @@ struct PopupView: View {
         return format
     }
 
-    private var timeShortFormat: Date.FormatStyle {
+    var timeShortFormat: Date.FormatStyle {
         var format = Date.FormatStyle(date: .omitted, time: .shortened)
         format.timeZone = model.timeZone
         format.locale = locale
         return format
     }
 
-    private var timeZoneName: String {
+    var timeZoneName: String {
         TimeZoneLabel.string(for: model.timeZone)
     }
 
-    private func scheduleRow(_ segment: (start: Date, end: Date, isPeak: Bool)) -> some View {
+    func scheduleRow(_ segment: (start: Date, end: Date, isPeak: Bool)) -> some View {
         let status = PeakStatus(isPeak: segment.isPeak)
         return HStack {
             Text("\(segment.start.formatted(timeShortFormat)) – \(segment.end.formatted(timeShortFormat))")
@@ -192,47 +158,73 @@ struct PopupView: View {
     }
 }
 
-#if DEBUG
-private extension AppModel {
-    static func preview(isPeak: Bool) -> AppModel {
-        let settings = AppSettings()
-        settings.timeZoneIdentifier = "UTC"
+/// The pricing/info page shown when the info button is tapped.
+struct PopupInfoContent: View {
+    let config: DeepSeekConfig
+    let timeZone: TimeZone
+    let onClose: () -> Void
 
-        var components = DateComponents()
-        components.year = 2026
-        components.month = 1
-        components.day = 5
-        components.hour = isPeak ? 2 : 12
-        var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .gmt
-        let date = calendar.date(from: components) ?? Date()
-
-        return AppModel(
-            settings: settings,
-            config: .fallback,
-            clock: Clock(now: date),
-            autoStart: false
-        )
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            HStack {
+                Text("pricing".localized())
+                    .font(.headline)
+                Spacer()
+                Button {
+                    onClose()
+                } label: {
+                    Image(systemName: "chevron.left")
+                }
+                .buttonStyle(.borderless)
+                .help("close".localized())
+                .accessibilityLabel("close".localized())
+            }
+            PricingInfoView(config: config, timeZone: timeZone)
+        }
+        .padding()
+        .frame(width: 340)
+        .background(.regularMaterial)
     }
 }
 
-#Preview("Peak · Light") {
-    PopupView(model: .preview(isPeak: true))
-        .preferredColorScheme(.light)
+/// The collapsible history chart.
+struct PopupHistorySection: View {
+    let model: AppModel
+    @Binding var isExpanded: Bool
+
+    var body: some View {
+        DisclosureGroup(isExpanded: $isExpanded) {
+            HistoryChartView(days: model.historyDays, timeZone: model.timeZone)
+        } label: {
+            VStack(alignment: .leading, spacing: 2) {
+                Text("history.title".localized())
+                    .font(.subheadline)
+                Text("history.last7days".localized())
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
 }
 
-#Preview("Peak · Dark") {
-    PopupView(model: .preview(isPeak: true))
-        .preferredColorScheme(.dark)
-}
+/// The footer action buttons.
+struct PopupActionButtons: View {
+    let onSettings: () -> Void
+    let onInfo: () -> Void
 
-#Preview("Off-Peak · Light") {
-    PopupView(model: .preview(isPeak: false))
-        .preferredColorScheme(.light)
+    var body: some View {
+        HStack {
+            Button("settings".localized(), action: onSettings)
+            Button(action: onInfo) {
+                Image(systemName: "info.circle")
+            }
+            .buttonStyle(.borderless)
+            .help("info".localized())
+            .accessibilityLabel("info".localized())
+            Spacer()
+            Button("quit".localized()) {
+                NSApplication.shared.terminate(nil)
+            }
+        }
+    }
 }
-
-#Preview("Off-Peak · Dark") {
-    PopupView(model: .preview(isPeak: false))
-        .preferredColorScheme(.dark)
-}
-#endif

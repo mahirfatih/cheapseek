@@ -180,6 +180,18 @@ final class PeakCalculatorTests: XCTestCase {
         XCTAssertTrue(PeakCalculator.transitions(from: utcDate(2026, 1, 5, 8, 0), to: utcDate(2026, 1, 5, 7, 0)).isEmpty)
     }
 
+    // MARK: - todaySchedules
+
+    func testTodaySchedulesCoversTheLocalDay() {
+        let utc = TimeZone(identifier: "UTC")!
+        let segments = PeakCalculator.todaySchedules(for: utc)
+
+        XCTAssertFalse(segments.isEmpty)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = utc
+        XCTAssertEqual(segments.first?.0, calendar.startOfDay(for: Date()))
+    }
+
     // MARK: - schedules
 
     func testSchedulesForUTCDay() {

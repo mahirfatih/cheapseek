@@ -34,12 +34,18 @@ struct DeepSeekConfig: Codable, Equatable {
     }
 
     static func load(from bundle: Bundle = .main) -> DeepSeekConfig {
-        guard let url = bundle.url(forResource: "Configuration", withExtension: "plist") else {
+        let url = bundle.url(forResource: "Configuration", withExtension: "plist")
+        return decode(url.flatMap { try? Data(contentsOf: $0) })
+    }
+
+    /// Decodes the bundled configuration from raw plist data, falling back to the
+    /// built-in defaults when the data is missing, malformed, or fails validation.
+    static func decode(_ data: Data?) -> DeepSeekConfig {
+        guard let data else {
             logger.warning("Configuration.plist missing; falling back to built-in defaults.")
             return .fallback
         }
         do {
-            let data = try Data(contentsOf: url)
             let config = try PropertyListDecoder().decode(DeepSeekConfig.self, from: data)
             guard config.isValid else {
                 logger.error("Configuration.plist failed validation; falling back to built-in defaults.")

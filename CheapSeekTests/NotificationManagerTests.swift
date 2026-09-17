@@ -134,4 +134,60 @@ final class NotificationManagerTests: XCTestCase {
         XCTAssertTrue(client.requestedAuthorization)
         XCTAssertTrue(manager.permissionDenied)
     }
+
+    func testSystemClientDelegatesToCenterAdapter() {
+        let adapter = FakeUserNotificationCenterAdapter()
+        let client = SystemNotificationCenterClient(center: adapter)
+
+        let content = UNMutableNotificationContent()
+        content.title = "x"
+        let request = UNNotificationRequest(identifier: "test", content: content, trigger: nil)
+
+        client.requestAuthorization { _ in }
+        client.authorizationStatus { _ in }
+        client.add([request])
+        client.removeAllPending()
+
+        XCTAssertTrue(adapter.requestedAuthorization)
+        XCTAssertEqual(adapter.added.count, 1)
+        XCTAssertEqual(adapter.removeAllCount, 1)
+    }
+
+    func testDisabledClientMethodsAreNoOps() {
+        let client = DisabledNotificationCenterClient()
+
+        var granted: Bool?
+        client.requestAuthorization { granted = $0 }
+        var status: UNAuthorizationStatus?
+        client.authorizationStatus { status = $0 }
+        client.add([])
+        client.removeAllPending()
+
+        XCTAssertEqual(granted, false)
+        XCTAssertEqual(status, .notDetermined)
+    }
+}
+
+private final class FakeUserNotificationCenterAdapter: UserNotificationCenterAdapter {
+    var requestedAuthorization = false
+    var status: UNAuthorizationStatus = .authorized
+    private(set) var added: [UNNotificationRequest] = []
+    private(set) var removeAllCount = 0
+
+    func requestAuthorization(options: UNAuthorizationOptions, completion: @escaping (Bool) -> Void) {
+        requestedAuthorization = true
+        completion(true)
+    }
+
+    func authorizationStatus(completion: @escaping (UNAuthorizationStatus) -> Void) {
+        completion(status)
+    }
+
+    func add(_ request: UNNotificationRequest) {
+        added.append(request)
+    }
+
+    func removeAllPending() {
+        removeAllCount += 1
+    }
 }
