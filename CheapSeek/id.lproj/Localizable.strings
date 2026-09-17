@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "Tidak ada zona waktu yang cocok";
+"timezone.search" = "Cari zona waktu";

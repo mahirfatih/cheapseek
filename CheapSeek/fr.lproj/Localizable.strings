@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "Aucun fuseau horaire correspondant";
+"timezone.search" = "Rechercher un fuseau horaire";

@@ -30,13 +30,13 @@ struct HistoryChartView: View {
                     x: .value("history.title".localized(), day.date, unit: .day),
                     y: .value("unit_minutes".localized(), day.offPeakMinutes)
                 )
-                .foregroundStyle(by: .value("Status", offPeakLabel))
+                .foregroundStyle(by: .value("history.title".localized(), offPeakLabel))
 
                 BarMark(
                     x: .value("history.title".localized(), day.date, unit: .day),
                     y: .value("unit_minutes".localized(), day.peakMinutes)
                 )
-                .foregroundStyle(by: .value("Status", peakLabel))
+                .foregroundStyle(by: .value("history.title".localized(), peakLabel))
             }
         }
         .chartForegroundStyleScale(domain: [offPeakLabel, peakLabel], range: [Color.green, Color.red])

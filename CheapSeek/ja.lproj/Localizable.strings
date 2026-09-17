@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "一致するタイムゾーンがありません";
+"timezone.search" = "タイムゾーンを検索";

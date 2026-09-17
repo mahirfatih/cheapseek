@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "कोई मेल खाता समय क्षेत्र नहीं";
+"timezone.search" = "समय क्षेत्र खोजें";

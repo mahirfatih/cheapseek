@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "Hakuna saa za eneo zinazolingana";
+"timezone.search" = "Tafuta saa za eneo";

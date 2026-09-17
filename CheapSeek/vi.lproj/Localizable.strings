@@ -62,3 +62,5 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"timezone.no_results" = "Không có múi giờ phù hợp";
+"timezone.search" = "Tìm múi giờ";

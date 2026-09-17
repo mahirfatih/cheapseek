@@ -25,7 +25,8 @@ final class LocalizationTests: XCTestCase {
         "notification.peak_soon.title", "notification.peak_soon.body",
         "notification.offpeak_start.title", "notification.offpeak_start.body",
         "notification.peak_start.title", "notification.peak_start.body",
-        "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty"
+        "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty",
+        "timezone.search", "timezone.no_results"
     ]
 
     private var cheapSeekDir: URL {
