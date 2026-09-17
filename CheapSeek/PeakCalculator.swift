@@ -71,6 +71,24 @@ struct PeakCalculator {
         return (nextWindowStart(after: date, schedule: schedule), true)
     }
 
+    /// Every instant strictly inside `(start, end)` at which the peak/off-peak
+    /// state changes, in ascending order. Pure: derived only from the schedule.
+    static func transitions(from start: Date, to end: Date, schedule: PeakSchedule = .deepseekDefault) -> [Date] {
+        guard start < end else { return [] }
+
+        var result: [Date] = []
+        var cursor = start
+        // Guard against a pathological schedule that never advances.
+        let limit = 10_000
+        while result.count < limit {
+            let (next, _) = nextTransition(from: cursor, schedule: schedule)
+            guard next > cursor, next < end else { break }
+            result.append(next)
+            cursor = next
+        }
+        return result
+    }
+
     static func todaySchedules(for timeZone: TimeZone, schedule: PeakSchedule = .deepseekDefault) -> [(Date, Date, Bool)] {
         schedules(for: timeZone, referenceDate: Date(), schedule: schedule)
     }

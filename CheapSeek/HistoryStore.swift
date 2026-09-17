@@ -1,4 +1,7 @@
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.labrus.CheapSeek", category: "HistoryStore")
 
 /// A single observed peak/off-peak state at a point in time.
 struct HistorySample: Codable, Equatable {
@@ -14,6 +17,7 @@ struct HistorySample: Codable, Equatable {
 final class HistoryStore {
 
     static let defaultRetentionDays = 7
+    static let defaultMaxBackfillSamples = 50
     private static let storageKey = "history.samples.v1"
 
     private let defaults: UserDefaults?
@@ -42,6 +46,45 @@ final class HistoryStore {
         samples.append(HistorySample(timestamp: date, isPeak: isPeak))
         persist()
         return true
+    }
+
+    /// Fills the gap between the last recorded sample and `now` by recomputing the
+    /// true peak/off-peak state from the pure schedule, inserting only the transition
+    /// boundaries that actually occurred plus a final sample at `now`.
+    ///
+    /// Idempotent: existing timestamps are never duplicated, so calling it again with
+    /// the same inputs leaves the store unchanged.
+    /// - Returns: the number of samples appended.
+    @discardableResult
+    func backfill(
+        from lastSample: Date,
+        to now: Date,
+        schedule: PeakSchedule,
+        retentionDays: Int = HistoryStore.defaultRetentionDays,
+        maxSamples: Int = HistoryStore.defaultMaxBackfillSamples
+    ) -> Int {
+        guard lastSample < now else { return 0 }
+
+        let boundaries = PeakCalculator.transitions(from: lastSample, to: now, schedule: schedule)
+        var additions = boundaries.map {
+            HistorySample(timestamp: $0, isPeak: PeakCalculator.isPeak(at: $0, schedule: schedule))
+        }
+        additions.append(HistorySample(timestamp: now, isPeak: PeakCalculator.isPeak(at: now, schedule: schedule)))
+
+        if additions.count > maxSamples {
+            logger.debug("Backfill gap produced \(additions.count) samples; capping to \(maxSamples).")
+            additions = Array(additions.suffix(maxSamples))
+        }
+
+        let existingTimestamps = Set(samples.map(\.timestamp))
+        let newSamples = additions.filter { !existingTimestamps.contains($0.timestamp) }
+        guard !newSamples.isEmpty else { return 0 }
+
+        samples.append(contentsOf: newSamples)
+        samples.sort { $0.timestamp < $1.timestamp }
+        prune(now: now, retentionDays: retentionDays)
+        persist()
+        return newSamples.count
     }
 
     /// Drops entries older than the retention window, keeping the most recent

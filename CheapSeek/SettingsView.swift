@@ -146,7 +146,7 @@ struct SettingsView: View {
         }
         .onChange(of: settings.timeZoneIdentifier) { _, _ in
             model.refreshNotifications()
-            model.refreshHistory()
+            model.backfillHistory()
         }
         .onChange(of: settings.notifyOnOffPeakStart) { _, _ in
             model.refreshNotifications()
