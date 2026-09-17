@@ -43,6 +43,19 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ---
 
+## 📸 Screenshots
+
+All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
+
+| | Light | Dark |
+| :--- | :---: | :---: |
+| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup (dark)"></a> |
+| **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
+| **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
+| **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
+
+---
+
 ## 🆕 What's new
 
 - **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
@@ -247,6 +260,9 @@ CheapSeek/
 │   ├── cheapseek-architecture.html      # Components and boundaries
 │   ├── cheapseek-dataflow.html          # How data moves through the app
 │   └── cheapseek-workflow.html          # Runtime workflow and life cycle
+├── docs/screenshots/                    # English UI screenshots (used in README)
+│   ├── light/                           # popup, pricing, settings, timezone-picker
+│   └── dark/                            # popup, pricing, settings, timezone-picker
 ├── README.md
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
