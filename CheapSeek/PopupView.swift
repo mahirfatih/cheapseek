@@ -75,7 +75,7 @@ struct PopupView: View {
                         Text(timeZoneName)
                             .lineLimit(1)
                             .truncationMode(.middle)
-                            .help(model.timeZone.identifier)
+                            .help(TimeZoneLabel.displayName(for: model.timeZone))
                     }
                     .font(.subheadline)
                     .accessibilityElement(children: .combine)

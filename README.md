@@ -77,6 +77,8 @@ graph TD
         Entry["CheapSeekApp<br/>MenuBarExtra + Settings scene"]
         Popup["PopupView<br/>.window popup"]
         Settings["SettingsView<br/>Language / Timezone / Toggles / Interval"]
+        Picker["TimeZonePicker<br/>searchable · grouped"]
+        Zone["TimeZoneCatalog · TimeZoneLabel<br/>pure timezone helpers"]
         Model["AppModel<br/>@Observable state"]
         Config["AppSettings<br/>UserDefaults + SMAppService"]
         Notify["NotificationManager<br/>+ NotificationPlanner"]
@@ -91,6 +93,8 @@ graph TD
     Popup -->|"observes"| Model
     Popup -->|"countdown"| Fmt
     Settings -->|"writes"| Config
+    Settings -->|"opens"| Picker
+    Picker -->|"uses"| Zone
     Settings -->|"setCurrentLanguage"| L10n
     Model -->|"isPeak · schedule"| Core
     Model -->|"timeZone · interval"| Config
@@ -179,6 +183,8 @@ This creates `build/CheapSeek.xcarchive` (the app is under `Products/Application
 ### 4. Distribute
 
 - **Direct download (outside the App Store):** export with the Developer ID method, then notarize and staple:
+
+  > `ExportOptions.plist` is **not** committed — create it with `method: developer-id` and your `teamID` before exporting.
 
   ```bash
   xcodebuild -exportArchive -archivePath build/CheapSeek.xcarchive \
