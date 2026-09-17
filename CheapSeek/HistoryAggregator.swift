@@ -33,9 +33,7 @@ struct HistoryAggregator {
         calendar.timeZone = timeZone
 
         let today = calendar.startOfDay(for: now)
-        guard let windowStart = calendar.date(byAdding: .day, value: -(days - 1), to: today) else {
-            return []
-        }
+        let windowStart = calendar.date(byAdding: .day, value: -(days - 1), to: today) ?? today
 
         var dayStarts: [Date] = []
         for offset in 0..<days {

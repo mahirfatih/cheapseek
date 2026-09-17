@@ -130,6 +130,41 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(store.samples, [HistorySample(timestamp: utcDate(2026, 1, 5, 2), isPeak: true)])
     }
 
+    func testTickCallbackRecordsHistory() {
+        let clock = Clock(now: utcDate(2026, 1, 5, 2))
+        let store = HistoryStore(defaults: nil)
+        let model = AppModel(
+            settings: makeSettings(),
+            config: .fallback,
+            clock: clock,
+            history: store,
+            autoStart: false
+        )
+
+        clock.onTick?(utcDate(2026, 1, 5, 5)) // transition from peak to off-peak
+
+        XCTAssertEqual(store.samples.last?.isPeak, false)
+        _ = model
+    }
+
+    func testHasHistoryReflectsStoredSamples() {
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 5, 1))
+        let model = AppModel(
+            settings: makeSettings(),
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)),
+            history: store,
+            autoStart: false
+        )
+
+        XCTAssertTrue(model.hasHistory)
+
+        store.removeAll()
+        model.refreshHistory()
+        XCTAssertFalse(model.hasHistory)
+    }
+
     func testLanguageChangeReschedulesNotifications() {
         let suite = "AppModelTests-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

@@ -124,4 +124,21 @@ final class HistoryAggregatorTests: XCTestCase {
         XCTAssertEqual(today?.peakMinutes, 60)
         XCTAssertEqual(today?.offPeakMinutes, 0)
     }
+
+    func testDayDistributionIsIdentifiableByItsDate() {
+        let days = HistoryAggregator.dailyDistribution(samples: [], now: date(2026, 1, 10, 12), timeZone: utc)
+        XCTAssertEqual(days.first?.id, days.first?.date)
+    }
+
+    func testLastSampleEqualToNowYieldsNoInterval() {
+        let now = date(2026, 1, 10, 12)
+        let samples = [HistorySample(timestamp: now, isPeak: true)]
+        let days = HistoryAggregator.dailyDistribution(samples: samples, now: now, timeZone: utc)
+        XCTAssertEqual(days.reduce(0) { $0 + $1.totalMinutes }, 0)
+    }
+
+    func testNonPositiveDaysReturnsEmpty() {
+        XCTAssertTrue(HistoryAggregator.dailyDistribution(samples: [], now: Date(), days: 0, timeZone: utc).isEmpty)
+        XCTAssertTrue(HistoryAggregator.dailyDistribution(samples: [], now: Date(), days: -1, timeZone: utc).isEmpty)
+    }
 }

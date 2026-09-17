@@ -6,19 +6,20 @@ struct SettingsView: View {
     let config: DeepSeekConfig
     let model: AppModel
 
-    @State private var showInfo = false
+    @State private var showInfo: Bool
 
-    init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel) {
+    init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel, showInfo: Bool = false) {
         self.settings = settings
         self.config = config
         self.model = model
+        _showInfo = State(initialValue: showInfo)
     }
 
-    private var languages: [AppLanguage] {
+    var languages: [AppLanguage] {
         AppLanguage.allCases.sorted { $0.displayName < $1.displayName }
     }
 
-    private var locale: Locale {
+    var locale: Locale {
         AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
     }
 
@@ -28,7 +29,7 @@ struct SettingsView: View {
             .id(model.languageRevision)
     }
 
-    private var content: some View {
+    var content: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
             HStack {
                 Text("settings".localized())
@@ -121,48 +122,41 @@ struct SettingsView: View {
         .padding(.vertical, Spacing.lg)
         .frame(width: 440)
         .sheet(isPresented: $showInfo) {
-            VStack(spacing: 0) {
-                HStack {
-                    Text("pricing".localized())
-                        .font(.headline)
-                    Spacer()
-                    Button {
-                        showInfo = false
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                    }
-                    .buttonStyle(.borderless)
-                    .help("close".localized())
-                    .accessibilityLabel("close".localized())
-                }
-                .padding([.horizontal, .top])
-
-                PricingInfoView(config: config, timeZone: settings.timeZone, scrollable: false)
+            SettingsPricingSheet(config: config, timeZone: settings.timeZone) {
+                showInfo = false
             }
         }
         .onChange(of: settings.updateInterval) { _, newValue in
-            model.setUpdateInterval(newValue)
+            handleUpdateIntervalChange(newValue)
         }
         .onChange(of: settings.timeZoneIdentifier) { _, _ in
-            model.refreshNotifications()
-            model.backfillHistory()
+            handleTimeZoneChange()
         }
         .onChange(of: settings.notifyOnOffPeakStart) { _, _ in
-            model.refreshNotifications()
+            handleNotifyOffPeakChange()
         }
         .onChange(of: settings.notifyOnPeakStart) { _, _ in
-            model.refreshNotifications()
+            handleNotifyPeakChange()
         }
         .onChange(of: settings.quietHoursEnabled) { _, _ in
-            model.refreshNotifications()
+            handleQuietHoursChange()
         }
         .onAppear {
-            model.notifications.refreshAuthorizationStatus()
+            handleAppear()
         }
     }
 
-    private var notificationsEnabledBinding: Binding<Bool> {
+    func handleUpdateIntervalChange(_ value: Double) { model.setUpdateInterval(value) }
+    func handleTimeZoneChange() {
+        model.refreshNotifications()
+        model.backfillHistory()
+    }
+    func handleNotifyOffPeakChange() { model.refreshNotifications() }
+    func handleNotifyPeakChange() { model.refreshNotifications() }
+    func handleQuietHoursChange() { model.refreshNotifications() }
+    func handleAppear() { model.notifications.refreshAuthorizationStatus() }
+
+    var notificationsEnabledBinding: Binding<Bool> {
         Binding(
             get: { settings.notificationsEnabled },
             set: { enabled in
@@ -175,7 +169,7 @@ struct SettingsView: View {
         )
     }
 
-    private var beforePeakBinding: Binding<Double> {
+    var beforePeakBinding: Binding<Double> {
         Binding(
             get: { Double(settings.notifyBeforePeakMinutes) },
             set: { value in
@@ -185,13 +179,13 @@ struct SettingsView: View {
         )
     }
 
-    private var beforePeakValue: String {
+    var beforePeakValue: String {
         settings.notifyBeforePeakMinutes == 0
             ? "settings.notifications.before_peak_off".localized()
             : "settings.notifications.before_peak_value".localizedFormat(settings.notifyBeforePeakMinutes)
     }
 
-    private var quietStartBinding: Binding<Date> {
+    var quietStartBinding: Binding<Date> {
         Binding(
             get: { quietDate(fromMinutes: settings.quietHoursStart) },
             set: {
@@ -201,7 +195,7 @@ struct SettingsView: View {
         )
     }
 
-    private var quietEndBinding: Binding<Date> {
+    var quietEndBinding: Binding<Date> {
         Binding(
             get: { quietDate(fromMinutes: settings.quietHoursEnd) },
             set: {
@@ -211,13 +205,13 @@ struct SettingsView: View {
         )
     }
 
-    private var quietCalendar: Calendar {
+    var quietCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = settings.timeZone
         return calendar
     }
 
-    private func quietDate(fromMinutes minutes: Int) -> Date {
+    func quietDate(fromMinutes minutes: Int) -> Date {
         var components = DateComponents()
         components.year = 2000
         components.month = 1
@@ -227,19 +221,20 @@ struct SettingsView: View {
         return quietCalendar.date(from: components) ?? Date()
     }
 
-    private func quietMinutes(from date: Date) -> Int {
+    func quietMinutes(from date: Date) -> Int {
         let components = quietCalendar.dateComponents([.hour, .minute], from: date)
         return (components.hour ?? 0) * 60 + (components.minute ?? 0)
     }
 
-    private func openNotificationSettings() {
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") else {
-            return
-        }
-        NSWorkspace.shared.open(url)
+    static let notificationSettingsURL = URL(
+        string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+    )!
+
+    func openNotificationSettings() {
+        NSWorkspace.shared.open(Self.notificationSettingsURL)
     }
 
-    private var languageBinding: Binding<String> {
+    var languageBinding: Binding<String> {
         Binding(
             get: { Localize.currentLanguage() },
             set: { code in
@@ -248,7 +243,7 @@ struct SettingsView: View {
         )
     }
 
-    private var launchAtLoginBinding: Binding<Bool> {
+    var launchAtLoginBinding: Binding<Bool> {
         Binding(
             get: { settings.launchAtLogin },
             set: { enabled in
@@ -258,18 +253,31 @@ struct SettingsView: View {
     }
 }
 
-#if DEBUG
-#Preview("Settings · Light") {
-    let settings = AppSettings()
-    let model = AppModel(settings: settings, config: .fallback, autoStart: false)
-    return SettingsView(settings: settings, config: .fallback, model: model)
-        .preferredColorScheme(.light)
-}
+/// The pricing sheet shown from the Settings info button.
+struct SettingsPricingSheet: View {
+    let config: DeepSeekConfig
+    let timeZone: TimeZone
+    let onClose: () -> Void
 
-#Preview("Settings · Dark") {
-    let settings = AppSettings()
-    let model = AppModel(settings: settings, config: .fallback, autoStart: false)
-    return SettingsView(settings: settings, config: .fallback, model: model)
-        .preferredColorScheme(.dark)
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("pricing".localized())
+                    .font(.headline)
+                Spacer()
+                Button {
+                    onClose()
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(.secondary)
+                }
+                .buttonStyle(.borderless)
+                .help("close".localized())
+                .accessibilityLabel("close".localized())
+            }
+            .padding([.horizontal, .top])
+
+            PricingInfoView(config: config, timeZone: timeZone, scrollable: false)
+        }
+    }
 }
-#endif

@@ -9,19 +9,6 @@ struct TimeZonePicker: View {
 
     @State private var isPresented = false
     @State private var query = ""
-    @FocusState private var searchFocused: Bool
-
-    private var groups: [TimeZoneGroup] {
-        TimeZoneCatalog.groups(
-            identifiers: TimeZone.knownTimeZoneIdentifiers,
-            locale: locale,
-            systemEntry: TimeZoneCatalog.entry(for: "", locale: locale)
-        )
-    }
-
-    private var filteredGroups: [TimeZoneGroup] {
-        TimeZoneCatalog.filter(groups, query: query)
-    }
 
     var body: some View {
         Button {
@@ -41,13 +28,42 @@ struct TimeZonePicker: View {
         }
         .buttonStyle(.plain)
         .popover(isPresented: $isPresented, arrowEdge: .bottom) {
-            popoverContent
+            TimeZonePickerContent(selection: $selection, isPresented: $isPresented, query: $query, locale: locale)
         }
         .accessibilityLabel("timezone".localized())
         .accessibilityValue(selectedLabel)
     }
 
-    private var popoverContent: some View {
+    var selectedLabel: String {
+        if selection.isEmpty {
+            return "system_timezone".localized()
+        }
+        return TimeZoneLabel.string(for: TimeZone(identifier: selection) ?? .current)
+    }
+}
+
+/// The popover body, extracted so it can be inspected directly in tests.
+struct TimeZonePickerContent: View {
+    @Binding var selection: String
+    @Binding var isPresented: Bool
+    @Binding var query: String
+    let locale: Locale
+
+    @FocusState private var searchFocused: Bool
+
+    var groups: [TimeZoneGroup] {
+        TimeZoneCatalog.groups(
+            identifiers: TimeZone.knownTimeZoneIdentifiers,
+            locale: locale,
+            systemEntry: TimeZoneCatalog.entry(for: "", locale: locale)
+        )
+    }
+
+    var filteredGroups: [TimeZoneGroup] {
+        TimeZoneCatalog.filter(groups, query: query)
+    }
+
+    var body: some View {
         VStack(spacing: 0) {
             searchField
             Divider()
@@ -130,18 +146,11 @@ struct TimeZonePicker: View {
         .accessibilityLabel("\(displayName(for: entry)) \(entry.offset)")
     }
 
-    private var selectedLabel: String {
-        if selection.isEmpty {
-            return "system_timezone".localized()
-        }
-        return TimeZoneLabel.string(for: TimeZone(identifier: selection) ?? .current)
-    }
-
-    private func displayName(for entry: TimeZoneEntry) -> String {
+    func displayName(for entry: TimeZoneEntry) -> String {
         entry.id.isEmpty ? "system_timezone".localized() : entry.city
     }
 
-    private func selectFirstMatch() {
+    func selectFirstMatch() {
         guard let first = filteredGroups.first?.entries.first else { return }
         selection = first.id
         isPresented = false

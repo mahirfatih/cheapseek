@@ -112,4 +112,12 @@ final class NotificationPlannerTests: XCTestCase {
         let zeroLength = NotificationPlanner.QuietHours(enabled: true, startMinutes: 0, endMinutes: 0)
         XCTAssertFalse(NotificationPlanner.isQuiet(utcDate(2026, 1, 5, 2), quietHours: zeroLength, timeZone: .gmt))
     }
+
+    func testIsQuietHandlesSameDayWindow() {
+        let quiet = NotificationPlanner.QuietHours(enabled: true, startMinutes: 9 * 60, endMinutes: 17 * 60)
+
+        XCTAssertTrue(NotificationPlanner.isQuiet(utcDate(2026, 1, 5, 10), quietHours: quiet, timeZone: .gmt))
+        XCTAssertFalse(NotificationPlanner.isQuiet(utcDate(2026, 1, 5, 8, 59), quietHours: quiet, timeZone: .gmt))
+        XCTAssertFalse(NotificationPlanner.isQuiet(utcDate(2026, 1, 5, 17, 0), quietHours: quiet, timeZone: .gmt))
+    }
 }

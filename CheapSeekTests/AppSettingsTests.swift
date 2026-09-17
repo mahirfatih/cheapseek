@@ -1,6 +1,25 @@
 import XCTest
 @testable import CheapSeek
 
+private struct LoginItemFailure: Error {}
+
+private final class FakeLoginItemService: LoginItemService {
+    var enabled = false
+    var shouldThrow = false
+
+    func register() throws {
+        if shouldThrow { throw LoginItemFailure() }
+        enabled = true
+    }
+
+    func unregister() throws {
+        if shouldThrow { throw LoginItemFailure() }
+        enabled = false
+    }
+
+    var isEnabled: Bool { enabled }
+}
+
 final class AppSettingsTests: XCTestCase {
 
     private let timeZoneKey = "settings.timeZone"
@@ -89,5 +108,24 @@ final class AppSettingsTests: XCTestCase {
 
         XCTAssertEqual(AppSettings.normalizedMinutes(-30), 1410)
         XCTAssertEqual(AppSettings.normalizedMinutes(1500), 60)
+    }
+
+    func testLaunchAtLoginSuccessAndFailure() {
+        let loginItem = FakeLoginItemService()
+        let settings = AppSettings(defaults: makeDefaults(), loginItem: loginItem)
+
+        XCTAssertFalse(settings.launchAtLogin)
+
+        settings.setLaunchAtLogin(true)
+        XCTAssertTrue(settings.launchAtLogin)
+        XCTAssertFalse(settings.loginItemError)
+
+        settings.setLaunchAtLogin(false)
+        XCTAssertFalse(settings.launchAtLogin)
+        XCTAssertFalse(settings.loginItemError)
+
+        loginItem.shouldThrow = true
+        settings.setLaunchAtLogin(true)
+        XCTAssertTrue(settings.loginItemError)
     }
 }
