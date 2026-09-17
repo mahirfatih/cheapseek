@@ -13,12 +13,12 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 ## 🛠️ Tech Stack & Architecture
 
 - **Language & Framework:** Swift 5.9 / SwiftUI, macOS 14+, `MenuBarExtra` popup (`.window` style)
-- **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`), state (`AppModel`, `AppSettings`, `Clock`, `HistoryStore`, `NotificationManager`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `MenuBarLabel`)
+- **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`, `TimeZoneCatalog`, `TimeZoneLabel`), state (`AppModel`, `AppSettings`, `Clock`, `HistoryStore`, `NotificationManager`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `MenuBarLabel`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (101, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (114, incl. security + config) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -30,10 +30,11 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - 🟢 **Live status in your menu bar** — `leaf` + `cheap` when off-peak, `flame.fill` + `peak` when expensive (text + symbol, readable even when macOS renders the status item as a monochrome template)
 - 🧮 **Accurate peak logic** — UTC weekdays `01:00–04:00` & `06:00–10:00`, weekends always off-peak
 - 🕐 **Timezone-aware** — peak hours computed in UTC, displayed in your local (configurable) timezone
+- 🧭 **Searchable timezone picker** — all IANA zones grouped by region with instant search and live UTC offsets
 - 📅 **Today's full schedule** — every peak/off-peak window for the day
 - ⏳ **Next transition countdown** — "Next change in 3h 42m (to PEAK)", ticking live every second
 - 🌍 **17 languages** — English 🇺🇸, Turkish 🇹🇷, German 🇩🇪, Spanish 🇪🇸, Portuguese 🇵🇹, French 🇫🇷, Italian 🇮🇹, Chinese (Simplified) 🇨🇳, Hindi 🇮🇳, Bengali 🇧🇩, Russian 🇷🇺, Indonesian 🇮🇩, Malay 🇲🇾, Japanese 🇯🇵, Korean 🇰🇷, Vietnamese 🇻🇳, Swahili 🇹🇿
-- ⚙️ **Settings** — language, timezone, notifications (permission, before-peak warning, transition alerts, quiet hours), launch at login, refresh interval (30–300s)
+- ⚙️ **Settings** — language, searchable timezone picker, notifications (permission, before-peak warning, transition alerts, quiet hours), launch at login, refresh interval (30–300s)
 - 💰 **Pricing info** — DeepSeek model rates (peak/off-peak, per 1M tokens) with links to the pricing page and API docs
 - 🌗 **Light & dark mode** — follows your system appearance automatically
 - 🪶 **Minimal** — release build under 1 MB
@@ -43,11 +44,27 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ---
 
+## 📸 Screenshots
+
+All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
+
+| | Light | Dark |
+| :--- | :---: | :---: |
+| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup (dark)"></a> |
+| **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
+| **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
+| **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
+
+---
+
 ## 🆕 What's new
 
 - **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
 - **Local peak/off-peak notifications** — an optional warning before peak, an off-peak-start alert, and quiet hours, scheduled entirely on-device.
 - **7-day history chart** — a collapsible stacked-bar chart of daily peak vs. off-peak minutes in the popup.
+- **Searchable timezone picker** — every IANA zone grouped by region, with instant search and live UTC offsets.
+- **Grouped settings layout** — macOS System Settings–style sections with comfortable spacing.
+- **Live language switching** — the popup, settings, menu bar, and pending notifications update instantly, no relaunch.
 - **17 languages**, no tracking, and no network calls.
 
 ---
@@ -60,6 +77,8 @@ graph TD
         Entry["CheapSeekApp<br/>MenuBarExtra + Settings scene"]
         Popup["PopupView<br/>.window popup"]
         Settings["SettingsView<br/>Language / Timezone / Toggles / Interval"]
+        Picker["TimeZonePicker<br/>searchable · grouped"]
+        Zone["TimeZoneCatalog · TimeZoneLabel<br/>pure timezone helpers"]
         Model["AppModel<br/>@Observable state"]
         Config["AppSettings<br/>UserDefaults + SMAppService"]
         Notify["NotificationManager<br/>+ NotificationPlanner"]
@@ -74,6 +93,8 @@ graph TD
     Popup -->|"observes"| Model
     Popup -->|"countdown"| Fmt
     Settings -->|"writes"| Config
+    Settings -->|"opens"| Picker
+    Picker -->|"uses"| Zone
     Settings -->|"setCurrentLanguage"| L10n
     Model -->|"isPeak · schedule"| Core
     Model -->|"timeZone · interval"| Config
@@ -163,6 +184,8 @@ This creates `build/CheapSeek.xcarchive` (the app is under `Products/Application
 
 - **Direct download (outside the App Store):** export with the Developer ID method, then notarize and staple:
 
+  > `ExportOptions.plist` is **not** committed — create it with `method: developer-id` and your `teamID` before exporting.
+
   ```bash
   xcodebuild -exportArchive -archivePath build/CheapSeek.xcarchive \
     -exportOptionsPlist ExportOptions.plist -exportPath build/export
@@ -196,15 +219,18 @@ CheapSeek/
 │   ├── DesignSystem.swift               # Shared spacing/layout tokens
 │   ├── MenuBarLabel.swift               # Menu bar icon/label with accessibility
 │   ├── CountdownFormatter.swift         # Localized countdown formatting
+│   ├── TimeZoneLabel.swift              # Pretty timezone names + live UTC offsets
+│   ├── TimeZoneCatalog.swift            # Pure grouped/searchable timezone catalog
 │   ├── AppLanguage.swift                # Single source of truth for the 17 languages
 │   ├── DeepSeekConfig.swift             # Loads Configuration.plist (peak hours, prices, links)
 │   ├── Configuration.plist              # Bundled config: peak windows, model pricing, links
 │   ├── PrivacyInfo.xcprivacy            # Privacy manifest (UserDefaults reason CA92.1)
 │   ├── PopupView.swift                  # Menu bar popup (status, schedule, countdown, history, actions)
 │   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
+│   ├── TimeZonePicker.swift             # Searchable, region-grouped timezone picker
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
-│   ├── en.lproj/Localizable.strings     # English (64 keys)
+│   ├── en.lproj/Localizable.strings     # English (66 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
 │   ├── es.lproj/Localizable.strings     # Español
@@ -234,6 +260,8 @@ CheapSeek/
 │   ├── HistoryStoreTests.swift          # Event-based recording, retention, persistence
 │   ├── LocalizationTests.swift          # 17-language key parity & completeness
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
+│   ├── TimeZoneCatalogTests.swift       # Grouping, offsets, and search filtering
+│   ├── TimeZoneLabelTests.swift         # Pretty names, offsets, and DST
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
 │   └── CheapSeekUITests.swift           # App launch + best-effort menu bar checks
@@ -247,6 +275,9 @@ CheapSeek/
 │   ├── cheapseek-architecture.html      # Components and boundaries
 │   ├── cheapseek-dataflow.html          # How data moves through the app
 │   └── cheapseek-workflow.html          # Runtime workflow and life cycle
+├── docs/screenshots/                    # English UI screenshots (used in README)
+│   ├── light/                           # popup, pricing, settings, timezone-picker
+│   └── dark/                            # popup, pricing, settings, timezone-picker
 ├── README.md
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
@@ -262,7 +293,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (6), `AppModelTests` (4), `MenuBarLabelTests` (5), `NotificationManagerTests` (5), `NotificationPlannerTests` (10), `HistoryAggregatorTests` (8), `HistoryStoreTests` (6), `LocalizationTests` (3), `PricingConfigTests` (6), `SecurityRegressionTests` (8) — **101 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (33), `CountdownFormatterTests` (7), `AppSettingsTests` (6), `AppModelTests` (5), `MenuBarLabelTests` (6), `NotificationManagerTests` (5), `NotificationPlannerTests` (10), `HistoryAggregatorTests` (8), `HistoryStoreTests` (6), `LocalizationTests` (3), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `SecurityRegressionTests` (8) — **114 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 25%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).

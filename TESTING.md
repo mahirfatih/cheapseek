@@ -38,6 +38,7 @@ xcodebuild -project CheapSeek.xcodeproj \
         │         │  NotificationManagerTests, NotificationPlannerTests,
         │         │  HistoryAggregatorTests, HistoryStoreTests,
         │         │  LocalizationTests, PricingConfigTests,
+        │         │  TimeZoneCatalogTests, TimeZoneLabelTests,
         │         │  SecurityRegressionTests
         └─────────┘
 ```
@@ -49,17 +50,19 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `PeakCalculatorTests` (33) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
 | `CountdownFormatterTests` (7) | Hours/minutes/seconds formatting, exact hour, negative clamp, hour-truncation spec. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (6) | Defaults, `updateInterval`/notification clamping and persistence, timezone resolution, quiet-hours preferences. | Injected `UserDefaults` suite (hermetic) |
-| `AppModelTests` (4) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision. | Injected clock/timezone via `autoStart: false` |
-| `MenuBarLabelTests` (5) | Menu bar status text for each `PeakStatus`, short-length guard, distinct non-empty symbols, accessibility titles. | Pins the language to English via Localize |
+| `AppModelTests` (5) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule. | Injected clock/timezone via `autoStart: false` |
+| `MenuBarLabelTests` (6) | Menu bar status text for each `PeakStatus`, short-length guard, distinct non-empty symbols, accessibility titles, per-language status titles. | Pins the language to English via Localize |
 | `NotificationManagerTests` (5) | Cancel-then-add scheduling, disabled settings clear pending, denied permission skips scheduling, permission state updates. | Mock `NotificationCenterClient` |
 | `NotificationPlannerTests` (10) | Peak warning at `T−before`, off-peak/peak-start events, disabled options, past-date drop, 7-day horizon, quiet-hours suppression and wrap-around. | Pure functions with injected `now`/`PeakSchedule` |
 | `HistoryAggregatorTests` (8) | Empty data, single day, full 7 days, timezone reassignment, DST spring-forward (23h) and fall-back (25h), window clipping, last-interval state. | Pure functions with injected `now`/`TimeZone` |
 | `HistoryStoreTests` (6) | Event-based dedupe, persistence round-trip, prune keeps a boundary anchor, all-old keeps latest, in-memory mode. | Injected `UserDefaults` suite + in-memory store |
 | `LocalizationTests` (3) | All 17 `.lproj` files have identical key sets; every expected key present in every language; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (6) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation; usage URL present. | Injected `PeakSchedule` — no mocks |
+| `TimeZoneCatalogTests` (6) | System entry without a title, region grouping, city extraction (incl. 3-part identifiers), offset formatting, and case/diacritic-insensitive search filtering. | Injected identifier lists — no global state |
+| `TimeZoneLabelTests` (5) | Identifier + offset labels, underscore prettifying, fixed-offset passthrough, offset formatting, and DST-aware offsets. | Pure functions with injected dates |
 | `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages, `LSUIElement`, 17 languages present. | Source + `project.yml` assertions — no mocks |
 
-> There is no unit test for the SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`): SwiftUI view bodies are not meaningfully unit-testable. Their rendering is covered by SwiftUI previews (light/dark) and manual verification. All charting/date math lives in the pure `HistoryAggregator` so it *is* unit-tested.
+> There is no unit test for the SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`): SwiftUI view bodies are not meaningfully unit-testable. Their rendering is covered by SwiftUI previews (light/dark) and manual verification. All charting/date math lives in the pure `HistoryAggregator` so it *is* unit-tested.
 
 ## Security Regression Suite (runs on every build)
 
@@ -132,11 +135,11 @@ UI tests are intended to run **locally**; see CI below.
 | `AppSettings.swift` | **70%+** |
 | `AppModel.swift` | **70%+** |
 | `Clock.swift` | **70%+** |
-| SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
+| SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
 
 ## Measured Coverage (2026-09-17, local macOS run)
 
-`CheapSeek.app` line coverage: **29.06%** (CI gate ≥ 25% ✅ — SwiftUI views are intentionally untested by unit tests)
+`CheapSeek.app` line coverage: **28.27%** (CI gate ≥ 25% ✅ — SwiftUI views are intentionally untested by unit tests)
 
 | File | Line Coverage |
 | :--- | :--- |
@@ -144,17 +147,20 @@ UI tests are intended to run **locally**; see CI below.
 | `CountdownFormatter.swift` | **100.00%** |
 | `HistoryStore.swift` | **100.00%** |
 | `MenuBarLabel.swift` | **100.00%** |
+| `TimeZoneLabel.swift` | **100.00%** |
 | `HistoryAggregator.swift` | 97.22% |
 | `NotificationPlanner.swift` | 95.40% |
 | `PeakCalculator.swift` | 92.79% |
+| `NotificationManager.swift` | 92.00% |
+| `TimeZoneCatalog.swift` | 91.55% |
 | `Clock.swift` | 87.50% |
-| `NotificationManager.swift` | 86.73% |
-| `AppModel.swift` | 80.56% |
+| `AppModel.swift` | 81.58% |
 | `DeepSeekConfig.swift` | 80.49% |
-| `AppSettings.swift` | 79.37% |
+| `AppSettings.swift` | 77.78% |
 | `AppLanguage.swift` | 33.85% (enum — exercised via Settings picker) |
 | `PeakStatus.swift` | 30.00% |
-| `SettingsView.swift` | 1.00% (SwiftUI view) |
+| `SettingsView.swift` | 0.94% (SwiftUI view) |
+| `TimeZonePicker.swift` | 0.00% (SwiftUI view) |
 | `PricingInfoView.swift` | 0.00% (SwiftUI view) |
 | `PopupView.swift` | 0.00% (SwiftUI view) |
 | `HistoryChartView.swift` | 0.00% (SwiftUI view) |

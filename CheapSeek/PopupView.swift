@@ -75,7 +75,7 @@ struct PopupView: View {
                         Text(timeZoneName)
                             .lineLimit(1)
                             .truncationMode(.middle)
-                            .help(model.timeZone.identifier)
+                            .help(TimeZoneLabel.displayName(for: model.timeZone))
                     }
                     .font(.subheadline)
                     .accessibilityElement(children: .combine)
@@ -174,8 +174,7 @@ struct PopupView: View {
     }
 
     private var timeZoneName: String {
-        model.timeZone.localizedName(for: .shortStandard, locale: locale)
-            ?? model.timeZone.identifier
+        TimeZoneLabel.string(for: model.timeZone)
     }
 
     private func scheduleRow(_ segment: (start: Date, end: Date, isPeak: Bool)) -> some View {

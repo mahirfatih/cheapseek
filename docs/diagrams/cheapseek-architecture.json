@@ -15,6 +15,7 @@
     { "id": "popup", "type": "frontend", "label": "Popup Window", "sublabel": "PopupView", "pos": [300, 250], "size": [150, 64] },
     { "id": "pricing", "type": "frontend", "label": "Pricing Info", "sublabel": "PricingInfoView", "pos": [560, 250], "size": [150, 64] },
     { "id": "settings", "type": "frontend", "label": "Settings", "sublabel": "SettingsView", "pos": [820, 250], "size": [150, 64] },
+    { "id": "timezonepicker", "type": "frontend", "label": "Timezone Picker", "sublabel": "TimeZonePicker", "pos": [820, 60], "size": [150, 64], "tag": "searchable · grouped" },
     { "id": "design", "type": "backend", "label": "Design System", "sublabel": "DesignSystem · tokens", "pos": [1080, 250], "size": [150, 64] },
     { "id": "clock", "type": "backend", "label": "Clock", "sublabel": "async ticker", "pos": [40, 440], "size": [150, 64], "tag": "no Timer/Combine" },
     { "id": "model", "type": "backend", "label": "State Model", "sublabel": "AppModel", "pos": [300, 440], "size": [150, 64], "tag": "@Observable" },
@@ -46,10 +47,11 @@
     { "id": "settings-localize", "from": "settings", "to": "localize", "label": "setCurrentLanguage" },
     { "id": "config-defaults", "from": "config", "to": "defaults", "label": "persist", "labelAt": [910, 600] },
     { "id": "config-loginitem", "from": "config", "to": "loginitem", "label": "register" },
-    { "id": "design-settings", "from": "design", "to": "settings", "label": "tokens", "variant": "dashed" }
+    { "id": "design-settings", "from": "design", "to": "settings", "label": "tokens", "variant": "dashed" },
+    { "id": "settings-timezonepicker", "from": "settings", "to": "timezonepicker", "label": "opens" }
   ],
   "cards": [
-    { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator, CountdownFormatter, NotificationPlanner, and HistoryAggregator use only Foundation", "Testable independent of the UI"] },
+    { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator, CountdownFormatter, NotificationPlanner, HistoryAggregator, TimeZoneCatalog, and TimeZoneLabel use only Foundation", "Testable independent of the UI"] },
     { "dot": "cyan", "title": "One-Way Flow", "items": ["AppModel publishes @Observable state", "Menu bar and popup read the same source"] },
     { "dot": "violet", "title": "Local & Offline", "items": ["Preferences and history stored in UserDefaults", "Notifications are scheduled locally by macOS", "No network calls or telemetry"] }
   ]

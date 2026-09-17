@@ -267,7 +267,8 @@
       "title": "Interaction",
       "items": [
         "The popup shows status and countdown",
-        "Settings persist preferences"
+        "Settings persist preferences",
+        "Timezone picker searches IANA zones by region"
       ]
     },
     {

@@ -49,7 +49,7 @@ Keep one logical change per commit.
 ## Code Style
 
 - **Language:** Swift 5.9 / SwiftUI, macOS 14+
-- **Architecture:** Pure logic (`PeakCalculator`, `CountdownFormatter`) separated from state (`AppModel`, `AppSettings`) and views (`PopupView`, `SettingsView`)
+- **Architecture:** Pure logic (`PeakCalculator`, `CountdownFormatter`, `TimeZoneCatalog`, `TimeZoneLabel`) separated from state (`AppModel`, `AppSettings`) and views (`PopupView`, `SettingsView`, `TimeZonePicker`)
 - **Concurrency:** UI updates on the main actor; `AppModel` is `@Observable` and refreshed by an async `Clock` (no `Timer` or Combine)
 - **Localization:** Every user-facing string **must** use `"key".localized()`. Keys live in all 17 `*.lproj/Localizable.strings` files.
 - **Theme:** Use semantic colors only (`.primary`, `.secondary`, `.regularMaterial`); never hardcode white/black.

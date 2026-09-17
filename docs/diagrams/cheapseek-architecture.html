@@ -5177,6 +5177,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
         <path data-edge-from="config" data-edge-to="defaults" data-edge-label="persist" data-edge-key="15" data-edge-id="config-defaults" data-composition-points="895,504;895,630" d="M 895 504 L 895 630" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="config" data-edge-to="loginitem" data-edge-label="register" data-edge-key="16" data-edge-id="config-loginitem" data-composition-points="970,472;1025,472;1025,662;1080,662" d="M 970 472 L 1017 472 Q 1025 472 1025 480 L 1025 654 Q 1025 662 1033 662 L 1080 662" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
         <path data-edge-from="design" data-edge-to="settings" data-edge-label="tokens" data-edge-key="17" data-edge-id="design-settings" data-composition-points="1080,275;970,275" d="M 1080 275 L 970 275" class="a-dashed" stroke-width="1.5" marker-end="url(#arrowhead-dashed)"/>
+        <path data-edge-from="settings" data-edge-to="timezonepicker" data-edge-label="opens" data-edge-key="18" data-edge-id="settings-timezonepicker" data-composition-points="895,250;895,124" d="M 895 250 L 895 124" class="a-default" stroke-width="1.5" marker-end="url(#arrowhead)"/>
 
         <!-- Components -->
         <g id="node-formatter" data-node-id="formatter" data-node-label="Countdown" tabindex="0" role="button" aria-label="Focus Countdown, CountdownFormatter, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="CountdownFormatter" data-node-context="Architecture component">
@@ -5259,6 +5260,21 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           </g>
           <text data-node-label="" data-detail-anchor="" x="895" y="280" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Settings</text>
         <text data-detail="context" x="895" y="296" class="t-muted" font-size="9" text-anchor="middle">SettingsView</text>
+        </g>
+
+        <g id="node-timezonepicker" data-node-id="timezonepicker" data-node-label="Timezone Picker" tabindex="0" role="button" aria-label="Focus Timezone Picker, TimeZonePicker, Architecture component" aria-pressed="false" data-node-kind="frontend" data-node-sublabel="TimeZonePicker" data-node-tag="searchable · grouped" data-node-context="Architecture component">
+          <title>Timezone Picker · TimeZonePicker · Architecture component · searchable · grouped</title>
+          <rect x="820" y="60" width="150" height="64" rx="6" class="c-mask"/>
+          <rect x="820" y="60" width="150" height="64" rx="6" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(826 66) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
+          <text data-node-label="" data-detail-anchor="" x="895" y="90" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Timezone Picker</text>
+        <text data-detail="context" x="895" y="106" class="t-muted" font-size="9" text-anchor="middle">TimeZonePicker</text>
+        <text data-detail="fine" x="895" y="116" class="t-frontend" font-size="7" text-anchor="middle">searchable · grouped</text>
         </g>
 
         <g id="node-design" data-node-id="design" data-node-label="Design System" tabindex="0" role="button" aria-label="Focus Design System, DesignSystem · tokens, Architecture component" aria-pressed="false" data-node-kind="backend" data-node-sublabel="DesignSystem · tokens" data-node-context="Architecture component">
@@ -5478,6 +5494,10 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <rect x="1005.6" y="255" width="38.8" height="14" rx="3" class="c-mask"/>
           <text x="1025" y="265" class="t-messagebus" font-size="8" text-anchor="middle">tokens</text>
         </g>
+        <g data-detail="context" data-edge-from="settings" data-edge-to="timezonepicker" data-edge-label="opens" data-edge-key="18" data-edge-id="settings-timezonepicker">
+          <rect x="878" y="230" width="34" height="14" rx="3" class="c-mask"/>
+          <text x="895" y="240" class="t-muted" font-size="8" text-anchor="middle">opens</text>
+        </g>
 
         <!-- Boundary labels (foreground masks keep routes out of titles) -->
 
@@ -5676,7 +5696,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
           <h3>Pure Core</h3>
         </div>
         <ul>
-          <li>&bull; PeakCalculator, CountdownFormatter, NotificationPlanner, and HistoryAggregator use only Foundation</li>
+          <li>&bull; PeakCalculator, CountdownFormatter, NotificationPlanner, HistoryAggregator, TimeZoneCatalog, and TimeZoneLabel use only Foundation</li>
           <li>&bull; Testable independent of the UI</li>
         </ul>
       </div>
