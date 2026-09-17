@@ -18,8 +18,8 @@ struct SettingsView: View {
         AppLanguage.allCases.sorted { $0.displayName < $1.displayName }
     }
 
-    private var timeZoneIdentifiers: [String] {
-        TimeZone.knownTimeZoneIdentifiers.sorted()
+    private var locale: Locale {
+        AppLanguage(rawValue: Localize.currentLanguage())?.locale ?? .current
     }
 
     var body: some View {
@@ -45,16 +45,15 @@ struct SettingsView: View {
             }
 
             Form {
-                Picker("language".localized(), selection: languageBinding) {
-                    ForEach(languages) { language in
-                        Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
+                Section {
+                    Picker("language".localized(), selection: languageBinding) {
+                        ForEach(languages) { language in
+                            Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
+                        }
                     }
-                }
 
-                Picker("timezone".localized(), selection: $settings.timeZoneIdentifier) {
-                    Text("system_timezone".localized()).tag(AppSettings.systemTimeZoneIdentifier)
-                    ForEach(timeZoneIdentifiers, id: \.self) { identifier in
-                        Text(identifier).tag(identifier)
+                    LabeledContent("timezone".localized()) {
+                        TimeZonePicker(selection: $settings.timeZoneIdentifier, locale: locale)
                     }
                 }
 
@@ -97,26 +96,30 @@ struct SettingsView: View {
                     Text("notifications".localized())
                 }
 
-                Toggle("launch_at_login".localized(), isOn: launchAtLoginBinding)
-                if settings.loginItemError {
-                    Text("login_item_error".localized())
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
+                Section {
+                    Toggle("launch_at_login".localized(), isOn: launchAtLoginBinding)
+                    if settings.loginItemError {
+                        Text("login_item_error".localized())
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
 
-                HStack {
-                    Text("update_interval".localized())
-                    Spacer()
-                    Text("update_interval_value".localizedFormat(Int(settings.updateInterval.rounded())))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
+                    HStack {
+                        Text("update_interval".localized())
+                        Spacer()
+                        Text("update_interval_value".localizedFormat(Int(settings.updateInterval.rounded())))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    Slider(value: $settings.updateInterval, in: AppSettings.updateIntervalRange, step: 10)
                 }
-                Slider(value: $settings.updateInterval, in: AppSettings.updateIntervalRange, step: 10)
             }
+            .formStyle(.grouped)
         }
-        .padding()
-        .frame(width: 380)
+        .padding(.horizontal, Spacing.xl)
+        .padding(.vertical, Spacing.lg)
+        .frame(width: 440)
         .sheet(isPresented: $showInfo) {
             VStack(spacing: 0) {
                 HStack {
