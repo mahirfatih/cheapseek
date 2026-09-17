@@ -93,6 +93,43 @@ final class AppModelTests: XCTestCase {
         XCTAssertGreaterThan(model.languageRevision, before)
     }
 
+    func testBackfillOnLaunchFillsWeekend() {
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 2, 8)) // Friday peak
+
+        let model = AppModel(
+            settings: makeSettings(),
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)), // Monday peak
+            history: store,
+            autoStart: false
+        )
+
+        XCTAssertEqual(store.samples.map(\.timestamp), [
+            utcDate(2026, 1, 2, 8), utcDate(2026, 1, 2, 10),
+            utcDate(2026, 1, 5, 1), utcDate(2026, 1, 5, 2)
+        ])
+
+        for day in [utcDate(2026, 1, 3, 0), utcDate(2026, 1, 4, 0)] {
+            let bucket = model.historyDays.first { $0.date == day }
+            XCTAssertEqual(bucket?.peakMinutes, 0, "\(day) should have no peak minutes")
+            XCTAssertEqual(bucket?.offPeakMinutes, 1440, "\(day) should be fully off-peak")
+        }
+    }
+
+    func testBackfillOnLaunchWithEmptyStoreRecordsOnlyNow() {
+        let store = HistoryStore(defaults: nil)
+        _ = AppModel(
+            settings: makeSettings(),
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)),
+            history: store,
+            autoStart: false
+        )
+
+        XCTAssertEqual(store.samples, [HistorySample(timestamp: utcDate(2026, 1, 5, 2), isPeak: true)])
+    }
+
     func testLanguageChangeReschedulesNotifications() {
         let suite = "AppModelTests-\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

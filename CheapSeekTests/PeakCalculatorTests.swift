@@ -133,6 +133,53 @@ final class PeakCalculatorTests: XCTestCase {
         XCTAssertTrue(result.1)
     }
 
+    // MARK: - transitions
+
+    func testTransitionsWithinAWeekday() {
+        let result = PeakCalculator.transitions(
+            from: utcDate(2026, 1, 5, 0, 0),
+            to: utcDate(2026, 1, 6, 0, 0)
+        )
+        XCTAssertEqual(result, [
+            utcDate(2026, 1, 5, 1, 0),
+            utcDate(2026, 1, 5, 4, 0),
+            utcDate(2026, 1, 5, 6, 0),
+            utcDate(2026, 1, 5, 10, 0)
+        ])
+    }
+
+    func testTransitionsExcludeEndBoundary() {
+        let result = PeakCalculator.transitions(
+            from: utcDate(2026, 1, 5, 0, 0),
+            to: utcDate(2026, 1, 5, 4, 0)
+        )
+        XCTAssertEqual(result, [utcDate(2026, 1, 5, 1, 0)])
+    }
+
+    func testTransitionsAcrossWeekendAreEmpty() {
+        let result = PeakCalculator.transitions(
+            from: utcDate(2026, 1, 3, 0, 0), // Saturday
+            to: utcDate(2026, 1, 4, 0, 0)    // Sunday
+        )
+        XCTAssertTrue(result.isEmpty)
+    }
+
+    func testTransitionsFromFridayPeakToMonday() {
+        let result = PeakCalculator.transitions(
+            from: utcDate(2026, 1, 2, 8, 0), // Friday peak
+            to: utcDate(2026, 1, 5, 2, 0)    // Monday peak
+        )
+        XCTAssertEqual(result, [
+            utcDate(2026, 1, 2, 10, 0),
+            utcDate(2026, 1, 5, 1, 0)
+        ])
+    }
+
+    func testTransitionsEmptyWhenStartNotBeforeEnd() {
+        XCTAssertTrue(PeakCalculator.transitions(from: utcDate(2026, 1, 5, 8, 0), to: utcDate(2026, 1, 5, 8, 0)).isEmpty)
+        XCTAssertTrue(PeakCalculator.transitions(from: utcDate(2026, 1, 5, 8, 0), to: utcDate(2026, 1, 5, 7, 0)).isEmpty)
+    }
+
     // MARK: - schedules
 
     func testSchedulesForUTCDay() {

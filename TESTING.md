@@ -47,16 +47,16 @@ xcodebuild -project CheapSeek.xcodeproj \
 
 | Suite | Focus | Dependency Strategy |
 | :--- | :--- | :--- |
-| `PeakCalculatorTests` (33) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
+| `PeakCalculatorTests` (38) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `transitions` between dates, `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
 | `CountdownFormatterTests` (7) | Hours/minutes/seconds formatting, exact hour, negative clamp, hour-truncation spec. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (6) | Defaults, `updateInterval`/notification clamping and persistence, timezone resolution, quiet-hours preferences. | Injected `UserDefaults` suite (hermetic) |
-| `AppModelTests` (5) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule. | Injected clock/timezone via `autoStart: false` |
+| `AppModelTests` (7) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule, launch backfill (weekend gap, empty store). | Injected clock/timezone via `autoStart: false` |
 | `MenuBarLabelTests` (6) | Menu bar status text for each `PeakStatus`, short-length guard, distinct non-empty symbols, accessibility titles, per-language status titles. | Pins the language to English via Localize |
 | `NotificationManagerTests` (5) | Cancel-then-add scheduling, disabled settings clear pending, denied permission skips scheduling, permission state updates. | Mock `NotificationCenterClient` |
 | `NotificationPlannerTests` (10) | Peak warning at `T−before`, off-peak/peak-start events, disabled options, past-date drop, 7-day horizon, quiet-hours suppression and wrap-around. | Pure functions with injected `now`/`PeakSchedule` |
 | `HistoryAggregatorTests` (8) | Empty data, single day, full 7 days, timezone reassignment, DST spring-forward (23h) and fall-back (25h), window clipping, last-interval state. | Pure functions with injected `now`/`TimeZone` |
-| `HistoryStoreTests` (6) | Event-based dedupe, persistence round-trip, prune keeps a boundary anchor, all-old keeps latest, in-memory mode. | Injected `UserDefaults` suite + in-memory store |
-| `LocalizationTests` (3) | All 17 `.lproj` files have identical key sets; every expected key present in every language; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
+| `HistoryStoreTests` (17) | Event-based dedupe, persistence round-trip, prune anchor, in-memory mode, plus backfill: transitions+final sample, no-op guards, off-peak-only gap, peak→off→peak, full weekend, idempotency, 50-sample cap, DST 23/25h, non-UTC and half-hour zones. | Injected `UserDefaults` suite + in-memory store |
+| `LocalizationTests` (4) | All 17 `.lproj` files have identical key sets; every expected key present in every language; notification/history/menu-bar strings are not left in English; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (6) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation; usage URL present. | Injected `PeakSchedule` — no mocks |
 | `TimeZoneCatalogTests` (6) | System entry without a title, region grouping, city extraction (incl. 3-part identifiers), offset formatting, and case/diacritic-insensitive search filtering. | Injected identifier lists — no global state |
 | `TimeZoneLabelTests` (5) | Identifier + offset labels, underscore prettifying, fixed-offset passthrough, offset formatting, and DST-aware offsets. | Pure functions with injected dates |
@@ -137,24 +137,24 @@ UI tests are intended to run **locally**; see CI below.
 | `Clock.swift` | **70%+** |
 | SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
 
-## Measured Coverage (2026-09-17, local macOS run)
+## Measured Coverage (2026-09-18, local macOS run)
 
-`CheapSeek.app` line coverage: **28.27%** (CI gate ≥ 25% ✅ — SwiftUI views are intentionally untested by unit tests)
+`CheapSeek.app` line coverage: **29.77%** (CI gate ≥ 25% ✅ — SwiftUI views are intentionally untested by unit tests)
 
 | File | Line Coverage |
 | :--- | :--- |
 | `CheapSeekApp.swift` | **100.00%** |
 | `CountdownFormatter.swift` | **100.00%** |
-| `HistoryStore.swift` | **100.00%** |
 | `MenuBarLabel.swift` | **100.00%** |
 | `TimeZoneLabel.swift` | **100.00%** |
+| `HistoryStore.swift` | 97.44% |
 | `HistoryAggregator.swift` | 97.22% |
 | `NotificationPlanner.swift` | 95.40% |
-| `PeakCalculator.swift` | 92.79% |
+| `PeakCalculator.swift` | 93.65% |
 | `NotificationManager.swift` | 92.00% |
 | `TimeZoneCatalog.swift` | 91.55% |
+| `AppModel.swift` | 91.46% |
 | `Clock.swift` | 87.50% |
-| `AppModel.swift` | 81.58% |
 | `DeepSeekConfig.swift` | 80.49% |
 | `AppSettings.swift` | 77.78% |
 | `AppLanguage.swift` | 33.85% (enum — exercised via Settings picker) |

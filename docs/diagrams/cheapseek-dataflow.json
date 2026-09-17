@@ -38,6 +38,6 @@
   "cards": [
     { "dot": "cyan", "title": "Main Data Path", "items": ["Clock → PeakCalculator → AppModel → Display", "State is published one way (@Observable)", "Menu bar and popup read the same source", "Timezone picker feeds AppSettings with the chosen zone"] },
     { "dot": "emerald", "title": "Compute Core", "items": ["PeakCalculator produces half-open UTC windows", "Countdown is formatted by CountdownFormatter", "All logic is tested independent of the UI"] },
-    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences are stored in UserDefaults", "Language resolves from 17 .lproj files", "No network calls or telemetry"] }
+    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences are stored in UserDefaults", "Language resolves from 17 .lproj files", "History gaps are backfilled on launch", "No network calls or telemetry"] }
   ]
 }

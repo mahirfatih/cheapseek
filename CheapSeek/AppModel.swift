@@ -45,6 +45,7 @@ final class AppModel {
         }
         notifications.refreshAuthorizationStatus()
         refreshNotifications()
+        backfillHistory()
         recordHistory(at: now)
     }
 
@@ -75,6 +76,14 @@ final class AppModel {
 
     var hasHistory: Bool {
         historyDays.contains { $0.totalMinutes > 0 }
+    }
+
+    /// Fills the gap since the last recorded sample with the true peak/off-peak
+    /// transitions, then reaggregates. Runs on launch and after a timezone change.
+    func backfillHistory() {
+        guard let lastSample = history.samples.last?.timestamp else { return }
+        history.backfill(from: lastSample, to: now, schedule: config.schedule)
+        refreshHistory()
     }
 
     /// Reaggregates history, e.g. after a timezone change.

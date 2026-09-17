@@ -27,7 +27,7 @@
     { "id": "notificationcenter", "type": "external", "label": "Notification Center", "sublabel": "local alerts", "pos": [560, 630], "size": [150, 64] },
     { "id": "defaults", "type": "database", "label": "UserDefaults", "sublabel": "local preferences", "pos": [820, 630], "size": [150, 64] },
     { "id": "loginitem", "type": "external", "label": "SMAppService", "sublabel": "launch at login", "pos": [1080, 630], "size": [150, 64] },
-    { "id": "history", "type": "database", "label": "History", "sublabel": "HistoryStore · Aggregator", "pos": [820, 800], "size": [150, 64], "tag": "local JSON" }
+    { "id": "history", "type": "database", "label": "History", "sublabel": "HistoryStore · Aggregator", "pos": [820, 800], "size": [150, 64], "tag": "backfill on launch" }
   ],
   "connections": [
     { "id": "entry-popup", "from": "entry", "to": "popup", "label": "opens" },
@@ -53,6 +53,6 @@
   "cards": [
     { "dot": "emerald", "title": "Pure Core", "items": ["PeakCalculator, CountdownFormatter, NotificationPlanner, HistoryAggregator, TimeZoneCatalog, and TimeZoneLabel use only Foundation", "Testable independent of the UI"] },
     { "dot": "cyan", "title": "One-Way Flow", "items": ["AppModel publishes @Observable state", "Menu bar and popup read the same source"] },
-    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences and history stored in UserDefaults", "Notifications are scheduled locally by macOS", "No network calls or telemetry"] }
+    { "dot": "violet", "title": "Local & Offline", "items": ["Preferences and history stored in UserDefaults", "History gaps are backfilled on launch", "Notifications are scheduled locally by macOS", "No network calls or telemetry"] }
   ]
 }

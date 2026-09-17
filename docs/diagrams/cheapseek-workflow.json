@@ -259,6 +259,7 @@
       "title": "Launch & Loop",
       "items": [
         "Initial state is computed on launch",
+        "History gaps are backfilled on launch",
         "The async clock refreshes on every interval"
       ]
     },
