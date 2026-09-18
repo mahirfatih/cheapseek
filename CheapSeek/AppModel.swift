@@ -3,6 +3,7 @@ import Observation
 import Localize_Swift
 
 @Observable
+@MainActor
 final class AppModel {
     let config: DeepSeekConfig
     let settings: AppSettings

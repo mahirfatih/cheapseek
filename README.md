@@ -338,6 +338,8 @@ System architecture and visual documentation are generated with [Archify](https:
 - **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 - **Notifications** — local alerts are scheduled for the upcoming 7 days and refreshed when notification or timezone settings change; a notification only fires while the app is running or had already scheduled it. Delivery depends on macOS notification permission, and ad-hoc signed dev builds may not show the authorization prompt reliably. Quiet hours suppress alerts whose delivery time falls inside the configured window.
 - **History** — samples are recorded only while the app is running, on state changes; time while the app was closed is backfilled on next launch using the same peak rules, so the chart stays accurate. The chart therefore becomes more meaningful the longer the app runs.
+- **Countdown units** — the countdown uses short unit suffixes (`h`/`m`/`s`, localized per language) rather than full pluralized phrases, so languages with complex plural rules (e.g. Russian) show a single form. Charting/date math is unaffected.
+- **Pricing/config updates** — model prices and peak windows live in `CheapSeek/Configuration.plist`; update that file when DeepSeek changes its rates. `DeepSeekConfigTests`/`PricingConfigTests` validate the file and fall back to built-in defaults if it is missing or malformed.
 
 ---
 

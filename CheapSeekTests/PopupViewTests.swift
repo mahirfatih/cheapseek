@@ -3,6 +3,7 @@ import SwiftUI
 import ViewInspector
 @testable import CheapSeek
 
+@MainActor
 final class PopupViewTests: XCTestCase {
 
     private func utcDate(_ day: Int, _ hour: Int) -> Date {

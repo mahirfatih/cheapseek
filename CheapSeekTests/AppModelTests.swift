@@ -23,6 +23,7 @@ private final class MockNotificationCenterClient: NotificationCenterClient {
     }
 }
 
+@MainActor
 final class AppModelTests: XCTestCase {
 
     private func utcDate(_ year: Int, _ month: Int, _ day: Int,

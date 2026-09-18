@@ -23,11 +23,31 @@ final class SecurityRegressionTests: XCTestCase {
         return String(remainder[..<end])
     }
 
-    private var appSources: String {
+    private var appSwiftFiles: [URL] {
         let dir = repoRoot.appendingPathComponent("CheapSeek")
-        let files = try! FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
+        return try! FileManager.default.contentsOfDirectory(at: dir, includingPropertiesForKeys: nil)
             .filter { $0.pathExtension == "swift" }
-        return files.map { try! String(contentsOf: $0, encoding: .utf8) }.joined(separator: "\n")
+    }
+
+    /// App sources with comments removed, so banned-word scans do not trip on
+    /// prose in doc comments.
+    private var appSources: String {
+        appSwiftFiles
+            .map { stripComments(try! String(contentsOf: $0, encoding: .utf8)) }
+            .joined(separator: "\n")
+    }
+
+    private func stripComments(_ source: String) -> String {
+        let withoutBlocks = source.replacingOccurrences(
+            of: "/\\*[\\s\\S]*?\\*/", with: " ", options: .regularExpression
+        )
+        return withoutBlocks
+            .components(separatedBy: .newlines)
+            .map { line -> String in
+                if let range = line.range(of: "//") { return String(line[..<range.lowerBound]) }
+                return line
+            }
+            .joined(separator: "\n")
     }
 
     func testA05_noATSArbitraryLoads() {
@@ -48,6 +68,23 @@ final class SecurityRegressionTests: XCTestCase {
         XCTAssertFalse(source.contains("URLSession"))
         XCTAssertFalse(source.contains("URLRequest"))
         XCTAssertFalse(source.contains("import Network"))
+        XCTAssertFalse(source.contains("import CFNetwork"))
+    }
+
+    func testA05_noEntitlementsFilePresent() {
+        var found: [String] = []
+        for directory in [repoRoot, repoRoot.appendingPathComponent("CheapSeek")] {
+            let files = (try? FileManager.default.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+            found += files.filter { $0.pathExtension == "entitlements" }.map(\.lastPathComponent)
+        }
+        XCTAssertTrue(found.isEmpty, "Found entitlements file(s): \(found)")
+    }
+
+    func testPrivacyManifestDeclaresRequiredReasonAPI() {
+        let manifest = repoRoot.appendingPathComponent("CheapSeek/PrivacyInfo.xcprivacy")
+        XCTAssertTrue(FileManager.default.fileExists(atPath: manifest.path))
+        let contents = try! String(contentsOf: manifest, encoding: .utf8)
+        XCTAssertTrue(contents.contains("CA92.1"), "UserDefaults required-reason code CA92.1 missing")
     }
 
     func test_noAnalyticsOrTelemetrySDKs() {
