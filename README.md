@@ -18,7 +18,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (190, incl. security, config, and ViewInspector view tests) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (207, incl. security, config, ViewInspector and ImageRenderer view tests) + XCUITest (app launch + best-effort menu bar checks)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -294,7 +294,7 @@ CheapSeek/
 ./test/test.sh --coverage             # unit tests + coverage summary
 ```
 
-- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (9), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (17), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (9), `ClockTests` (3), `AppLanguageTests` (2), `PeakStatusTests` (6), plus ViewInspector suites (`PricingInfoViewTests`, `PopupViewTests`, `SettingsViewTests`, `TimeZonePickerTests`, `HistoryChartViewTests`) and system-boundary tests — **190 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (9), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (17), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (9), `ClockTests` (3), `AppLanguageTests` (2), `PeakStatusTests` (6), plus ViewInspector suites (`PricingInfoViewTests`, `PopupViewTests`, `SettingsViewTests`, `TimeZonePickerTests`, `HistoryChartViewTests`) and system-boundary tests — **207 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 25%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).

@@ -1,11 +1,46 @@
 import SwiftUI
 import Localize_Swift
 
-struct PopupView: View {
+/// Reads the `openSettings` environment action and hands it to `PopupView`, so
+/// the popup itself stays free of environment dependencies and testable.
+struct PopupHost: View {
     let model: AppModel
     @Environment(\.openSettings) private var openSettings
-    @State private var showInfo = false
-    @State private var showHistory = true
+
+    var body: some View {
+        PopupView(
+            model: model,
+            onOpenSettings: {
+                openSettings()
+                NSApp.activate()
+            },
+            onQuit: {
+                NSApplication.shared.terminate(nil)
+            }
+        )
+    }
+}
+
+struct PopupView: View {
+    let model: AppModel
+    var onOpenSettings: () -> Void
+    var onQuit: () -> Void
+    @State private var showInfo: Bool
+    @State private var showHistory: Bool
+
+    init(
+        model: AppModel,
+        showInfo: Bool = false,
+        showHistory: Bool = true,
+        onOpenSettings: @escaping () -> Void = {},
+        onQuit: @escaping () -> Void = {}
+    ) {
+        self.model = model
+        self.onOpenSettings = onOpenSettings
+        self.onQuit = onQuit
+        _showInfo = State(initialValue: showInfo)
+        _showHistory = State(initialValue: showHistory)
+    }
 
     var body: some View {
         let _ = model.languageRevision
@@ -34,13 +69,11 @@ struct PopupView: View {
             Divider()
 
             PopupActionButtons(
-                onSettings: {
-                    openSettings()
-                    NSApp.activate()
-                },
+                onSettings: onOpenSettings,
                 onInfo: {
                     showInfo = true
-                }
+                },
+                onQuit: onQuit
             )
         }
         .padding()
@@ -211,6 +244,7 @@ struct PopupHistorySection: View {
 struct PopupActionButtons: View {
     let onSettings: () -> Void
     let onInfo: () -> Void
+    let onQuit: () -> Void
 
     var body: some View {
         HStack {
@@ -222,9 +256,7 @@ struct PopupActionButtons: View {
             .help("info".localized())
             .accessibilityLabel("info".localized())
             Spacer()
-            Button("quit".localized()) {
-                NSApplication.shared.terminate(nil)
-            }
+            Button("quit".localized(), action: onQuit)
         }
     }
 }

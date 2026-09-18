@@ -98,7 +98,7 @@ UI tests are intended to run **locally**; see CI below.
 - Installs XcodeGen, then `xcodegen generate` (`project.yml` is canonical).
 - Builds the app.
 - Runs the **unit tests only** (`-only-testing:CheapSeekTests`) with `-enableCodeCoverage YES`.
-- Enforces a **coverage gate**: `CheapSeek.app` line coverage ≥ `0.85`.
+- Enforces a **coverage gate**: `CheapSeek.app` line coverage ≥ `0.96`.
 - Uploads the `.xcresult` bundle as an artifact.
 
 > UI tests are excluded from CI: macOS XCUITest requires an interactive GUI session and accessibility permissions, which GitHub-hosted runners do not provide reliably. Run `./test/test.sh --ui` locally instead.
@@ -139,7 +139,7 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Measured Coverage (2026-09-18, local macOS run)
 
-`CheapSeek.app` line coverage: **89.34%** (CI gate ≥ 85% ✅ — remaining lines are view-DSL closures and system boundaries, see "Excluded from coverage")
+`CheapSeek.app` line coverage: **97.70%** (CI gate ≥ 96% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, and system boundaries; see "Excluded from coverage")
 
 | File | Line Coverage |
 | :--- | :--- |
@@ -169,12 +169,16 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Excluded from coverage
 
-The remaining `CheapSeek.app` lines cannot be executed deterministically in a headless unit-test host and are excluded by design (the gate is set to the highest stable measured value, `0.85`):
+Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99% and the target to **97.70%**.
 
-- **SwiftUI view-DSL closures** — `Chart`/`AxisMarks` builders, `TimelineView`/`DisclosureGroup`/`List`/`Form` content and modifier closures, and `popover`/`sheet` bodies are only built during real rendering. ViewInspector evaluates each view's `body` (which lifted view coverage from ~0% to ~65–93%), but it does not materialize these deferred closures. Affected: `TimeZonePicker`, `HistoryChartView`, `SettingsView`, `PopupView`, `PricingInfoView`.
-- **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned, so line counts stay open.
-- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring is entry-point glue.
+The remaining `CheapSeek.app` lines are excluded by design (the gate is set to the highest stable measured value, `0.96`):
 
-`xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files report just under 100% even though every branch has a test. Raise the gate as the excluded view-DSL surface is reduced.
+- **Framework-deferred closures that offscreen rendering still skips** — a SwiftUI `Picker`'s menu rows (e.g. the language list) and a `.sheet`'s content closure are built only when the menu/sheet is actually presented. Affected: a few lines in `SettingsView`, `TimeZonePicker`'s popover body, and `PopupView`'s `PopupHost` `openSettings`/`terminate` glue.
+- **Property-wrapper attribution** — `@State`/`@Environment` storage initializers are sometimes reported as uncovered even though the view is constructed and rendered.
+- **Dead fallback** — `PricingInfoView`'s `fallbackWindowText` requires `Calendar.date(from:)` to fail, which does not happen for valid windows.
+- **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned.
+- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring and `PopupHost`'s environment read are entry-point glue.
+
+`xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files (e.g. `TimeZoneCatalog`, `PeakCalculator`) report 93–96% despite every branch having a test.
 
 > **Flaky-test note:** `SystemUserNotificationCenterAdapterTests` and `SystemLoginItemServiceTests` intentionally touch real system APIs and use bounded waits (they never fail on a missing callback). If they prove flaky on CI, move them behind a feature flag and exclude the system adapters entirely.

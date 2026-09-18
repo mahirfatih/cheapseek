@@ -6,12 +6,13 @@ struct SettingsView: View {
     let config: DeepSeekConfig
     let model: AppModel
 
-    @State private var showInfo = false
+    @State private var showInfo: Bool
 
-    init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel) {
+    init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel, showInfo: Bool = false) {
         self.settings = settings
         self.config = config
         self.model = model
+        _showInfo = State(initialValue: showInfo)
     }
 
     var languages: [AppLanguage] {
@@ -126,25 +127,34 @@ struct SettingsView: View {
             }
         }
         .onChange(of: settings.updateInterval) { _, newValue in
-            model.setUpdateInterval(newValue)
+            handleUpdateIntervalChange(newValue)
         }
         .onChange(of: settings.timeZoneIdentifier) { _, _ in
-            model.refreshNotifications()
-            model.backfillHistory()
+            handleTimeZoneChange()
         }
         .onChange(of: settings.notifyOnOffPeakStart) { _, _ in
-            model.refreshNotifications()
+            handleNotifyOffPeakChange()
         }
         .onChange(of: settings.notifyOnPeakStart) { _, _ in
-            model.refreshNotifications()
+            handleNotifyPeakChange()
         }
         .onChange(of: settings.quietHoursEnabled) { _, _ in
-            model.refreshNotifications()
+            handleQuietHoursChange()
         }
         .onAppear {
-            model.notifications.refreshAuthorizationStatus()
+            handleAppear()
         }
     }
+
+    func handleUpdateIntervalChange(_ value: Double) { model.setUpdateInterval(value) }
+    func handleTimeZoneChange() {
+        model.refreshNotifications()
+        model.backfillHistory()
+    }
+    func handleNotifyOffPeakChange() { model.refreshNotifications() }
+    func handleNotifyPeakChange() { model.refreshNotifications() }
+    func handleQuietHoursChange() { model.refreshNotifications() }
+    func handleAppear() { model.notifications.refreshAuthorizationStatus() }
 
     var notificationsEnabledBinding: Binding<Bool> {
         Binding(
@@ -216,11 +226,12 @@ struct SettingsView: View {
         return (components.hour ?? 0) * 60 + (components.minute ?? 0)
     }
 
+    static let notificationSettingsURL = URL(
+        string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension"
+    )!
+
     func openNotificationSettings() {
-        guard let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension") else {
-            return
-        }
-        NSWorkspace.shared.open(url)
+        NSWorkspace.shared.open(Self.notificationSettingsURL)
     }
 
     var languageBinding: Binding<String> {

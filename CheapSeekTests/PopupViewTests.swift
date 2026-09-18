@@ -64,7 +64,7 @@ final class PopupViewTests: XCTestCase {
     func testActionButtonsRender() {
         var settingsTapped = false
         var infoTapped = false
-        let view = PopupActionButtons(onSettings: { settingsTapped = true }, onInfo: { infoTapped = true })
+        let view = PopupActionButtons(onSettings: { settingsTapped = true }, onInfo: { infoTapped = true }, onQuit: {})
         _ = view.body
         _ = try? view.inspect()
         XCTAssertFalse(settingsTapped)

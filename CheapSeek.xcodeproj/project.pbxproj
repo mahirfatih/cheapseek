@@ -20,6 +20,7 @@
 		196BCB63AE1D632EAE5A345A /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2B87AA67B5D6D43052DFE4 /* AppModel.swift */; };
 		1A2B290335A5EB705E7DE941 /* Configuration.plist in Resources */ = {isa = PBXBuildFile; fileRef = 63B3BAC8BD269D2785F8B1EE /* Configuration.plist */; };
 		218005DBCF74F85BAB77DABA /* AppSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */; };
+		28135CE664998E1243D1D021 /* ViewRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F10EC87E55BC2590AF27D2 /* ViewRenderTests.swift */; };
 		29D0DFB8D16A97688292C46D /* DeepSeekConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */; };
 		30914CEF12E7C6FD11AC1F82 /* PopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0E21CBE3D7EE66D873D6B46 /* PopupView.swift */; };
 		37E5B5C5EA59317D96CE4CA9 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C5D9710C23F4365935612A /* AppModelTests.swift */; };
@@ -57,6 +58,7 @@
 		D3BDC9FCFC8C64CE61DBC4C2 /* PricingConfigTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */; };
 		D83D6404A0AEAD24394253D4 /* PricingInfoViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A006AE07509E44D69394467F /* PricingInfoViewTests.swift */; };
 		DF0A46B608893FBD260EA8CB /* CheapSeekUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5195082CEBA7D072AF2CD7B /* CheapSeekUITests.swift */; };
+		E447016E7EC51D8411E77755 /* HistoryChartViewRenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70A495D841292A0249A97213 /* HistoryChartViewRenderTests.swift */; };
 		E8BFC00ED122F05A7354A1CE /* AppLanguage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096CD96CC89D1404EE66324E /* AppLanguage.swift */; };
 		F20E66EED9BF8A9F556ED107 /* TimeZonePickerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A623D8208FD2F6F7AF2A543 /* TimeZonePickerTests.swift */; };
 		F2DF0404BD43C9222CED2CC8 /* HistoryAggregatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65E1F058586FEEF4A3EE0E28 /* HistoryAggregatorTests.swift */; };
@@ -114,6 +116,7 @@
 		6B86E26005879300C35B112A /* Clock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clock.swift; sourceTree = "<group>"; };
 		6C26D64E8C8A2015E4064560 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6D9DF90EA80FD8C603F5E670 /* HistoryStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryStoreTests.swift; sourceTree = "<group>"; };
+		70A495D841292A0249A97213 /* HistoryChartViewRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryChartViewRenderTests.swift; sourceTree = "<group>"; };
 		734BF74DC420255C2FE750DA /* TimeZoneCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeZoneCatalog.swift; sourceTree = "<group>"; };
 		7420463111F9E22687C1558B /* NotificationManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManagerTests.swift; sourceTree = "<group>"; };
 		7503F9B9D75BF1E29C472495 /* NotificationPlannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPlannerTests.swift; sourceTree = "<group>"; };
@@ -139,6 +142,7 @@
 		CFCFEBC093EACF2D3C9BD4EA /* SettingsViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewTests.swift; sourceTree = "<group>"; };
 		D02B32FDE535563164132BF4 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		D1ED9E73F171BE9137D6737D /* PeakStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeakStatus.swift; sourceTree = "<group>"; };
+		D1F10EC87E55BC2590AF27D2 /* ViewRenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewRenderTests.swift; sourceTree = "<group>"; };
 		D2740228755B278D05E4A2A7 /* vi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = vi; path = vi.lproj/Localizable.strings; sourceTree = "<group>"; };
 		D72C8FE6C34BE8D985DDD7EC /* SystemUserNotificationCenterAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemUserNotificationCenterAdapterTests.swift; sourceTree = "<group>"; };
 		D95B4445F26332442C9330A8 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -258,6 +262,7 @@
 				4E5ABA415A4F0661FB34C1E1 /* CountdownFormatterTests.swift */,
 				269EF29EF91F13946CDB3E09 /* DeepSeekConfigTests.swift */,
 				65E1F058586FEEF4A3EE0E28 /* HistoryAggregatorTests.swift */,
+				70A495D841292A0249A97213 /* HistoryChartViewRenderTests.swift */,
 				8FE45050591A9D79B6AB4A94 /* HistoryChartViewTests.swift */,
 				6D9DF90EA80FD8C603F5E670 /* HistoryStoreTests.swift */,
 				933686AA06E3C3664B2F0C5E /* LocalizationTests.swift */,
@@ -276,6 +281,7 @@
 				84F56EDF983FC6BAC00A9B88 /* TimeZoneCatalogTests.swift */,
 				860E1FCF5151D6B8E9ADC132 /* TimeZoneLabelTests.swift */,
 				9A623D8208FD2F6F7AF2A543 /* TimeZonePickerTests.swift */,
+				D1F10EC87E55BC2590AF27D2 /* ViewRenderTests.swift */,
 			);
 			path = CheapSeekTests;
 			sourceTree = "<group>";
@@ -455,6 +461,7 @@
 				AD944C9DE6FC59A68B4686E1 /* CountdownFormatterTests.swift in Sources */,
 				3CDC6448CA6E81A6DF9A5BC3 /* DeepSeekConfigTests.swift in Sources */,
 				F2DF0404BD43C9222CED2CC8 /* HistoryAggregatorTests.swift in Sources */,
+				E447016E7EC51D8411E77755 /* HistoryChartViewRenderTests.swift in Sources */,
 				76A783A8869F28EC0A8CD472 /* HistoryChartViewTests.swift in Sources */,
 				720BD78DF5D092748A4DD2C5 /* HistoryStoreTests.swift in Sources */,
 				6B644DD9FD4A9AC924DDE2C0 /* LocalizationTests.swift in Sources */,
@@ -473,6 +480,7 @@
 				01F6E5BEB33AE61A7154143B /* TimeZoneCatalogTests.swift in Sources */,
 				4D2A489B80C0BF2AAB36F985 /* TimeZoneLabelTests.swift in Sources */,
 				F20E66EED9BF8A9F556ED107 /* TimeZonePickerTests.swift in Sources */,
+				28135CE664998E1243D1D021 /* ViewRenderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

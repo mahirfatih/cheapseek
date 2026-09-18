@@ -15,7 +15,7 @@ struct CheapSeekApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            PopupView(model: model)
+            PopupHost(model: model)
         } label: {
             MenuBarLabel(model: model)
                 .id(model.languageRevision)
