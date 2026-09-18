@@ -11,6 +11,7 @@ private final class DeniedNotificationClient: NotificationCenterClient {
     func removeAllPending() {}
 }
 
+@MainActor
 final class SettingsViewTests: XCTestCase {
 
     private func makeView(

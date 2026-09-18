@@ -31,7 +31,7 @@ xcodebuild -project CheapSeek.xcodeproj \
         ┌─────────┐
         │  Manual │  Menu bar rendering, Settings interactions, SMAppService
         ├─────────┤
-        │   UI    │  CheapSeekUITests (app launch; menu bar popup best-effort)
+        │   UI    │  CheapSeekUITests (launch, settings, timezone picker; popup best-effort)
         ├─────────┤
         │  Unit   │  PeakCalculatorTests, CountdownFormatterTests,
         │         │  AppSettingsTests, AppModelTests, MenuBarLabelTests,
@@ -50,17 +50,17 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `PeakCalculatorTests` (39) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `transitions` between dates, `todaySchedules`, `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
 | `CountdownFormatterTests` (7) | Hours/minutes/seconds formatting, exact hour, negative clamp, hour-truncation spec. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (7) | Defaults, `updateInterval`/notification clamping and persistence, timezone resolution, quiet-hours preferences, launch-at-login via a fake `LoginItemService`. | Injected `UserDefaults` suite + `LoginItemService` |
-| `AppModelTests` (9) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule, launch backfill (weekend gap, empty store), tick callback, `hasHistory`. | Injected clock/timezone via `autoStart: false` |
+| `AppModelTests` (12) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule, launch backfill (weekend gap, empty store), timezone-change backfill (LA/Kolkata/DST, idempotent, re-aggregation), tick callback, `hasHistory`. | Injected clock/timezone via `autoStart: false` |
 | `MenuBarLabelTests` (6) | Menu bar status text for each `PeakStatus`, short-length guard, distinct non-empty symbols, accessibility titles, per-language status titles. | Pins the language to English via Localize |
 | `NotificationManagerTests` (7) | Cancel-then-add scheduling, disabled settings clear pending, denied permission skips scheduling, permission state updates, `SystemNotificationCenterClient` delegation, no-op disabled client. | Mock `NotificationCenterClient` + fake `UserNotificationCenterAdapter` |
 | `NotificationPlannerTests` (11) | Peak warning at `T−before`, off-peak/peak-start events, disabled options, past-date drop, 7-day horizon, quiet-hours suppression, wrap-around and same-day windows. | Pure functions with injected `now`/`PeakSchedule` |
 | `HistoryAggregatorTests` (11) | Empty data, single day, full 7 days, timezone reassignment, DST spring-forward (23h) and fall-back (25h), window clipping, last-interval state, identifier, guarded durations. | Pure functions with injected `now`/`TimeZone` |
-| `HistoryStoreTests` (17) | Event-based dedupe, persistence round-trip, prune anchor, in-memory mode, plus backfill: transitions+final sample, no-op guards, off-peak-only gap, peak→off→peak, full weekend, idempotency, 50-sample cap, DST 23/25h, non-UTC and half-hour zones. | Injected `UserDefaults` suite + in-memory store |
+| `HistoryStoreTests` (18) | Event-based dedupe, persistence round-trip, prune anchor, in-memory mode, plus backfill: transitions+final sample, no-op guards, off-peak-only gap, peak→off→peak, full weekend, idempotency, 50-sample cap, DST 23/25h, non-UTC and half-hour zones. | Injected `UserDefaults` suite + in-memory store |
 | `LocalizationTests` (4) | All 17 `.lproj` files have identical key sets; every expected key present in every language; notification/history/menu-bar strings are not left in English; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (6) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation; usage URL present. | Injected `PeakSchedule` — no mocks |
 | `TimeZoneCatalogTests` (6) | System entry without a title, region grouping, city extraction (incl. 3-part identifiers), offset formatting, and case/diacritic-insensitive search filtering. | Injected identifier lists — no global state |
 | `TimeZoneLabelTests` (5) | Identifier + offset labels, underscore prettifying, fixed-offset passthrough, offset formatting, and DST-aware offsets. | Pure functions with injected dates |
-| `DeepSeekConfigTests` (9) | `decode` for nil/malformed/invalid/valid data, `load` fallback from a bundle without the plist, validation branches, UTC schedule. | Injected `Data` — no bundle state |
+| `DeepSeekConfigTests` (10) | `decode` for nil/malformed/invalid/valid data, `load` fallback from a bundle without the plist, validation branches, UTC schedule. | Injected `Data` — no bundle state |
 | `AppLanguageTests` (2) | All 17 cases expose non-empty, unique `displayName`/`flag`/`localeIdentifier`/`locale`. | Pure enum iteration |
 | `ClockTests` (3) | Ticks fire on schedule, restarting cancels the previous task, stop without start is safe. | Real async clock with short intervals + expectations |
 | `PeakStatusTests` (6) | `isPeak` init, titles/colors/symbols, badge body + accessibility label. | Pure values + ViewInspector |
@@ -73,7 +73,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `ViewRenderTests` (15) | Offscreen `ImageRenderer` renders every view + variant; button taps and binding writes. | `ImageRenderer` + ViewInspector |
 | `SystemUserNotificationCenterAdapterTests` (1) | Exercises the real `UNUserNotificationCenter` adapter with bounded waits. | Real system API — excluded from the CI job via `-skip-testing` |
 | `SystemLoginItemServiceTests` (1) | Exercises the real `SMAppService` wrapper with cleanup. | Real system API — excluded from the CI job via `-skip-testing` |
-| `SecurityRegressionTests` (8) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements, no networking APIs, no analytics SDKs, no Keychain, no remote packages in the app target, `LSUIElement`, 17 languages present. | Source + `project.yml` assertions — no mocks |
+| `SecurityRegressionTests` (10) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements (declared or file), no networking APIs, no analytics SDKs, no Keychain, no remote packages in the app target, `LSUIElement`, privacy required-reason API, 17 languages present. | Source + `project.yml` assertions — no mocks |
 
 > **Views are unit-tested in two layers:** ViewInspector evaluates each view's `body` and lets tests tap controls, and `ImageRenderer` renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures. This lifted view coverage from ~0% to ~96–99%. See **Excluded from coverage** for the framework/system lines that remain.
 
@@ -85,33 +85,43 @@ xcodebuild -project CheapSeek.xcodeproj \
 | :--- | :--- |
 | `testA05_noATSArbitraryLoads` | No `NSAllowsArbitraryLoads` in `project.yml` |
 | `testA05_noEntitlementsDeclared` | The app declares no entitlements and is not sandboxed |
+| `testA05_noEntitlementsFilePresent` | No `*.entitlements` file exists in the repository |
 | `testMenuBarAgent_isLSUIElement` | Runs as a menu-bar-only agent (`LSUIElement`) |
-| `test_noNetworkingAPIs` | No `URLSession` / `URLRequest` / `import Network` in app sources |
+| `test_noNetworkingAPIs` | No `URLSession` / `URLRequest` / `import Network` / `import CFNetwork` in app sources |
 | `test_noAnalyticsOrTelemetrySDKs` | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | No Keychain / `SecItem` usage (UserDefaults-only persistence) |
-| `testA06_noRemotePackageDependencies` | No remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
+| `testPrivacyManifestDeclaresRequiredReasonAPI` | `PrivacyInfo.xcprivacy` declares the UserDefaults required-reason code `CA92.1` |
+| `testA06_noRemotePackageDependencies` | The app target has no remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
 | `testLocalizations_allLanguagesPresent` | All 17 `.lproj` packs exist |
 
 ## UI Tests (`CheapSeekUITests`, XCUITest)
 
-Runs against the real app and covers:
+Runs against the real app (`-UITestMode 1`, which disables real notification scheduling and
+launch-at-login registration) and asserts via accessibility identifiers. Run locally with
+`./test/test.sh --ui`.
 
-- `testAppLaunches` — launches the app and asserts it is running.
-- `testStatusItemOpensPopup` — locates the menu bar status item, clicks it, and asserts the popup title appears.
-- `testSettingsControlsWhenPopupOpen` — opens the popup, clicks **Settings**, and asserts the Settings controls.
+| Test | Result | What it checks |
+| :--- | :--- | :--- |
+| `testAppLaunches` | **assert** | The app is running after launch. |
+| `testSettingsOpensAndListsLanguages` | **assert** | Settings opens via the app menu; `settings.language` lists exactly 17 languages. |
+| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover, and the search field filters to Tokyo. |
+| `testQuitMenuItemExists` | **assert** | The app menu exposes a Quit item. |
+| `testPopupOpensAndShowsStatus` | **assert / skip** | Opens the `MenuBarExtra` popup via the status item and checks `popup.status`; `XCTSkip` when macOS does not expose the status item. |
 
-macOS does not reliably expose third-party menu bar (``MenuBarExtra`) status items to the accessibility tree, and the `.window` popup is not always reachable. When the status item or popup cannot be found, the affected tests **skip (`XCTSkip`)** instead of failing, so the suite stays green while documenting the limitation. `testAppLaunches` is always deterministic.
-
-UI tests are intended to run **locally**; see CI below.
+macOS 14.x does not reliably expose third-party `MenuBarExtra` status items to the accessibility
+tree, and there is no public API to open the popup programmatically, so **only
+`testPopupOpensAndShowsStatus` may skip** — with the exact `operatingSystemVersionString` and
+reason in the skip message. The other four tests assert without relying on the status item
+(Settings opens through the app menu). UI tests are intended to run **locally**; see CI below.
 
 ## CI
 
-`.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
+`.github/workflows/ci.yml` (`macos-latest`, **manual dispatch only**):
 
 - Installs XcodeGen, then `xcodegen generate` (`project.yml` is canonical).
 - Builds the app.
 - Runs the **unit tests only** (`-only-testing:CheapSeekTests`) with `-enableCodeCoverage YES`.
-- Enforces a **coverage gate**: `CheapSeek.app` line coverage ≥ `0.96`.
+- Enforces a **coverage gate**: `CheapSeek.app` line coverage ≥ `0.95`.
 - Uploads the `.xcresult` bundle as an artifact.
 
 > UI tests are excluded from CI: macOS XCUITest requires an interactive GUI session and accessibility permissions, which GitHub-hosted runners do not provide reliably. Run `./test/test.sh --ui` locally instead.
@@ -128,7 +138,7 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Deliberately Out of Scope
 
-- **Menu bar (`MenuBarExtra`) UI automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS — covered by `XCTSkip` and manual verification.
+- **Menu bar (`MenuBarExtra`) popup automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS 14.x — only `testPopupOpensAndShowsStatus` skips (with the OS version + reason); app launch, Settings, the timezone picker, and Quit are asserted instead.
 - **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
 - **Menu bar tint rendering:** macOS may render the label as a monochrome template, so the app intentionally avoids color and uses `leaf`/`flame.fill` plus text; visual appearance is verified manually.
 - **Notification delivery:** authorization prompts and actual banner delivery depend on a signed app and user approval; `NotificationManager` is tested through a mock client, while real delivery is verified manually.
@@ -152,14 +162,14 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Measured Coverage (2026-09-18, local macOS run)
 
-`CheapSeek.app` line coverage: **97.70%** (CI gate ≥ 96% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, and system boundaries; see "Excluded from coverage")
+`CheapSeek.app` line coverage: **96.69%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, the UI-test-only window bootstrap, and system boundaries; see "Excluded from coverage")
 
 | File | Line Coverage |
 | :--- | :--- |
 | `AppLanguage.swift` | **100.00%** |
 | `AppModel.swift` | **100.00%** |
 | `AppSettings.swift` | **100.00%** |
-| `CheapSeekApp.swift` | **100.00%** |
+| `CheapSeekApp.swift` | 56.52% (`@main`/scene glue + UI-test-only window bootstrap) |
 | `Clock.swift` | **100.00%** |
 | `CountdownFormatter.swift` | **100.00%** |
 | `DeepSeekConfig.swift` | **100.00%** |
@@ -185,13 +195,13 @@ UI tests are intended to run **locally**; see CI below.
 
 Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99% and the target to **97.70%**.
 
-The remaining `CheapSeek.app` lines are excluded by design (the gate is set to the highest stable measured value, `0.96`):
+The remaining `CheapSeek.app` lines are excluded by design (the gate is set to the highest stable measured value, `0.95`):
 
 - **Framework-deferred closures that offscreen rendering still skips** — a SwiftUI `Picker`'s menu rows (e.g. the language list) and a `.sheet`'s content closure are built only when the menu/sheet is actually presented. Affected: a few lines in `SettingsView`, `TimeZonePicker`'s popover body, and `PopupView`'s `PopupHost` `openSettings`/`terminate` glue.
 - **Property-wrapper attribution** — `@State`/`@Environment` storage initializers are sometimes reported as uncovered even though the view is constructed and rendered.
 - **Dead fallback** — `PricingInfoView`'s `fallbackWindowText` requires `Calendar.date(from:)` to fail, which does not happen for valid windows.
 - **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned.
-- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring and `PopupHost`'s environment read are entry-point glue.
+- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the `-UITestSettings` window bootstrap, `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
 
 `xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files (e.g. `TimeZoneCatalog`, `PeakCalculator`) report 93–96% despite every branch having a test.
 

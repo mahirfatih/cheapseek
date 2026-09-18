@@ -19,6 +19,7 @@ private final class ThrowingLoginItem: LoginItemService {
     var isEnabled: Bool { false }
 }
 
+@MainActor
 final class ViewRenderTests: XCTestCase {
 
     private func utcDate(_ day: Int, _ hour: Int) -> Date {

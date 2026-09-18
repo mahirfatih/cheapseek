@@ -73,4 +73,11 @@ final class DeepSeekConfigTests: XCTestCase {
     func testScheduleUsesUTC() {
         XCTAssertEqual(DeepSeekConfig.fallback.schedule.timeZone, .gmt)
     }
+
+    func testFallbackWindowsMatchTheDefaultSchedule() {
+        // Single source of truth: the fallback must not redefine the windows.
+        XCTAssertEqual(DeepSeekConfig.fallback.schedule.windows, PeakSchedule.deepseekDefault.windows)
+        XCTAssertEqual(DeepSeekConfig.fallback.schedule.weekdayOnly, PeakSchedule.deepseekDefault.weekdayOnly)
+        XCTAssertEqual(DeepSeekConfig.fallback.schedule.timeZone, PeakSchedule.deepseekDefault.timeZone)
+    }
 }

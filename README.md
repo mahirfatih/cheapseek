@@ -1,12 +1,24 @@
 # CheapSeek
 
-> Never pay peak prices for DeepSeek API again.
+[![macOS CI](https://github.com/mahirfatih/cheapseek/actions/workflows/ci.yml/badge.svg?label=macOS%20CI)](https://github.com/mahirfatih/cheapseek/actions/workflows/ci.yml)
+![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-blue)
+![Swift](https://img.shields.io/badge/Swift-5.9-orange)
+![Languages](https://img.shields.io/badge/languages-17-green)
+![Tests](https://img.shields.io/badge/tests-214%20passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-**CheapSeek** is a tiny macOS menu bar app that tells you, at a glance, whether the DeepSeek API is currently in **peak** (expensive) or **off-peak** (cheap) pricing.
-
-When it's cheap, you code. When it's expensive, you wait. Simple.
+**CheapSeek** is a tiny macOS menu bar app that tells you, at a glance, whether the DeepSeek API is currently in **peak** (expensive) or **off-peak** (cheap) pricing — never pay peak prices again. When it's cheap, you code; when it's expensive, you wait.
 
 > **DEV MODE:** The project is currently **ad-hoc signed** (`CODE_SIGN_IDENTITY: "-"` in `project.yml`). Because of this, `SMAppService` launch-at-login may fail to register, and macOS may print harmless `com.apple.linkd.autoShortcut` connection messages at launch. Sign with a Development Team for properly signed builds.
+
+---
+
+## 📖 Overview
+
+CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar signal: a live status, today's schedule, a countdown to the next change, local notifications, and a 7-day history chart — computed entirely on-device from UTC rules, with 17 languages. Read the full walkthrough (how it works, the screens, the peak rules, the data layer, and the known limitations):
+
+**[English →](./docs/OVERVIEW/EN.md) · [Türkçe →](./docs/OVERVIEW/TR.md)**
 
 ---
 
@@ -18,7 +30,7 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (207, incl. security, config, ViewInspector and ImageRenderer view tests) + XCUITest (app launch + best-effort menu bar checks)
+- **Testing:** XCTest unit tests (214, incl. security, config, ViewInspector and ImageRenderer view tests) + XCUITest (launch, settings, timezone picker; popup best-effort)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -44,6 +56,19 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ---
 
+## 🆕 What's new
+
+- **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
+- **Local peak/off-peak notifications** — an optional warning before peak, an off-peak-start alert, and quiet hours, scheduled entirely on-device.
+- **7-day history chart** — a collapsible stacked-bar chart of daily peak vs. off-peak minutes in the popup.
+- **Accurate 7-day history** — gaps while the app was closed are backfilled on launch and on a timezone change.
+- **Searchable timezone picker** — every IANA zone grouped by region, with instant search and live UTC offsets.
+- **Grouped settings layout** — macOS System Settings–style sections with comfortable spacing.
+- **Live language switching** — the popup, settings, menu bar, and pending notifications update instantly, no relaunch.
+- **17 languages**, no tracking, and no network calls.
+
+---
+
 ## 📸 Screenshots
 
 All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
@@ -54,19 +79,6 @@ All screenshots use the English UI with a sample timezone (`America/Los_Angeles`
 | **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
 | **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
 | **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
-
----
-
-## 🆕 What's new
-
-- **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
-- **Local peak/off-peak notifications** — an optional warning before peak, an off-peak-start alert, and quiet hours, scheduled entirely on-device.
-- **7-day history chart** — a collapsible stacked-bar chart of daily peak vs. off-peak minutes in the popup.
-- **Accurate 7-day history** — gaps while the app was closed are backfilled on launch.
-- **Searchable timezone picker** — every IANA zone grouped by region, with instant search and live UTC offsets.
-- **Grouped settings layout** — macOS System Settings–style sections with comfortable spacing.
-- **Live language switching** — the popup, settings, menu bar, and pending notifications update instantly, no relaunch.
-- **17 languages**, no tracking, and no network calls.
 
 ---
 
@@ -265,17 +277,20 @@ CheapSeek/
 │   ├── TimeZoneLabelTests.swift         # Pretty names, offsets, and DST
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
-│   └── CheapSeekUITests.swift           # App launch + best-effort menu bar checks
+│   └── CheapSeekUITests.swift           # Launch, settings, timezone picker; popup best-effort
 ├── test/test.sh                         # Test runner (xcodegen + xcodebuild test)
 ├── test/TestResults/                    # .xcresult bundles (gitignored; .empty keeps the dir)
 ├── .github/workflows/ci.yml             # CI: generate, build, unit tests + coverage gate
 ├── TESTING.md                           # Test strategy, runner, UI tests, coverage
 ├── SECURITY.md                          # OWASP/MASVS security & privacy report
 ├── CONTRIBUTING.md                      # Setup, testing, commit conventions
+├── docs/OVERVIEW/                       # Detailed project overview
+│   ├── EN.md                            # Overview (English)
+│   └── TR.md                            # Genel bakış (Türkçe)
 ├── docs/diagrams/                       # Archify diagrams (interactive HTML + JSON)
-│   ├── cheapseek-architecture.html      # Components and boundaries
-│   ├── cheapseek-dataflow.html          # How data moves through the app
-│   └── cheapseek-workflow.html          # Runtime workflow and life cycle
+│   ├── architecture.html                # Components and boundaries
+│   ├── dataflow.html                    # How data moves through the app
+│   └── workflow.html                    # Runtime workflow and life cycle
 ├── docs/screenshots/                    # English UI screenshots (used in README)
 │   ├── light/                           # popup, pricing, settings, timezone-picker
 │   └── dark/                            # popup, pricing, settings, timezone-picker
@@ -292,23 +307,32 @@ CheapSeek/
 ./test/test.sh                        # unit tests (xcodegen generate + xcodebuild test)
 ./test/test.sh --ui                   # include the UI tests (local only)
 ./test/test.sh --coverage             # unit tests + coverage summary
+./test/capture-screenshots.sh         # render the light/dark screenshots
 ```
 
-- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (9), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (17), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (9), `ClockTests` (3), `AppLanguageTests` (2), `PeakStatusTests` (6), plus ViewInspector suites (`PricingInfoViewTests`, `PopupViewTests`, `SettingsViewTests`, `TimeZonePickerTests`, `HistoryChartViewTests`) and system-boundary tests — **207 unit tests**, plus `CheapSeekUITests` (app launch + best-effort menu bar checks).
+- Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
+
+- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10) — **214 unit tests**, plus `CheapSeekUITests` (launch, settings, timezone picker; popup best-effort).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage and enforces a **coverage gate** (`CheapSeek.app` ≥ 25%) on push / PR / manual dispatch. UI tests are local-only (macOS XCUITest needs an interactive session).
+- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **coverage gate** (`CheapSeek.app` ≥ 95%). UI tests are local-only (macOS XCUITest needs an interactive session).
 - Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 ---
 
 ## Documentation & Architecture
 
+### Overview
+A detailed walkthrough of what CheapSeek does and how it works: [`docs/OVERVIEW/EN.md`](./docs/OVERVIEW/EN.md) (English) · [`docs/OVERVIEW/TR.md`](./docs/OVERVIEW/TR.md) (Türkçe).
+
 ### Architecture Diagrams (Archify)
 System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
 
-- **Architecture:** [`cheapseek-architecture.html`](./docs/diagrams/cheapseek-architecture.html) — component relationships and system structure
-- **Data-Flow:** [`cheapseek-dataflow.html`](./docs/diagrams/cheapseek-dataflow.html) — how data moves through the app
-- **Workflow & Lifecycle:** [`cheapseek-workflow.html`](./docs/diagrams/cheapseek-workflow.html) — runtime workflow and life cycle
+- **Architecture:** [`architecture.html`](./docs/diagrams/architecture.html) — component relationships and system structure
+- **Data-Flow:** [`dataflow.html`](./docs/diagrams/dataflow.html) — how data moves through the app
+- **Workflow & Lifecycle:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow and life cycle
+
+### Screenshots
+Light and dark English UI screenshots live in [`docs/screenshots/`](./docs/screenshots) (embedded in the [Screenshots](#-screenshots) section above).
 
 ### Project Documentation
 - [TESTING.md](./TESTING.md) — test suites, runner, UI tests, and coverage.
@@ -337,7 +361,9 @@ System architecture and visual documentation are generated with [Archify](https:
 - **Launch at login** — depends on a properly signed build (ad-hoc signing may be rejected by `SMAppService`).
 - **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
 - **Notifications** — local alerts are scheduled for the upcoming 7 days and refreshed when notification or timezone settings change; a notification only fires while the app is running or had already scheduled it. Delivery depends on macOS notification permission, and ad-hoc signed dev builds may not show the authorization prompt reliably. Quiet hours suppress alerts whose delivery time falls inside the configured window.
-- **History** — samples are recorded only while the app is running, on state changes; time while the app was closed is backfilled on next launch using the same peak rules, so the chart stays accurate. The chart therefore becomes more meaningful the longer the app runs.
+- **History** — samples are recorded only while the app is running, on state changes; time while the app was closed is backfilled on next launch **and whenever the timezone changes**, using the same peak rules, so the chart stays accurate. The chart therefore becomes more meaningful the longer the app runs.
+- **Countdown units** — the countdown uses short unit suffixes (`h`/`m`/`s`, localized per language) rather than full pluralized phrases, so languages with complex plural rules (e.g. Russian) show a single form. Charting/date math is unaffected.
+- **Pricing/config updates** — model prices and peak windows live in `CheapSeek/Configuration.plist`; update that file when DeepSeek changes its rates. `DeepSeekConfigTests`/`PricingConfigTests` validate the file and fall back to built-in defaults if it is missing or malformed.
 
 ---
 

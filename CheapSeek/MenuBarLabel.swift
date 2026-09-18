@@ -14,6 +14,7 @@ struct MenuBarLabel: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(status.title)
+        .accessibilityIdentifier("menuBar.status")
     }
 
     static func text(for status: PeakStatus) -> String {

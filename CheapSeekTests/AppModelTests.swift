@@ -23,6 +23,7 @@ private final class MockNotificationCenterClient: NotificationCenterClient {
     }
 }
 
+@MainActor
 final class AppModelTests: XCTestCase {
 
     private func utcDate(_ year: Int, _ month: Int, _ day: Int,
@@ -163,6 +164,78 @@ final class AppModelTests: XCTestCase {
         store.removeAll()
         model.refreshHistory()
         XCTAssertFalse(model.hasHistory)
+    }
+
+    private func startOfDay(_ date: Date, in timeZone: TimeZone) -> Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        return calendar.startOfDay(for: date)
+    }
+
+    func testTimeZoneChangeReaggregatesWithoutDuplicatingSamples() {
+        let settings = makeSettings(timeZoneIdentifier: "UTC")
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 2, 8)) // Friday peak
+
+        let model = AppModel(
+            settings: settings, config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)), history: store, autoStart: false
+        )
+        let launchSamples = store.samples
+
+        let losAngeles = TimeZone(identifier: "America/Los_Angeles")!
+        settings.timeZoneIdentifier = "America/Los_Angeles"
+        model.backfillHistory()
+
+        XCTAssertEqual(model.timeZone, losAngeles)
+        XCTAssertEqual(store.samples, launchSamples, "Timezone change must not duplicate samples")
+        XCTAssertEqual(model.historyDays.count, 7)
+        XCTAssertEqual(model.historyDays.last?.date, startOfDay(utcDate(2026, 1, 5, 2), in: losAngeles))
+
+        let saturday = startOfDay(utcDate(2026, 1, 3, 20), in: losAngeles)
+        let bucket = model.historyDays.first { $0.date == saturday }
+        XCTAssertEqual(bucket?.peakMinutes, 0)
+        XCTAssertEqual(bucket?.offPeakMinutes, 1440)
+    }
+
+    func testTimeZoneChangeTwiceKeepsStoreStable() {
+        let settings = makeSettings(timeZoneIdentifier: "UTC")
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 2, 8))
+        let model = AppModel(
+            settings: settings, config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)), history: store, autoStart: false
+        )
+        let launchSamples = store.samples
+
+        settings.timeZoneIdentifier = "America/Los_Angeles"
+        model.backfillHistory()
+        settings.timeZoneIdentifier = "Asia/Kolkata"
+        model.backfillHistory()
+        settings.timeZoneIdentifier = "America/Los_Angeles"
+        model.backfillHistory()
+
+        XCTAssertEqual(store.samples, launchSamples, "Repeated timezone changes must be idempotent")
+        XCTAssertEqual(model.historyDays.count, 7)
+    }
+
+    func testTimeZoneChangeToDSTZoneIsStable() {
+        let settings = makeSettings(timeZoneIdentifier: "UTC")
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 2, 8))
+        let model = AppModel(
+            settings: settings, config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)), history: store, autoStart: false
+        )
+        let launchSamples = store.samples
+
+        settings.timeZoneIdentifier = "America/New_York"
+        model.backfillHistory()
+
+        XCTAssertEqual(store.samples, launchSamples)
+        XCTAssertEqual(model.historyDays.count, 7)
+        // The samples stay pruned to the 7-day window after reaggregation.
+        XCTAssertLessThanOrEqual(model.historyDays.reduce(0) { $0 + $1.totalMinutes }, 7 * 1440)
     }
 
     func testLanguageChangeReschedulesNotifications() {

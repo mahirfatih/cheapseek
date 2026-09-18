@@ -52,14 +52,17 @@ struct SettingsView: View {
                             Text("\(language.flag) \(language.displayName)").tag(language.rawValue)
                         }
                     }
+                    .accessibilityIdentifier("settings.language")
 
                     LabeledContent("timezone".localized()) {
                         TimeZonePicker(selection: $settings.timeZoneIdentifier, locale: locale)
+                            .accessibilityIdentifier("settings.timezone")
                     }
                 }
 
                 Section {
                     Toggle("settings.notifications.enable".localized(), isOn: notificationsEnabledBinding)
+                        .accessibilityIdentifier("settings.notifications")
 
                     if settings.notificationsEnabled && model.notifications.permissionDenied {
                         VStack(alignment: .leading, spacing: Spacing.xs) {
@@ -114,6 +117,7 @@ struct SettingsView: View {
                             .monospacedDigit()
                     }
                     Slider(value: $settings.updateInterval, in: AppSettings.updateIntervalRange, step: 10)
+                        .accessibilityIdentifier("settings.refreshInterval")
                 }
             }
             .formStyle(.grouped)
@@ -121,6 +125,7 @@ struct SettingsView: View {
         .padding(.horizontal, Spacing.xl)
         .padding(.vertical, Spacing.lg)
         .frame(width: 440)
+        .accessibilityIdentifier("settings.root")
         .sheet(isPresented: $showInfo) {
             SettingsPricingSheet(config: config, timeZone: settings.timeZone) {
                 showInfo = false
