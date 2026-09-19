@@ -114,7 +114,8 @@ System architecture and visual documentation are generated with [Archify](https:
 
 - **Architecture:** [`architecture.html`](./docs/diagrams/architecture.html) — component relationships and system structure
 - **Data-Flow:** [`dataflow.html`](./docs/diagrams/dataflow.html) — how data moves through the app
-- **Workflow & Lifecycle:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow and life cycle
+- **Workflow:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow
+- **Lifecycle:** [`lifecycle.html`](./docs/diagrams/lifecycle.html) — peak status states and transitions
 
 ---
 
@@ -240,7 +241,8 @@ CheapSeek/
 │   ├── diagrams/                        # Archify diagrams (interactive HTML + JSON)
 │   │   ├── architecture.html            # Components and boundaries
 │   │   ├── dataflow.html                # How data moves through the app
-│   │   └── workflow.html                # Runtime workflow and life cycle
+│   │   ├── workflow.html                # Runtime workflow
+│   │   └── lifecycle.html               # Peak status states and transitions
 │   └── screenshots/                     # English UI screenshots (used in README)
 │       ├── README.md                    # Light/dark gallery
 │       ├── light/                       # popup, pricing, settings, timezone-picker

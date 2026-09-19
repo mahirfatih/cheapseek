@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "CheapSeek \u2014 Peak Status Lifecycle",
+    "output": "docs/diagrams/lifecycle.html",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "viewBox": [1080, 630]
+  },
+  "lanes": [
+    { "id": "main", "label": "Peak Status" },
+    { "id": "terminal", "label": "Exits" }
+  ],
+  "states": [
+    { "id": "launch", "type": "start", "label": "Launch", "sublabel": "MenuBarExtra", "lane": "main", "col": 0, "step": "01" },
+    { "id": "ticking", "type": "active", "label": "Clock Tick", "sublabel": "AppModel", "lane": "main", "col": 1, "step": "02" },
+    { "id": "evaluate", "type": "decision", "label": "Peak Window?", "sublabel": "PeakCalculator (UTC)", "lane": "main", "col": 2, "step": "03" },
+    { "id": "peak", "type": "active", "label": "Peak", "sublabel": "flame.fill \u00b7 peak", "lane": "main", "col": 3, "step": "04" },
+    { "id": "offpeak", "type": "success", "label": "Off-Peak", "sublabel": "leaf \u00b7 cheap", "lane": "main", "col": 4, "step": "05" },
+    { "id": "closed", "type": "neutral", "label": "Closed", "sublabel": "app quits", "lane": "terminal", "col": 0, "tag": "terminal" }
+  ],
+  "transitions": [
+    { "id": "launch-ticking", "from": "launch", "to": "ticking", "label": "start ticker", "labelAt": [171, 202] },
+    { "id": "ticking-evaluate", "from": "ticking", "to": "evaluate", "label": "compute status", "labelAt": [325, 202] },
+    { "id": "evaluate-peak", "from": "evaluate", "to": "peak", "label": "inside window", "variant": "emphasis", "labelAt": [479, 202] },
+    { "id": "peak-offpeak", "from": "peak", "to": "offpeak", "label": "off-peak starts", "labelAt": [633, 202] },
+    { "id": "evaluate-closed", "from": "evaluate", "to": "closed", "label": "app quits", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [402, 300] }
+  ],
+  "cards": [
+    { "dot": "emerald", "title": "Status", "items": ["Peak uses flame.fill and peak", "Off-peak uses leaf and cheap", "Symbol and text, never color alone"] },
+    { "dot": "cyan", "title": "History", "items": ["A sample is stored on each change", "Entries are pruned to 7 days", "Gaps are backfilled on launch"] }
+  ]
+}
