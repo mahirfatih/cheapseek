@@ -80,7 +80,8 @@ struct DeepSeekConfig: Codable, Equatable {
         usageURL: "https://platform.deepseek.com/usage",
         weekdayOnly: true,
         offPeakFactor: 0.5,
-        peakWindows: [PeakWindow(startHour: 1, endHour: 4), PeakWindow(startHour: 6, endHour: 10)],
+        // Single source of truth for the default windows (01:00–04:00, 06:00–10:00 UTC, Mon–Fri).
+        peakWindows: PeakSchedule.deepseekDefault.windows,
         models: [
             ModelPricing(
                 id: "deepseek-flash",

@@ -168,6 +168,19 @@ final class HistoryStoreTests: XCTestCase {
         XCTAssertEqual(store.samples, first)
     }
 
+    func testBackfillWithLaterNowAddsOnlyNewTransitions() {
+        let store = HistoryStore(defaults: nil)
+        store.backfill(from: utc(2026, 1, 5, 0), to: utc(2026, 1, 5, 12), schedule: .deepseekDefault)
+        let first = store.samples
+
+        let added = store.backfill(from: utc(2026, 1, 5, 12), to: utc(2026, 1, 5, 18), schedule: .deepseekDefault)
+
+        XCTAssertGreaterThan(added, 0)
+        let timestamps = store.samples.map(\.timestamp)
+        XCTAssertEqual(Set(timestamps).count, timestamps.count, "No duplicate timestamps")
+        XCTAssertTrue(first.allSatisfy { store.samples.contains($0) }, "Existing samples must be retained")
+    }
+
     func testBackfillCapsVeryLongGap() {
         let store = HistoryStore(defaults: nil)
         let now = utc(2026, 2, 2, 0)

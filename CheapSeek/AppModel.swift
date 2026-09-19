@@ -2,6 +2,14 @@ import Foundation
 import Observation
 import Localize_Swift
 
+// History backfill wiring (audit):
+// - `backfillHistory()` is the only caller of `HistoryStore.backfill(...)`.
+// - It runs on launch (`init`) and on a timezone change
+//   (`SettingsView.handleTimeZoneChange` -> `backfillHistory`).
+// - Transitions are computed from `config.schedule`, whose timeZone is UTC, so the
+//   selected display timezone only affects aggregation (`refreshHistory`), not the
+//   transition instants. Backfill and live recording therefore always pass the
+//   same `config.schedule` instance.
 @Observable
 @MainActor
 final class AppModel {
