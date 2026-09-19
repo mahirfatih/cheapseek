@@ -1,4 +1,4 @@
-# CheapSeek — API
+# API Reference
 
 ## No network API
 

@@ -1,4 +1,4 @@
-# CheapSeek — Persistence (Database)
+# Database Schema
 
 CheapSeek has **no database and no network store**. All state is local and lives in `UserDefaults`:
 

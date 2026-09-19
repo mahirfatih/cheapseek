@@ -1,4 +1,4 @@
-# CheapSeek — Release
+# Release Guide
 
 The project is generated from `project.yml` by XcodeGen, so always regenerate before a release build. For local build setup, see [DEVELOPMENT.md](./DEVELOPMENT.md).
 

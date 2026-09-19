@@ -54,6 +54,24 @@
 | R2 | Menu bar label may render monochrome, hiding red/green | Low | High | Accepted | A macOS rendering behavior, not a security issue. Status text remains present in the popup. | Use a shape/emblem indicator if color is required |
 | R3 | Incorrect status if the system clock is wrong | Low | Low | Accepted | Peak logic trusts UTC from the OS; there is no independent time source by design. | Fetch trusted time if an offline-trust requirement emerges |
 
+## Incident Response (condensed playbook)
+
+- **Reset all preferences:** `defaults delete com.labrus.CheapSeek` (then relaunch).
+- **Disable launch at login:** toggle it off in **Settings**, or remove it in **System Settings → General → Login Items**.
+- **Wrong peak status:** verify the system date/time and the selected timezone in Settings (peak windows are always computed in UTC).
+
+## Verification Commands
+
+```bash
+# Unit tests + coverage summary
+./test/test.sh --coverage
+
+# Unit tests only, directly
+xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek \
+  -destination 'platform=macOS' \
+  -only-testing:CheapSeekTests test
+```
+
 ## Security Regression Suite (runs on every build)
 
 `SecurityRegressionTests.swift` — if any check fails, the **build is rejected**:
@@ -76,23 +94,5 @@
 | Localize-Swift pulled from upstream SPM did not build for macOS (iOS-only `import UIKit`) | Medium (A06 / supply chain) | Vendored 3.2.0 locally under `Packages/` — no remote resolution |
 | Settings window could not open on macOS 26 (private `showSettingsWindow:` selector removed) | Low (UX) | Modern `openSettings` action with a macOS 13 selector fallback |
 | Launch-at-login silently failed for ad-hoc signed builds | Low | `SMAppService` errors are caught and surfaced in Settings |
-
-## Incident Response (condensed playbook)
-
-- **Reset all preferences:** `defaults delete com.labrus.CheapSeek` (then relaunch).
-- **Disable launch at login:** toggle it off in **Settings**, or remove it in **System Settings → General → Login Items**.
-- **Wrong peak status:** verify the system date/time and the selected timezone in Settings (peak windows are always computed in UTC).
-
-## Verification Commands
-
-```bash
-# Unit tests + coverage summary
-./test/test.sh --coverage
-
-# Unit tests only, directly
-xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek \
-  -destination 'platform=macOS' \
-  -only-testing:CheapSeekTests test
-```
 
 **Version:** `CFBundleShortVersionString 1.0.0` (`CFBundleVersion 1`), set via `project.yml` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`).

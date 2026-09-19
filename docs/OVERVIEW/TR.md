@@ -6,7 +6,7 @@ CheapSeek, DeepSeek API'sinin şu an **peak** (pahalı) mi yoksa **off-peak** (u
 
 ---
 
-## Temel çalışma prensibi
+## How it works
 
 1. `Clock`, yapılandırılabilir aralıkta (varsayılan **60 sn**) tetiklenir ve geçerli tarihi `AppModel`'e verir.
 2. `AppModel`, saf `PeakCalculator`'a bu anın peak olup olmadığını sorar; UTC takvimi ve yarı-açık pencereler kullanılır (`[01:00,04:00)` ve `[06:00,10:00)`).
@@ -19,7 +19,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 
 ---
 
-## Ekranlar ve işlevleri
+## Screens and features
 
 ### Menü çubuğu
 
@@ -55,7 +55,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 
 ---
 
-## Peak mantığı
+## Peak logic
 
 Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her zaman off-peak'tir.
 
@@ -70,7 +70,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Mimari ve veri katmanı
+## Architecture and data layer
 
 - **Saf çekirdek:** `PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`, `TimeZoneCatalog`, `TimeZoneLabel` — yalnızca Foundation, tamamen birim testli, global durum yok.
 - **Durum:** `AppModel` (`@MainActor`, `@Observable`; yenileme tiki, program, geçmiş) + `AppSettings` (`UserDefaults` kalıcılığı, `SMAppService`) + `Clock` (async ticker) + `HistoryStore` + `NotificationManager`.
@@ -80,7 +80,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Gizlilik ve tasarım
+## Privacy and design
 
 - **%100 cihaz üstü:** analitik, telemetri, ağ çağrısı ve üçüncü taraf çalışma-zamanı SDK'sı yok.
 - Durum yalnızca `UserDefaults`'ta (saat dilimi, bildirim tercihleri, sessiz saatler, güncelleme aralığı, dil, geçmiş örnekleri); `PrivacyInfo.xcprivacy` UserDefaults gerekçe kodunu (`CA92.1`) bildirir.
@@ -89,7 +89,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Bilinen sınırlamalar
+## Known limitations
 
 - **Ad-hoc imza:** proje varsayılan olarak ad-hoc imzalanır; bu nedenle `SMAppService` girişte başlat kaydı, bir Development Team ile imzalanana kadar başarısız olabilir.
 - **Menü çubuğu görünümü:** macOS durum öğesini monokrom template olarak çizebilir; bu yüzden renk yerine kısa metin ve belirgin SF Symbols kullanılır.
@@ -98,7 +98,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Kalite, test ve proje yönetimi
+## Quality, testing, and project management
 
 - **Test:** **214 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **5 UI testi** (açılış, Ayarlar ve saat dilimi seçici assert edilir; menü çubuğu popup'ı best-effort'tur ve macOS durum öğesini açığa çıkarmazsa atlar).
 - **Kapsam:** `CheapSeek.app` satır kapsamı **%96,69**, CI kapısı **≥%95**.

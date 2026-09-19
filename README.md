@@ -128,7 +128,7 @@ System architecture and visual documentation are generated with [Archify](https:
 | **Xcode** | 15.0+ |
 | **Project Generator** | [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`) |
 
-### 2. Configure Settings in App
+### 2. Configure
 
 No hardcoded bundle identifiers or provisioning profiles are required. On launch the app reads saved settings (`AppSettings`), falling back to sensible defaults. In Settings you can change the language, timezone, notifications (alerts, before-peak warning, quiet hours), refresh interval (30–300s), and launch at login.
 
@@ -295,16 +295,6 @@ CheapSeek/
 > **Privacy:** CheapSeek makes **no network requests** and sends **no telemetry or analytics**. All state is stored locally in `UserDefaults` (timezone, notifications preferences, quiet hours, refresh interval, language, and the peak/off-peak history samples). Peak pricing is computed entirely on-device from the current UTC time, and notifications are scheduled locally by macOS.
 
 **Version:** `CFBundleShortVersionString 1.0.0` (`CFBundleVersion 1`), set via `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml`.
-
-### Known limitations
-
-- **Menu bar appearance** — macOS may render the status item as a monochrome template; the indicator therefore uses short text (`cheap`/`peak`) plus distinct SF Symbols (`leaf`/`flame.fill`) instead of color, so it stays readable in light, dark, and template mode. The full status remains visible in the popup.
-- **Launch at login** — depends on a properly signed build (ad-hoc signing may be rejected by `SMAppService`).
-- **UI tests** — menu bar popup interaction is skipped (`XCTSkip`) when macOS does not expose the status item to accessibility.
-- **Notifications** — local alerts are scheduled for the upcoming 7 days and refreshed when notification or timezone settings change; a notification only fires while the app is running or had already scheduled it. Delivery depends on macOS notification permission, and ad-hoc signed dev builds may not show the authorization prompt reliably. Quiet hours suppress alerts whose delivery time falls inside the configured window.
-- **History** — samples are recorded only while the app is running, on state changes; time while the app was closed is backfilled on next launch **and whenever the timezone changes**, using the same peak rules, so the chart stays accurate. The chart therefore becomes more meaningful the longer the app runs.
-- **Countdown units** — the countdown uses short unit suffixes (`h`/`m`/`s`, localized per language) rather than full pluralized phrases, so languages with complex plural rules (e.g. Russian) show a single form. Charting/date math is unaffected.
-- **Pricing/config updates** — model prices and peak windows live in `CheapSeek/Configuration.plist`; update that file when DeepSeek changes its rates. `DeepSeekConfigTests`/`PricingConfigTests` validate the file and fall back to built-in defaults if it is missing or malformed.
 
 ---
 

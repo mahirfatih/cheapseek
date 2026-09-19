@@ -35,6 +35,10 @@
 
 See [docs/TESTING.md](./docs/TESTING.md) for suite details and coverage expectations.
 
+## Capturing Screenshots
+
+`test/capture-screenshots.sh` regenerates `docs/screenshots`.
+
 ## Commit Message Format
 
 Write a **single, concise sentence** describing what the commit does, in the imperative mood:
@@ -70,10 +74,6 @@ Keep one logical change per commit.
 4. Security checks belong in `SecurityRegressionTests.swift` (they assert on `project.yml` and app sources).
 5. Run `xcodegen generate` so the new file is added to the project (XcodeGen syncs the target folders).
 
-## Dependency Notes
-
-The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/Localize-Swift` and wired in `project.yml` as a local package. Upstream's SPM target is iOS-only (it imports `UIKit` unconditionally in `Sources/UI`), so it cannot build for macOS as-is — do not switch it back to the remote URL without verifying macOS support.
-
 ## Key Files Reference
 
 | File | Purpose |
@@ -102,3 +102,7 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 - Regenerates the project with `xcodegen`, builds, then runs the **unit tests** with coverage.
 - Enforces a coverage gate (`CheapSeek.app` ≥ 95%).
 - UI tests are **not** run in CI (macOS XCUITest needs an interactive GUI session); run them locally with `./test/test.sh --ui`.
+
+## Dependency Notes
+
+The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/Localize-Swift` and wired in `project.yml` as a local package. Upstream's SPM target is iOS-only (it imports `UIKit` unconditionally in `Sources/UI`), so it cannot build for macOS as-is — do not switch it back to the remote URL without verifying macOS support.

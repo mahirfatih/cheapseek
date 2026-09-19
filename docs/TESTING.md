@@ -94,7 +94,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `testA06_noRemotePackageDependencies` | The app target has no remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
 | `testLocalizations_allLanguagesPresent` | All 17 `.lproj` packs exist |
 
-## UI Tests (`CheapSeekUITests`, XCUITest)
+## UI Tests
 
 Runs against the real app (`-UITestMode 1`, which disables real notification scheduling and
 launch-at-login registration) and asserts via accessibility identifiers. Run locally with
@@ -145,7 +145,9 @@ reason in the skip message. The other four tests assert without relying on the s
 - **History chart rendering:** the SwiftUI `Charts` view is not snapshot-tested; all date math is covered by `HistoryAggregatorTests` and the chart is verified manually.
 - **SwiftUI snapshot tests:** SwiftUI previews + manual visual verification were deemed sufficient.
 
-## Coverage Expectations
+## Coverage
+
+### Coverage Expectations
 
 | Module | Target Coverage |
 | :--- | :--- |
@@ -160,7 +162,7 @@ reason in the skip message. The other four tests assert without relying on the s
 | `Clock.swift` | **70%+** |
 | SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
 
-## Measured Coverage (2026-09-18, local macOS run)
+### Measured Coverage (2026-09-18, local macOS run)
 
 `CheapSeek.app` line coverage: **96.69%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, the UI-test-only window bootstrap, and system boundaries; see "Excluded from coverage")
 
@@ -191,7 +193,7 @@ reason in the skip message. The other four tests assert without relying on the s
 
 *Re-measure with `./test/test.sh --coverage`.*
 
-## Excluded from coverage
+### Excluded from coverage
 
 Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99% and the target to **97.70%**.
 

@@ -1,4 +1,4 @@
-# CheapSeek — Development
+# Development Guide
 
 How to build, run, and work on CheapSeek locally. For shipping a build, see [RELEASE.md](./RELEASE.md).
 
@@ -31,6 +31,31 @@ Key points in `project.yml`:
 - Unit test target `CheapSeekTests` and UI test target `CheapSeekUITests`; the scheme `CheapSeek` builds and tests all three.
 - The only runtime dependency, **Localize-Swift 3.2.0**, is vendored under `Packages/Localize-Swift` as a local package (the upstream SPM target is iOS-only). `ViewInspector` is a test-only dependency.
 - `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` are defined here — bump them with [`scripts/bump-version.sh`](../scripts/bump-version.sh).
+
+---
+
+## Signing
+
+Distributable builds must be signed with a **Developer ID Application** certificate (direct download) or an **Apple Distribution** certificate (Mac App Store); local builds are ad-hoc signed by default. The signing and launch-at-login details are covered under **Code signing & launch at login** below.
+
+---
+
+## Local verification
+
+Run the same plan as CI before pushing:
+
+```bash
+./test/test.sh --coverage
+swiftlint lint --strict
+```
+
+See **Tooling** below for the full command table and [TESTING.md](./TESTING.md) for suite details.
+
+---
+
+## Release
+
+Bump the version with [`scripts/bump-version.sh`](../scripts/bump-version.sh), regenerate with `xcodegen generate`, then archive, sign, notarize, and distribute — see [RELEASE.md](./RELEASE.md) for the full checklist.
 
 ---
 
