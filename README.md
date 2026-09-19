@@ -8,13 +8,17 @@
 ![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
-> Never pay peak prices for DeepSeek API again.
-
-**CheapSeek** is a tiny macOS menu bar app that tells you, at a glance, whether the DeepSeek API is currently in **peak** (expensive) or **off-peak** (cheap) pricing.
-
-When it's cheap, you code. When it's expensive, you wait. Simple.
+**CheapSeek** is a tiny macOS menu bar app that tells you, at a glance, whether the DeepSeek API is currently in **peak** (expensive) or **off-peak** (cheap) pricing — never pay peak prices again. When it's cheap, you code; when it's expensive, you wait.
 
 > **DEV MODE:** The project is currently **ad-hoc signed** (`CODE_SIGN_IDENTITY: "-"` in `project.yml`). Because of this, `SMAppService` launch-at-login may fail to register, and macOS may print harmless `com.apple.linkd.autoShortcut` connection messages at launch. Sign with a Development Team for properly signed builds.
+
+---
+
+## 📖 Overview
+
+CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar signal: a live status, today's schedule, a countdown to the next change, local notifications, and a 7-day history chart — computed entirely on-device from UTC rules, with 17 languages. Read the full walkthrough (how it works, the screens, the peak rules, the data layer, and the known limitations):
+
+**[English →](./docs/OVERVIEW/EN.md) · [Türkçe →](./docs/OVERVIEW/TR.md)**
 
 ---
 
@@ -52,19 +56,6 @@ When it's cheap, you code. When it's expensive, you wait. Simple.
 
 ---
 
-## 📸 Screenshots
-
-All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
-
-| | Light | Dark |
-| :--- | :---: | :---: |
-| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup (dark)"></a> |
-| **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
-| **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
-| **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
-
----
-
 ## 🆕 What's new
 
 - **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
@@ -75,6 +66,19 @@ All screenshots use the English UI with a sample timezone (`America/Los_Angeles`
 - **Grouped settings layout** — macOS System Settings–style sections with comfortable spacing.
 - **Live language switching** — the popup, settings, menu bar, and pending notifications update instantly, no relaunch.
 - **17 languages**, no tracking, and no network calls.
+
+---
+
+## 📸 Screenshots
+
+All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
+
+| | Light | Dark |
+| :--- | :---: | :---: |
+| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup (dark)"></a> |
+| **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
+| **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
+| **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
 
 ---
 
@@ -273,13 +277,16 @@ CheapSeek/
 │   ├── TimeZoneLabelTests.swift         # Pretty names, offsets, and DST
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
-│   └── CheapSeekUITests.swift           # App launch + best-effort menu bar checks
+│   └── CheapSeekUITests.swift           # Launch, settings, timezone picker; popup best-effort
 ├── test/test.sh                         # Test runner (xcodegen + xcodebuild test)
 ├── test/TestResults/                    # .xcresult bundles (gitignored; .empty keeps the dir)
 ├── .github/workflows/ci.yml             # CI: generate, build, unit tests + coverage gate
 ├── TESTING.md                           # Test strategy, runner, UI tests, coverage
 ├── SECURITY.md                          # OWASP/MASVS security & privacy report
 ├── CONTRIBUTING.md                      # Setup, testing, commit conventions
+├── docs/OVERVIEW/                       # Detailed project overview
+│   ├── EN.md                            # Overview (English)
+│   └── TR.md                            # Genel bakış (Türkçe)
 ├── docs/diagrams/                       # Archify diagrams (interactive HTML + JSON)
 │   ├── cheapseek-architecture.html      # Components and boundaries
 │   ├── cheapseek-dataflow.html          # How data moves through the app
@@ -311,12 +318,18 @@ CheapSeek/
 
 ## Documentation & Architecture
 
+### Overview
+A detailed walkthrough of what CheapSeek does and how it works: [`docs/OVERVIEW/EN.md`](./docs/OVERVIEW/EN.md) (English) · [`docs/OVERVIEW/TR.md`](./docs/OVERVIEW/TR.md) (Türkçe).
+
 ### Architecture Diagrams (Archify)
 System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
 
 - **Architecture:** [`cheapseek-architecture.html`](./docs/diagrams/cheapseek-architecture.html) — component relationships and system structure
 - **Data-Flow:** [`cheapseek-dataflow.html`](./docs/diagrams/cheapseek-dataflow.html) — how data moves through the app
 - **Workflow & Lifecycle:** [`cheapseek-workflow.html`](./docs/diagrams/cheapseek-workflow.html) — runtime workflow and life cycle
+
+### Screenshots
+Light and dark English UI screenshots live in [`docs/screenshots/`](./docs/screenshots) (embedded in the [Screenshots](#-screenshots) section above).
 
 ### Project Documentation
 - [TESTING.md](./TESTING.md) — test suites, runner, UI tests, and coverage.
