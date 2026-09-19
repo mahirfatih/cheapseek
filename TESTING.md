@@ -31,7 +31,7 @@ xcodebuild -project CheapSeek.xcodeproj \
         ┌─────────┐
         │  Manual │  Menu bar rendering, Settings interactions, SMAppService
         ├─────────┤
-        │   UI    │  CheapSeekUITests (app launch; menu bar popup best-effort)
+        │   UI    │  CheapSeekUITests (launch, settings, timezone picker; popup best-effort)
         ├─────────┤
         │  Unit   │  PeakCalculatorTests, CountdownFormatterTests,
         │         │  AppSettingsTests, AppModelTests, MenuBarLabelTests,
@@ -96,15 +96,23 @@ xcodebuild -project CheapSeek.xcodeproj \
 
 ## UI Tests (`CheapSeekUITests`, XCUITest)
 
-Runs against the real app and covers:
+Runs against the real app (`-UITestMode 1`, which disables real notification scheduling and
+launch-at-login registration) and asserts via accessibility identifiers. Run locally with
+`./test/test.sh --ui`.
 
-- `testAppLaunches` — launches the app and asserts it is running.
-- `testStatusItemOpensPopup` — locates the menu bar status item, clicks it, and asserts the popup title appears.
-- `testSettingsControlsWhenPopupOpen` — opens the popup, clicks **Settings**, and asserts the Settings controls.
+| Test | Result | What it checks |
+| :--- | :--- | :--- |
+| `testAppLaunches` | **assert** | The app is running after launch. |
+| `testSettingsOpensAndListsLanguages` | **assert** | Settings opens via the app menu; `settings.language` lists exactly 17 languages. |
+| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover, and the search field filters to Tokyo. |
+| `testQuitMenuItemExists` | **assert** | The app menu exposes a Quit item. |
+| `testPopupOpensAndShowsStatus` | **assert / skip** | Opens the `MenuBarExtra` popup via the status item and checks `popup.status`; `XCTSkip` when macOS does not expose the status item. |
 
-macOS does not reliably expose third-party menu bar (``MenuBarExtra`) status items to the accessibility tree, and the `.window` popup is not always reachable. When the status item or popup cannot be found, the affected tests **skip (`XCTSkip`)** instead of failing, so the suite stays green while documenting the limitation. `testAppLaunches` is always deterministic.
-
-UI tests are intended to run **locally**; see CI below.
+macOS 14.x does not reliably expose third-party `MenuBarExtra` status items to the accessibility
+tree, and there is no public API to open the popup programmatically, so **only
+`testPopupOpensAndShowsStatus` may skip** — with the exact `operatingSystemVersionString` and
+reason in the skip message. The other four tests assert without relying on the status item
+(Settings opens through the app menu). UI tests are intended to run **locally**; see CI below.
 
 ## CI
 
@@ -130,7 +138,7 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Deliberately Out of Scope
 
-- **Menu bar (`MenuBarExtra`) UI automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS — covered by `XCTSkip` and manual verification.
+- **Menu bar (`MenuBarExtra`) popup automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS 14.x — only `testPopupOpensAndShowsStatus` skips (with the OS version + reason); app launch, Settings, the timezone picker, and Quit are asserted instead.
 - **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
 - **Menu bar tint rendering:** macOS may render the label as a monochrome template, so the app intentionally avoids color and uses `leaf`/`flame.fill` plus text; visual appearance is verified manually.
 - **Notification delivery:** authorization prompts and actual banner delivery depend on a signed app and user approval; `NotificationManager` is tested through a mock client, while real delivery is verified manually.
@@ -154,14 +162,14 @@ UI tests are intended to run **locally**; see CI below.
 
 ## Measured Coverage (2026-09-18, local macOS run)
 
-`CheapSeek.app` line coverage: **97.70%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, and system boundaries; see "Excluded from coverage")
+`CheapSeek.app` line coverage: **96.69%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, the UI-test-only window bootstrap, and system boundaries; see "Excluded from coverage")
 
 | File | Line Coverage |
 | :--- | :--- |
 | `AppLanguage.swift` | **100.00%** |
 | `AppModel.swift` | **100.00%** |
 | `AppSettings.swift` | **100.00%** |
-| `CheapSeekApp.swift` | **100.00%** |
+| `CheapSeekApp.swift` | 56.52% (`@main`/scene glue + UI-test-only window bootstrap) |
 | `Clock.swift` | **100.00%** |
 | `CountdownFormatter.swift` | **100.00%** |
 | `DeepSeekConfig.swift` | **100.00%** |
@@ -193,7 +201,7 @@ The remaining `CheapSeek.app` lines are excluded by design (the gate is set to t
 - **Property-wrapper attribution** — `@State`/`@Environment` storage initializers are sometimes reported as uncovered even though the view is constructed and rendered.
 - **Dead fallback** — `PricingInfoView`'s `fallbackWindowText` requires `Calendar.date(from:)` to fail, which does not happen for valid windows.
 - **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned.
-- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring and `PopupHost`'s environment read are entry-point glue.
+- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the `-UITestSettings` window bootstrap, `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
 
 `xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files (e.g. `TimeZoneCatalog`, `PeakCalculator`) report 93–96% despite every branch having a test.
 

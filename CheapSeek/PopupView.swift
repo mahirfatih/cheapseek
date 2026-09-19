@@ -54,6 +54,7 @@ struct PopupView: View {
             }
         }
         .id(model.languageRevision)
+        .accessibilityIdentifier("popup.root")
     }
 
     private var statusContent: some View {
@@ -100,6 +101,7 @@ struct PopupStatusBody: View {
                 .foregroundStyle(.secondary)
 
             PeakStatusBadge(status: currentStatus)
+                .accessibilityIdentifier("popup.status")
 
             HStack {
                 Text("now_label".localized())
@@ -148,6 +150,7 @@ struct PopupStatusBody: View {
             }
             .font(.subheadline)
             .accessibilityElement(children: .combine)
+            .accessibilityIdentifier("popup.countdown")
         }
     }
 
@@ -237,6 +240,7 @@ struct PopupHistorySection: View {
                     .foregroundStyle(.secondary)
             }
         }
+        .accessibilityIdentifier("popup.history.toggle")
     }
 }
 
