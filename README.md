@@ -97,10 +97,12 @@ graph TD
     Picker -->|"uses"| Zone
     Settings -->|"setCurrentLanguage"| L10n
     Model -->|"isPeak · schedule"| Core
+    Model -->|"isPeak"| Label["MenuBarLabel<br/>leaf / flame"]
     Model -->|"timeZone · interval"| Config
     Model -->|"plan · schedule"| Notify
     Model -->|"samples"| History
-    History -->|"chart"| Popup
+    History -->|"daily totals"| Chart["HistoryChartView<br/>Swift Charts"]
+    Chart -->|"chart"| Popup
     History -->|"persist"| Store["UserDefaults"]
     Config -->|"persist"| Store["UserDefaults"]
     Config -->|"register"| SM["SMAppService"]
