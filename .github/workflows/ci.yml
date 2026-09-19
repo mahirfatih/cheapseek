@@ -1,9 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+  # Manual-only: run from the Actions tab or `gh workflow run ci.yml`.
   workflow_dispatch:
 
 jobs:
