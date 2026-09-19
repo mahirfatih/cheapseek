@@ -102,7 +102,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 - **Test:** **214 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **5 UI testi** (açılış, Ayarlar ve saat dilimi seçici assert edilir; menü çubuğu popup'ı best-effort'tur ve macOS durum öğesini açığa çıkarmazsa atlar).
 - **Kapsam:** `CheapSeek.app` satır kapsamı **%96,69**, CI kapısı **≥%95**.
-- **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
+- **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — SwiftLint (`--strict`) işi, `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
 - **Proje yönetimi:** `project.yml` (XcodeGen) tek doğruluk kaynağı; doküman/asset `docs/diagrams/` (Archify) ve `docs/screenshots/` altında.
 - **Sürüm:** `project.yml`'de `MARKETING_VERSION` artırılır; uygulama arşivlenir, imzalanır, dışa aktarılır, notarize edilir, staple'lanır ve dağıtım için paketlenir.
 

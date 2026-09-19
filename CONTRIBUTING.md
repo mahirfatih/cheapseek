@@ -33,7 +33,7 @@
 | `--results-dir <dir>` | Override the `.xcresult` output directory |
 | `--logs-dir <dir>` | Override the raw log output directory |
 
-See [TESTING.md](./TESTING.md) for suite details and coverage expectations.
+See [docs/TESTING.md](./docs/TESTING.md) for suite details and coverage expectations.
 
 ## Commit Message Format
 
@@ -87,15 +87,18 @@ The only dependency, **Localize-Swift 3.2.0**, is **vendored** under `Packages/L
 | `CheapSeekTests/` | XCTest suite (unit + security regression + config) |
 | `CheapSeekUITests/` | XCUITest suite (launch + best-effort menu bar checks) |
 | `test/test.sh` | Single test runner script |
-| `.github/workflows/ci.yml` | CI workflow (build + unit tests + coverage gate) |
+| `.github/workflows/ci.yml` | CI workflow (lint + build + unit tests + coverage gate) |
+| `.swiftlint.yml` | SwiftLint configuration (run with `--strict`) |
 | `README.md` | Installation, features, architecture |
-| `TESTING.md` | Detailed test strategy and coverage |
+| `docs/TESTING.md` | Detailed test strategy and coverage |
+| `docs/DEVELOPMENT.md` | Local setup, project generation, and tooling |
 | `SECURITY.md` | OWASP/MASVS security report |
 
 ## CI
 
-`.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
+`.github/workflows/ci.yml` (`macos-latest`, **manual dispatch only**):
 
+- Runs SwiftLint (`swiftlint lint --strict`) as a separate `lint` job.
 - Regenerates the project with `xcodegen`, builds, then runs the **unit tests** with coverage.
-- Enforces a coverage gate (`CheapSeek.app` ≥ 25%).
+- Enforces a coverage gate (`CheapSeek.app` ≥ 95%).
 - UI tests are **not** run in CI (macOS XCUITest needs an interactive GUI session); run them locally with `./test/test.sh --ui`.

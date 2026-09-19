@@ -56,19 +56,6 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 
 ---
 
-## 🆕 What's new
-
-- **Text-based menu bar indicator** — `leaf` + `cheap` / `flame.fill` + `peak` replaces the color-only icon, so the status stays readable in light, dark, and monochrome template mode.
-- **Local peak/off-peak notifications** — an optional warning before peak, an off-peak-start alert, and quiet hours, scheduled entirely on-device.
-- **7-day history chart** — a collapsible stacked-bar chart of daily peak vs. off-peak minutes in the popup.
-- **Accurate 7-day history** — gaps while the app was closed are backfilled on launch and on a timezone change.
-- **Searchable timezone picker** — every IANA zone grouped by region, with instant search and live UTC offsets.
-- **Grouped settings layout** — macOS System Settings–style sections with comfortable spacing.
-- **Live language switching** — the popup, settings, menu bar, and pending notifications update instantly, no relaunch.
-- **17 languages**, no tracking, and no network calls.
-
----
-
 ## 📸 Screenshots
 
 All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
@@ -121,15 +108,13 @@ graph TD
     L10n -->|"localized()"| Settings
 ```
 
-### Data Flow Summary
+### Architecture Diagrams (Archify)
 
-1. **Refresh tick** — `AppModel` runs an async `Clock` tick at the configured interval (default 60s) and computes `isPeak` + today's schedule via `PeakCalculator` (UTC).
-2. **Menu bar update** — the observable `isPeak` drives the label: `leaf` + `cheap` when off-peak, `flame.fill` + `peak` when peak — short text and a neutral symbol instead of color, so it stays readable in light, dark, and monochrome template mode.
-3. **Popup render** — `PopupView` wraps content in a 1s `TimelineView`; each second it recomputes the next transition and the countdown via `CountdownFormatter`.
-4. **Settings change** — `SettingsView` writes `AppSettings` (UserDefaults); timezone/interval updates propagate to `AppModel` through the Observation framework, and the views re-render live.
-5. **Launch at login** — toggled via `SMAppService.mainApp` (`register()` / `unregister()`).
-6. **Notifications** — on launch and on any notification/timezone setting change, `AppModel` asks `NotificationPlanner` for the upcoming transitions over a 7-day horizon; `NotificationManager` cancels pending requests and re-schedules them as local notifications, skipping quiet hours. If permission is denied it clears pending requests and the Settings screen points the user to System Settings.
-7. **History** — `Clock` calls back on every tick; `AppModel` records the current state through `HistoryStore` only when it changes (one JSON blob in `UserDefaults`, pruned to 7 days with a boundary anchor). `HistoryAggregator` turns the samples into per-day peak/off-peak minutes, and `HistoryChartView` renders them for the selected timezone.
+System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
+
+- **Architecture:** [`architecture.html`](./docs/diagrams/architecture.html) — component relationships and system structure
+- **Data-Flow:** [`dataflow.html`](./docs/diagrams/dataflow.html) — how data moves through the app
+- **Workflow & Lifecycle:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow and life cycle
 
 ---
 
@@ -145,69 +130,20 @@ graph TD
 
 ### 2. Configure Settings in App
 
-No hardcoded bundle identifiers or provisioning profiles are required. On launch the app reads saved settings (`AppSettings`); if none, it uses sensible defaults. In Settings you can change:
-
-1. **Language** — defaults to the system language; if unsupported, falls back to English. Changes apply instantly (no relaunch).
-2. **Timezone** — defaults to the system timezone; pick any IANA identifier.
-3. **Notifications** — enable peak/off-peak alerts, a warning before peak, transition alerts, and quiet hours.
-4. **Refresh interval** — 30–300s (default 60s).
-5. **Launch at login** — via `SMAppService`.
+No hardcoded bundle identifiers or provisioning profiles are required. On launch the app reads saved settings (`AppSettings`), falling back to sensible defaults. In Settings you can change the language, timezone, notifications (alerts, before-peak warning, quiet hours), refresh interval (30–300s), and launch at login.
 
 ### 3. Run & Build
 
-1. Generate the project first: `xcodegen generate` (`project.yml` is canonical — never edit the `.xcodeproj` by hand).
-2. Open `CheapSeek.xcodeproj` in Xcode.
-3. Press `Cmd + R` to build and run.
-
-> **Note on code signing:** Local builds are ad-hoc signed. `SMAppService` launch-at-login can fail until the app is signed with a Development Team (and, for distribution, notarized). See the **DEV MODE** note at the top.
-
----
-
-## 📦 Building a Release
-
-The project is generated from `project.yml` by XcodeGen, so always regenerate before a release build.
-
-> **Signing prerequisite:** A distributable build must be signed with a **Developer ID Application** certificate (direct download) or an **Apple Distribution** certificate (Mac App Store). For local builds, set `DEVELOPMENT_TEAM` in `project.yml` first — see the **DEV MODE** note at the top.
-
-### 1. Generate the project
-
 ```bash
 xcodegen generate
+open CheapSeek.xcodeproj
 ```
 
-### 2. Build the Release app
+Press `Cmd + R` to build and run. `project.yml` is canonical — never edit the `.xcodeproj` by hand.
 
-```bash
-xcodebuild build -project CheapSeek.xcodeproj -scheme CheapSeek \
-  -configuration Release -derivedDataPath build
-```
+> **Note on code signing:** Local builds are ad-hoc signed, so `SMAppService` launch-at-login can fail until the app is signed with a Development Team. See the **DEV MODE** note at the top.
 
-The app is produced at `build/Build/Products/Release/CheapSeek.app`; drag it into `/Applications` to run it.
-
-### 3. Archive
-
-```bash
-xcodebuild archive -project CheapSeek.xcodeproj -scheme CheapSeek \
-  -configuration Release -archivePath build/CheapSeek.xcarchive
-```
-
-This creates `build/CheapSeek.xcarchive` (the app is under `Products/Applications/`).
-
-### 4. Distribute
-
-- **Direct download (outside the App Store):** export with the Developer ID method, then notarize and staple:
-
-  > `ExportOptions.plist` is **not** committed — create it with `method: developer-id` and your `teamID` before exporting.
-
-  ```bash
-  xcodebuild -exportArchive -archivePath build/CheapSeek.xcarchive \
-    -exportOptionsPlist ExportOptions.plist -exportPath build/export
-  ditto -c -k --keepParent build/export/CheapSeek.app build/CheapSeek.zip
-  xcrun notarytool submit build/CheapSeek.zip --keychain-profile "notary" --wait
-  xcrun stapler staple build/export/CheapSeek.app
-  ```
-
-- **Mac App Store / macOS TestFlight:** export the archive with `method: app-store` and upload via Xcode Organizer or Transporter.
+Deep build/tooling detail lives in [docs/DEVELOPMENT.md](./docs/DEVELOPMENT.md); shipping steps are in [docs/RELEASE.md](./docs/RELEASE.md).
 
 ---
 
@@ -216,7 +152,7 @@ This creates `build/CheapSeek.xcarchive` (the app is under `Products/Application
 ```
 CheapSeek/
 ├── project.yml                          # XcodeGen declarative project spec (single source of truth)
-├── CheapSeek.xcodeproj/                # Generated project (do not edit by hand)
+├── CheapSeek.xcodeproj/                 # Generated project (do not edit by hand)
 ├── CheapSeek/                           # Main app target
 │   ├── CheapSeekApp.swift               # @main entry: MenuBarExtra + Settings scene
 │   ├── AppModel.swift                   # @Observable: peak status, schedule, clock-driven updates
@@ -275,25 +211,40 @@ CheapSeek/
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
 │   ├── TimeZoneCatalogTests.swift       # Grouping, offsets, and search filtering
 │   ├── TimeZoneLabelTests.swift         # Pretty names, offsets, and DST
+│   ├── ScreenshotCaptureTests.swift     # Offscreen light/dark PNG rendering (gated)
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
 │   └── CheapSeekUITests.swift           # Launch, settings, timezone picker; popup best-effort
-├── test/test.sh                         # Test runner (xcodegen + xcodebuild test)
-├── test/TestResults/                    # .xcresult bundles (gitignored; .empty keeps the dir)
-├── .github/workflows/ci.yml             # CI: generate, build, unit tests + coverage gate
-├── TESTING.md                           # Test strategy, runner, UI tests, coverage
+├── scripts/
+│   └── bump-version.sh                  # Bump MARKETING_VERSION / CURRENT_PROJECT_VERSION
+├── test/
+│   ├── test.sh                          # Test runner (xcodegen + xcodebuild test)
+│   ├── capture-screenshots.sh           # Render the light/dark screenshots
+│   └── TestResults/                     # .xcresult bundles (gitignored; .empty keeps the dir)
+├── .github/workflows/ci.yml             # CI: lint + generate, build, unit tests, coverage gate
+├── .swiftlint.yml                       # SwiftLint configuration (strict in CI)
+├── .editorconfig                        # Editor defaults
+├── .gitignore                           # Ignored build artifacts and results
+├── CHANGELOG.md                         # Keep a Changelog release notes
 ├── SECURITY.md                          # OWASP/MASVS security & privacy report
 ├── CONTRIBUTING.md                      # Setup, testing, commit conventions
-├── docs/OVERVIEW/                       # Detailed project overview
-│   ├── EN.md                            # Overview (English)
-│   └── TR.md                            # Genel bakış (Türkçe)
-├── docs/diagrams/                       # Archify diagrams (interactive HTML + JSON)
-│   ├── architecture.html                # Components and boundaries
-│   ├── dataflow.html                    # How data moves through the app
-│   └── workflow.html                    # Runtime workflow and life cycle
-├── docs/screenshots/                    # English UI screenshots (used in README)
-│   ├── light/                           # popup, pricing, settings, timezone-picker
-│   └── dark/                            # popup, pricing, settings, timezone-picker
+├── docs/                                # Deep/dependent documentation
+│   ├── OVERVIEW/                        # Detailed project overview
+│   │   ├── EN.md                        # Overview (English)
+│   │   └── TR.md                        # Genel bakış (Türkçe)
+│   ├── TESTING.md                       # Test strategy, runner, UI tests, coverage
+│   ├── DEVELOPMENT.md                   # Local setup, project generation, tooling
+│   ├── DATABASE.md                      # UserDefaults settings + history persistence
+│   ├── API.md                           # No network API; bundled config & links
+│   ├── RELEASE.md                       # Sign, archive, notarize, distribute
+│   ├── diagrams/                        # Archify diagrams (interactive HTML + JSON)
+│   │   ├── architecture.html            # Components and boundaries
+│   │   ├── dataflow.html                # How data moves through the app
+│   │   └── workflow.html                # Runtime workflow and life cycle
+│   └── screenshots/                     # English UI screenshots (used in README)
+│       ├── README.md                    # Light/dark gallery
+│       ├── light/                       # popup, pricing, settings, timezone-picker
+│       └── dark/                        # popup, pricing, settings, timezone-picker
 ├── README.md
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
@@ -311,31 +262,21 @@ CheapSeek/
 ```
 
 - Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
-
 - Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10) — **214 unit tests**, plus `CheapSeekUITests` (launch, settings, timezone picker; popup best-effort).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **coverage gate** (`CheapSeek.app` ≥ 95%). UI tests are local-only (macOS XCUITest needs an interactive session).
-- Details: [TESTING.md](./TESTING.md) · Security: [SECURITY.md](./SECURITY.md) · Contributing: [CONTRIBUTING.md](./CONTRIBUTING.md).
+- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **coverage gate** (`CheapSeek.app` ≥ 95%). UI tests are local-only (macOS XCUITest needs an interactive session).
 
 ---
 
-## Documentation & Architecture
-
-### Overview
-A detailed walkthrough of what CheapSeek does and how it works: [`docs/OVERVIEW/EN.md`](./docs/OVERVIEW/EN.md) (English) · [`docs/OVERVIEW/TR.md`](./docs/OVERVIEW/TR.md) (Türkçe).
-
-### Architecture Diagrams (Archify)
-System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
-
-- **Architecture:** [`architecture.html`](./docs/diagrams/architecture.html) — component relationships and system structure
-- **Data-Flow:** [`dataflow.html`](./docs/diagrams/dataflow.html) — how data moves through the app
-- **Workflow & Lifecycle:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow and life cycle
-
-### Screenshots
-Light and dark English UI screenshots live in [`docs/screenshots/`](./docs/screenshots) (embedded in the [Screenshots](#-screenshots) section above).
+## 📚 Documentation
 
 ### Project Documentation
-- [TESTING.md](./TESTING.md) — test suites, runner, UI tests, and coverage.
+
+- [TESTING.md](./docs/TESTING.md) — test suites, runner, UI tests, and coverage.
+- [DEVELOPMENT.md](./docs/DEVELOPMENT.md) — local setup, project generation, and tooling.
+- [DATABASE.md](./docs/DATABASE.md) — UserDefaults settings and history persistence.
+- [API.md](./docs/API.md) — no network API; bundled configuration and external links.
+- [RELEASE.md](./docs/RELEASE.md) — signing, archiving, notarizing, and distribution.
 - [SECURITY.md](./SECURITY.md) — OWASP Top 10, MASVS, threat model, and privacy posture.
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — development setup, tests, and commit conventions.
 
