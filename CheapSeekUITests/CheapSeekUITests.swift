@@ -104,6 +104,10 @@ final class CheapSeekUITests: XCTestCase {
             )
         }
         XCTAssertTrue(badge.exists, "Popup status badge should be visible")
+        XCTAssertFalse(
+            badge.label.isEmpty,
+            "Popup status badge should expose its live peak/off-peak status text"
+        )
     }
 
     // MARK: - Helpers

@@ -92,7 +92,7 @@ struct PopupStatusBody: View {
         let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
         let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
         let targetStatus = PeakStatus(isPeak: targetIsPeak)
-        let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
+        let currentStatus = self.currentStatus
         let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
 
         return VStack(alignment: .leading, spacing: Spacing.md) {
@@ -152,6 +152,12 @@ struct PopupStatusBody: View {
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("popup.countdown")
         }
+    }
+
+    /// The live peak/off-peak status at `now`; exposed so tests can assert the
+    /// popup's status for a fixed instant without re-deriving the peak rules.
+    var currentStatus: PeakStatus {
+        PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
     }
 
     var locale: Locale {
