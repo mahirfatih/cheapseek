@@ -4,6 +4,8 @@ The project is generated from `project.yml` by XcodeGen, so always regenerate be
 
 > **Signing prerequisite:** A distributable build must be signed with a **Developer ID Application** certificate (direct download) or an **Apple Distribution** certificate (Mac App Store). For local builds, set `DEVELOPMENT_TEAM` in `project.yml` first.
 
+> **Unsigned artifact:** `.github/workflows/release.yml` (manual `workflow_dispatch` only) builds an **unsigned** Release app (`CODE_SIGNING_ALLOWED=NO`) and uploads it as the `cheapseek-unsigned` artifact. Developer ID signing, notarization, and App Store submission remain **manual** steps.
+
 ---
 
 ## 1. Bump the version

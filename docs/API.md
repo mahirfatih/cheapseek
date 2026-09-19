@@ -1,4 +1,6 @@
-# API Reference
+# Interfaces & Integrations
+
+> No network API. This documents local system integrations and bundled configuration.
 
 ## No network API
 

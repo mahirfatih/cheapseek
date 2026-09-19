@@ -1,0 +1,33 @@
+name: Release
+
+on:
+  # Manual-only: run from the Actions tab or `gh workflow run release.yml`.
+  workflow_dispatch:
+
+jobs:
+  build-unsigned:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate project
+        run: xcodegen generate
+
+      - name: Build (unsigned Release)
+        run: >
+          xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek
+          -configuration Release -destination 'platform=macOS'
+          -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+
+      - name: Zip the unsigned app
+        run: ditto -c -k --keepParent build/Build/Products/Release/CheapSeek.app build/CheapSeek-unsigned.zip
+
+      - name: Upload the unsigned artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cheapseek-unsigned
+          path: build/CheapSeek-unsigned.zip
+          if-no-files-found: error

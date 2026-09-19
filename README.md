@@ -278,8 +278,8 @@ CheapSeek/
 
 - [TESTING.md](./docs/TESTING.md) — test suites, runner, UI tests, and coverage.
 - [DEVELOPMENT.md](./docs/DEVELOPMENT.md) — local setup, project generation, and tooling.
-- [DATABASE.md](./docs/DATABASE.md) — UserDefaults settings and history persistence.
-- [API.md](./docs/API.md) — no network API; bundled configuration and external links.
+- [DATABASE.md](./docs/DATABASE.md) — data and persistence.
+- [API.md](./docs/API.md) — interfaces and integrations.
 - [RELEASE.md](./docs/RELEASE.md) — signing, archiving, notarizing, and distribution.
 - [SECURITY.md](./SECURITY.md) — OWASP Top 10, MASVS, threat model, and privacy posture.
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — development setup, tests, and commit conventions.
