@@ -39,7 +39,8 @@ xcodebuild -project CheapSeek.xcodeproj \
         │         │  HistoryAggregatorTests, HistoryStoreTests,
         │         │  LocalizationTests, PricingConfigTests,
         │         │  TimeZoneCatalogTests, TimeZoneLabelTests,
-        │         │  SecurityRegressionTests
+        │         │  SecurityRegressionTests,
+        │         │  ScreenshotCaptureTests (gated/skipped by default)
         └─────────┘
 ```
 
@@ -71,6 +72,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `HistoryChartViewTests` (4) | Empty state, chart properties, single/7-day rendering. | ViewInspector |
 | `HistoryChartViewRenderTests` (2) | Offscreen `ImageRenderer` executes the `Chart`/`AxisMarks` builders. | `ImageRenderer` |
 | `ViewRenderTests` (15) | Offscreen `ImageRenderer` renders every view + variant; button taps and binding writes. | `ImageRenderer` + ViewInspector |
+| `ScreenshotCaptureTests` (1) | Offscreen light/dark PNG rendering of the popup, pricing, settings, and timezone picker. **Skipped by default** (`XCTSkipUnless`) and only runs with `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` (see `test/capture-screenshots.sh`). | `ImageRenderer` + process environment |
 | `SystemUserNotificationCenterAdapterTests` (1) | Exercises the real `UNUserNotificationCenter` adapter with bounded waits. | Real system API — excluded from the CI job via `-skip-testing` |
 | `SystemLoginItemServiceTests` (1) | Exercises the real `SMAppService` wrapper with cleanup. | Real system API — excluded from the CI job via `-skip-testing` |
 | `SecurityRegressionTests` (10) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements (declared or file), no networking APIs, no analytics SDKs, no Keychain, no remote packages in the app target, `LSUIElement`, privacy required-reason API, 17 languages present. | Source + `project.yml` assertions — no mocks |
@@ -94,25 +96,36 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `testA06_noRemotePackageDependencies` | The app target has no remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
 | `testLocalizations_allLanguagesPresent` | All 17 `.lproj` packs exist |
 
-## UI Tests (`CheapSeekUITests`, XCUITest)
+## UI Tests
 
-Runs against the real app (`-UITestMode 1`, which disables real notification scheduling and
-launch-at-login registration) and asserts via accessibility identifiers. Run locally with
+Runs against the real app and asserts via accessibility identifiers. Run locally with
 `./test/test.sh --ui`.
+
+### UI test mode
+
+A menu-bar-only agent (`LSUIElement`) has no hittable menu bar, and macOS exposes no public API to
+open the `MenuBarExtra` popup, so the UI tests launch with test-only arguments:
+
+- **`-UITestMode 1`** — disables real notification scheduling and launch-at-login registration,
+  renders the status block at a **fixed instant** (Monday 02:00 UTC → deterministic peak) instead
+  of the wall-clock `TimelineView`, and presents the popup in a plain window so the `popup.*`
+  identifiers are reachable.
+- **`-UITestSettings`** — additionally presents the Settings screen in a plain window.
+
+Both flags are test-only; production behavior is identical when they are absent.
 
 | Test | Result | What it checks |
 | :--- | :--- | :--- |
 | `testAppLaunches` | **assert** | The app is running after launch. |
-| `testSettingsOpensAndListsLanguages` | **assert** | Settings opens via the app menu; `settings.language` lists exactly 17 languages. |
-| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover, and the search field filters to Tokyo. |
-| `testQuitMenuItemExists` | **assert** | The app menu exposes a Quit item. |
-| `testPopupOpensAndShowsStatus` | **assert / skip** | Opens the `MenuBarExtra` popup via the status item and checks `popup.status`; `XCTSkip` when macOS does not expose the status item. |
+| `testSettingsOpensAndListsLanguages` | **assert** | `settings.language` lists exactly 17 languages. |
+| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover and the search field filters to Tokyo. |
+| `testQuitMenuItemExists` | **assert** | The Quit command (⌘Q) terminates the app. |
+| `testPopupOpensAndShowsStatus` | **assert** | `popup.root`, `popup.status` (peak/off-peak), `popup.countdown`, and the history toggle/chart. |
+| `testPopupPricingSheetOpens` | **assert** | `popup.pricing.button` opens `pricing.root` with a model row. |
+| `testPopupQuitButtonExists` | **assert** | `popup.quit.button` exists and is hittable. |
 
-macOS 14.x does not reliably expose third-party `MenuBarExtra` status items to the accessibility
-tree, and there is no public API to open the popup programmatically, so **only
-`testPopupOpensAndShowsStatus` may skip** — with the exact `operatingSystemVersionString` and
-reason in the skip message. The other four tests assert without relying on the status item
-(Settings opens through the app menu). UI tests are intended to run **locally**; see CI below.
+All **7 UI tests assert real behavior; none skip**. Tested on macOS **26.6.2 (Build 25G83)**; the
+deployment target is macOS 14+. UI tests are intended to run **locally**; see CI below.
 
 ## CI
 
@@ -138,70 +151,69 @@ reason in the skip message. The other four tests assert without relying on the s
 
 ## Deliberately Out of Scope
 
-- **Menu bar (`MenuBarExtra`) popup automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS 14.x — only `testPopupOpensAndShowsStatus` skips (with the OS version + reason); app launch, Settings, the timezone picker, and Quit are asserted instead.
+- **Real `MenuBarExtra` click-through:** the status item is not reliably exposed to XCUITest and macOS has no public API to open the popup, so UI tests use test-only plain windows (`-UITestMode` / `-UITestSettings`); the production popup remains covered by the unit view tests and manual verification.
 - **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
 - **Menu bar tint rendering:** macOS may render the label as a monochrome template, so the app intentionally avoids color and uses `leaf`/`flame.fill` plus text; visual appearance is verified manually.
 - **Notification delivery:** authorization prompts and actual banner delivery depend on a signed app and user approval; `NotificationManager` is tested through a mock client, while real delivery is verified manually.
 - **History chart rendering:** the SwiftUI `Charts` view is not snapshot-tested; all date math is covered by `HistoryAggregatorTests` and the chart is verified manually.
 - **SwiftUI snapshot tests:** SwiftUI previews + manual visual verification were deemed sufficient.
 
-## Coverage Expectations
+## Coverage
 
-| Module | Target Coverage |
-| :--- | :--- |
-| `PeakCalculator.swift` | **90%+** |
-| `CountdownFormatter.swift` | **100%** |
-| `NotificationPlanner.swift` | **90%+** |
-| `HistoryAggregator.swift` | **90%+** |
-| `HistoryStore.swift` | **90%+** |
-| `NotificationManager.swift` | **80%+** |
-| `AppSettings.swift` | **70%+** |
-| `AppModel.swift` | **70%+** |
-| `Clock.swift` | **70%+** |
-| SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
+### Measured Coverage (2026-09-20, local macOS run)
 
-## Measured Coverage (2026-09-18, local macOS run)
+`CheapSeek.app` line coverage: **95.54%** (2742/2870 lines).
 
-`CheapSeek.app` line coverage: **96.69%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, the UI-test-only window bootstrap, and system boundaries; see "Excluded from coverage")
+**CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
-| File | Line Coverage |
-| :--- | :--- |
-| `AppLanguage.swift` | **100.00%** |
-| `AppModel.swift` | **100.00%** |
-| `AppSettings.swift` | **100.00%** |
-| `CheapSeekApp.swift` | 56.52% (`@main`/scene glue + UI-test-only window bootstrap) |
-| `Clock.swift` | **100.00%** |
-| `CountdownFormatter.swift` | **100.00%** |
-| `DeepSeekConfig.swift` | **100.00%** |
-| `MenuBarLabel.swift` | **100.00%** |
-| `NotificationManager.swift` | **100.00%** |
-| `PeakStatus.swift` | **100.00%** |
-| `SystemUserNotificationCenterAdapter.swift` | **100.00%** (full local run; CI skips it) |
-| `TimeZoneLabel.swift` | **100.00%** |
-| `HistoryChartView.swift` | 99.22% (SwiftUI view) |
-| `HistoryAggregator.swift` | 98.59% |
-| `PricingInfoView.swift` | 98.38% (SwiftUI view) |
-| `NotificationPlanner.swift` | 97.70% |
-| `PopupView.swift` | 97.55% (SwiftUI view) |
-| `HistoryStore.swift` | 97.44% |
-| `TimeZonePicker.swift` | 97.39% (SwiftUI view) |
-| `SettingsView.swift` | 96.04% (SwiftUI view) |
-| `PeakCalculator.swift` | 96.03% |
-| `TimeZoneCatalog.swift` | 92.96% |
+The figure above is the local full run (both system-boundary tests included). CI skips `SystemUserNotificationCenterAdapterTests` and `SystemLoginItemServiceTests`, so its number can differ by roughly 0.5 percentage points; the gate is 95%.
 
-*Re-measure with `./test/test.sh --coverage`.*
+| File | Line coverage | Notes |
+| :--- | :--- | :--- |
+| `AppLanguage.swift` | 100.00% | pure logic, no I/O |
+| `AppModel.swift` | 100.00% | state/orchestration, injected dependencies |
+| `AppSettings.swift` | 100.00% | `UserDefaults` persistence, in-memory suite in tests |
+| `Clock.swift` | 100.00% | pure scheduling logic |
+| `CountdownFormatter.swift` | 100.00% | pure formatting |
+| `DeepSeekConfig.swift` | 100.00% | pure config |
+| `MenuBarLabel.swift` | 100.00% | pure label logic |
+| `NotificationManager.swift` | 100.00% | injected notification center |
+| `PeakStatus.swift` | 100.00% | pure value type |
+| `SystemUserNotificationCenterAdapter.swift` | 100.00% | system boundary — exercised locally; CI skips this test |
+| `TimeZoneLabel.swift` | 100.00% | pure formatting |
+| `HistoryChartView.swift` | 99.24% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryAggregator.swift` | 98.59% | pure aggregation |
+| `PricingInfoView.swift` | 98.39% | SwiftUI view — ViewInspector + ImageRenderer |
+| `NotificationPlanner.swift` | 97.70% | pure planning |
+| `PopupView.swift` | 97.47% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryStore.swift` | 97.44% | file persistence, temp dirs in tests |
+| `TimeZonePicker.swift` | 97.39% | SwiftUI view — ViewInspector + ImageRenderer |
+| `SettingsView.swift` | 96.15% | SwiftUI view — ViewInspector + ImageRenderer |
+| `PeakCalculator.swift` | 96.03% | pure logic; remainder is `xccov` partial-line subranges |
+| `TimeZoneCatalog.swift` | 92.96% | pure catalog; remainder is `xccov` partial-line subranges |
+| `CheapSeekApp.swift` | 40.19% | `@main`/scene glue + UI-test-only window bootstrap |
 
-## Excluded from coverage
+`DesignSystem.swift` is the only file under `CheapSeek/` absent from the report: it contains only `static let` constants, which `xccov` does not instrument.
 
-Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99% and the target to **97.70%**.
+### How to reproduce
 
-The remaining `CheapSeek.app` lines are excluded by design (the gate is set to the highest stable measured value, `0.95`):
+```bash
+./test/test.sh --coverage                                              # writes test/TestResults/Test_<stamp>.xcresult
+xcrun xccov view --report --only-targets  <xcresult>                   # app-wide total
+xcrun xccov view --report --files-for-target CheapSeek.app <xcresult>  # per-file table above
+```
+
+### Excluded from coverage
+
+Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99%.
+
+The remaining uncovered `CheapSeek.app` lines (the ~4.5% below 100% in the measurement above) fall into these buckets — the CI gate, `0.95`, is a floor *below* the measured value, not a value derived from these exclusions:
 
 - **Framework-deferred closures that offscreen rendering still skips** — a SwiftUI `Picker`'s menu rows (e.g. the language list) and a `.sheet`'s content closure are built only when the menu/sheet is actually presented. Affected: a few lines in `SettingsView`, `TimeZonePicker`'s popover body, and `PopupView`'s `PopupHost` `openSettings`/`terminate` glue.
 - **Property-wrapper attribution** — `@State`/`@Environment` storage initializers are sometimes reported as uncovered even though the view is constructed and rendered.
 - **Dead fallback** — `PricingInfoView`'s `fallbackWindowText` requires `Calendar.date(from:)` to fail, which does not happen for valid windows.
 - **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned.
-- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the `-UITestSettings` window bootstrap, `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
+- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the UI-test-only window bootstraps (`-UITestMode` popup window and `-UITestSettings`), `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
 
 `xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files (e.g. `TimeZoneCatalog`, `PeakCalculator`) report 93–96% despite every branch having a test.
 

@@ -25,6 +25,9 @@ struct PopupView: View {
     let model: AppModel
     var onOpenSettings: () -> Void
     var onQuit: () -> Void
+    /// UI-test only: when set, the status block renders a fixed instant instead of
+    /// the live `TimelineView`, making UI assertions deterministic. `nil` in production.
+    var fixedNow: Date?
     @State private var showInfo: Bool
     @State private var showHistory: Bool
 
@@ -32,12 +35,14 @@ struct PopupView: View {
         model: AppModel,
         showInfo: Bool = false,
         showHistory: Bool = true,
+        fixedNow: Date? = nil,
         onOpenSettings: @escaping () -> Void = {},
         onQuit: @escaping () -> Void = {}
     ) {
         self.model = model
         self.onOpenSettings = onOpenSettings
         self.onQuit = onQuit
+        self.fixedNow = fixedNow
         _showInfo = State(initialValue: showInfo)
         _showHistory = State(initialValue: showHistory)
     }
@@ -54,13 +59,16 @@ struct PopupView: View {
             }
         }
         .id(model.languageRevision)
-        .accessibilityIdentifier("popup.root")
     }
 
     private var statusContent: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
-            TimelineView(.periodic(from: .now, by: 1)) { context in
-                PopupStatusBody(model: model, now: context.date)
+            if let fixedNow {
+                PopupStatusBody(model: model, now: fixedNow)
+            } else {
+                TimelineView(.periodic(from: .now, by: 1)) { context in
+                    PopupStatusBody(model: model, now: context.date)
+                }
             }
 
             Divider()
@@ -92,16 +100,18 @@ struct PopupStatusBody: View {
         let (target, targetIsPeak) = PeakCalculator.nextTransition(from: now, schedule: model.config.schedule)
         let countdown = CountdownFormatter.string(from: target.timeIntervalSince(now))
         let targetStatus = PeakStatus(isPeak: targetIsPeak)
-        let currentStatus = PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
+        let currentStatus = self.currentStatus
         let schedule = PeakCalculator.schedules(for: model.timeZone, referenceDate: now, schedule: model.config.schedule)
 
         return VStack(alignment: .leading, spacing: Spacing.md) {
             Text("app_title".localized())
                 .font(.caption)
                 .foregroundStyle(.secondary)
+                .accessibilityIdentifier("popup.root")
 
             PeakStatusBadge(status: currentStatus)
                 .accessibilityIdentifier("popup.status")
+                .accessibilityValue(currentStatus == .peak ? "peak" : "offPeak")
 
             HStack {
                 Text("now_label".localized())
@@ -152,6 +162,12 @@ struct PopupStatusBody: View {
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("popup.countdown")
         }
+    }
+
+    /// The live peak/off-peak status at `now`; exposed so tests can assert the
+    /// popup's status for a fixed instant without re-deriving the peak rules.
+    var currentStatus: PeakStatus {
+        PeakStatus(isPeak: PeakCalculator.isPeak(at: now, schedule: model.config.schedule))
     }
 
     var locale: Locale {
@@ -239,8 +255,8 @@ struct PopupHistorySection: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+            .accessibilityIdentifier("popup.history.toggle")
         }
-        .accessibilityIdentifier("popup.history.toggle")
     }
 }
 
@@ -259,8 +275,10 @@ struct PopupActionButtons: View {
             .buttonStyle(.borderless)
             .help("info".localized())
             .accessibilityLabel("info".localized())
+            .accessibilityIdentifier("popup.pricing.button")
             Spacer()
             Button("quit".localized(), action: onQuit)
+                .accessibilityIdentifier("popup.quit.button")
         }
     }
 }

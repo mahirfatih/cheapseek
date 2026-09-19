@@ -5,6 +5,17 @@ on:
   workflow_dispatch:
 
 jobs:
+  lint:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SwiftLint
+        run: brew install swiftlint
+
+      - name: Lint (strict)
+        run: swiftlint lint --strict
+
   build-test:
     runs-on: macos-latest
     env:

@@ -30,6 +30,12 @@ final class PopupViewTests: XCTestCase {
         let view = PopupView(model: makeModel(now: utcDate(5, 2)))
         _ = view.body
         XCTAssertNoThrow(try view.inspect())
+
+        // The menu-bar label renders the live status text for a fixed instant.
+        XCTAssertNoThrow(try MenuBarLabel(model: makeModel(now: utcDate(5, 2))).inspect()
+            .find(text: MenuBarLabel.text(for: .peak)))
+        XCTAssertNoThrow(try MenuBarLabel(model: makeModel(now: utcDate(5, 12))).inspect()
+            .find(text: MenuBarLabel.text(for: .offPeak)))
     }
 
     func testStatusBodyRendersPeakAndOffPeak() {
@@ -37,6 +43,11 @@ final class PopupViewTests: XCTestCase {
         _ = body.body
         XCTAssertNoThrow(try body.inspect())
         _ = try? PopupStatusBody(model: makeModel(now: utcDate(5, 12)), now: utcDate(5, 12)).inspect()
+
+        // 2026-01-05 02:00 UTC is inside the Mon–Fri 01:00–04:00 peak window;
+        // 12:00 UTC on the same day is outside both peak windows.
+        XCTAssertEqual(body.currentStatus, .peak)
+        XCTAssertEqual(PopupStatusBody(model: makeModel(now: utcDate(5, 12)), now: utcDate(5, 12)).currentStatus, .offPeak)
     }
 
     func testStatusBodyHelpers() {

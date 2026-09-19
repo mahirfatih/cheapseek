@@ -12,11 +12,14 @@ struct HistoryChartView: View {
     var body: some View {
         if hasData {
             chart
+                .accessibilityElement(children: .contain)
+                .accessibilityIdentifier("popup.history.chart")
         } else {
             Text("history.empty".localized())
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityIdentifier("popup.history.chart")
         }
     }
 
