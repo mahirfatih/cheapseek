@@ -102,7 +102,7 @@ Peak windows are **UTC** and applied Monday–Friday; weekends are always off-pe
 
 - **Tests:** **214 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **5 UI tests** (launch, Settings, timezone picker asserted; the menu bar popup is best-effort and skips when macOS does not expose the status item).
 - **Coverage:** `CheapSeek.app` line coverage **96.69%** with a CI gate of **≥95%**.
-- **CI:** GitHub Actions (`.github/workflows/ci.yml`) on push to `main`, pull requests, and manual dispatch — `xcodegen generate`, build, unit tests with coverage, and the coverage gate.
+- **CI:** GitHub Actions (`.github/workflows/ci.yml`) on **manual dispatch (`workflow_dispatch`) only** — `xcodegen generate`, build, unit tests with coverage, and the coverage gate.
 - **Project management:** `project.yml` (XcodeGen) is the single source of truth; docs and assets live in `docs/diagrams/` (Archify) and `docs/screenshots/`.
 - **Release:** `MARKETING_VERSION` in `project.yml` is bumped, then the app is archived, signed, exported, notarized, stapled, and packaged for distribution.
 
