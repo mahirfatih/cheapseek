@@ -1,5 +1,13 @@
 # CheapSeek
 
+[![macOS CI](https://github.com/mahirfatih/cheapseek/actions/workflows/ci.yml/badge.svg?label=macOS%20CI)](https://github.com/mahirfatih/cheapseek/actions/workflows/ci.yml)
+![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-blue)
+![Swift](https://img.shields.io/badge/Swift-5.9-orange)
+![Languages](https://img.shields.io/badge/languages-17-green)
+![Tests](https://img.shields.io/badge/tests-214%20passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+
 > Never pay peak prices for DeepSeek API again.
 
 **CheapSeek** is a tiny macOS menu bar app that tells you, at a glance, whether the DeepSeek API is currently in **peak** (expensive) or **off-peak** (cheap) pricing.
