@@ -39,7 +39,8 @@ xcodebuild -project CheapSeek.xcodeproj \
         │         │  HistoryAggregatorTests, HistoryStoreTests,
         │         │  LocalizationTests, PricingConfigTests,
         │         │  TimeZoneCatalogTests, TimeZoneLabelTests,
-        │         │  SecurityRegressionTests
+        │         │  SecurityRegressionTests,
+        │         │  ScreenshotCaptureTests (gated/skipped by default)
         └─────────┘
 ```
 
@@ -71,6 +72,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `HistoryChartViewTests` (4) | Empty state, chart properties, single/7-day rendering. | ViewInspector |
 | `HistoryChartViewRenderTests` (2) | Offscreen `ImageRenderer` executes the `Chart`/`AxisMarks` builders. | `ImageRenderer` |
 | `ViewRenderTests` (15) | Offscreen `ImageRenderer` renders every view + variant; button taps and binding writes. | `ImageRenderer` + ViewInspector |
+| `ScreenshotCaptureTests` (1) | Offscreen light/dark PNG rendering of the popup, pricing, settings, and timezone picker. **Skipped by default** (`XCTSkipUnless`) and only runs with `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` (see `test/capture-screenshots.sh`). | `ImageRenderer` + process environment |
 | `SystemUserNotificationCenterAdapterTests` (1) | Exercises the real `UNUserNotificationCenter` adapter with bounded waits. | Real system API — excluded from the CI job via `-skip-testing` |
 | `SystemLoginItemServiceTests` (1) | Exercises the real `SMAppService` wrapper with cleanup. | Real system API — excluded from the CI job via `-skip-testing` |
 | `SecurityRegressionTests` (10) | OWASP/MASVS regression: no ATS arbitrary loads, no entitlements (declared or file), no networking APIs, no analytics SDKs, no Keychain, no remote packages in the app target, `LSUIElement`, privacy required-reason API, 17 languages present. | Source + `project.yml` assertions — no mocks |
