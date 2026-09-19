@@ -288,9 +288,9 @@ CheapSeek/
 │   ├── EN.md                            # Overview (English)
 │   └── TR.md                            # Genel bakış (Türkçe)
 ├── docs/diagrams/                       # Archify diagrams (interactive HTML + JSON)
-│   ├── cheapseek-architecture.html      # Components and boundaries
-│   ├── cheapseek-dataflow.html          # How data moves through the app
-│   └── cheapseek-workflow.html          # Runtime workflow and life cycle
+│   ├── architecture.html                # Components and boundaries
+│   ├── dataflow.html                    # How data moves through the app
+│   └── workflow.html                    # Runtime workflow and life cycle
 ├── docs/screenshots/                    # English UI screenshots (used in README)
 │   ├── light/                           # popup, pricing, settings, timezone-picker
 │   └── dark/                            # popup, pricing, settings, timezone-picker
@@ -324,9 +324,9 @@ A detailed walkthrough of what CheapSeek does and how it works: [`docs/OVERVIEW/
 ### Architecture Diagrams (Archify)
 System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
 
-- **Architecture:** [`cheapseek-architecture.html`](./docs/diagrams/cheapseek-architecture.html) — component relationships and system structure
-- **Data-Flow:** [`cheapseek-dataflow.html`](./docs/diagrams/cheapseek-dataflow.html) — how data moves through the app
-- **Workflow & Lifecycle:** [`cheapseek-workflow.html`](./docs/diagrams/cheapseek-workflow.html) — runtime workflow and life cycle
+- **Architecture:** [`architecture.html`](./docs/diagrams/architecture.html) — component relationships and system structure
+- **Data-Flow:** [`dataflow.html`](./docs/diagrams/dataflow.html) — how data moves through the app
+- **Workflow & Lifecycle:** [`workflow.html`](./docs/diagrams/workflow.html) — runtime workflow and life cycle
 
 ### Screenshots
 Light and dark English UI screenshots live in [`docs/screenshots/`](./docs/screenshots) (embedded in the [Screenshots](#-screenshots) section above).
