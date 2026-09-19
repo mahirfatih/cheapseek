@@ -307,7 +307,10 @@ CheapSeek/
 ./test/test.sh                        # unit tests (xcodegen generate + xcodebuild test)
 ./test/test.sh --ui                   # include the UI tests (local only)
 ./test/test.sh --coverage             # unit tests + coverage summary
+./test/capture-screenshots.sh         # render the light/dark screenshots
 ```
+
+- Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
 
 - Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10) — **214 unit tests**, plus `CheapSeekUITests` (launch, settings, timezone picker; popup best-effort).
 - UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.

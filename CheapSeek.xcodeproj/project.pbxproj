@@ -29,6 +29,7 @@
 		43A7D10D719AF054D1F54F42 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D02B32FDE535563164132BF4 /* NotificationManager.swift */; };
 		4584BDA628985E992517A4F9 /* TimeZonePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBA1E0C4DCEECAE0EC1DD313 /* TimeZonePicker.swift */; };
 		4A73E16176CE9F5926193F0A /* HistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED7EFDAA5E8DC23A51783D54 /* HistoryStore.swift */; };
+		4CBEF0CB72704C65CE2C834D /* ScreenshotCaptureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFDCAAE14BD9036817E76412 /* ScreenshotCaptureTests.swift */; };
 		4D2A489B80C0BF2AAB36F985 /* TimeZoneLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860E1FCF5151D6B8E9ADC132 /* TimeZoneLabelTests.swift */; };
 		4E489FA8CA13FB53807F3949 /* SystemLoginItemServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DAAE446EE1476FD115A663 /* SystemLoginItemServiceTests.swift */; };
 		54366E19CFDCE6B53C65B295 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = AD4A6A234682FAE0F930CEC0 /* Localizable.strings */; };
@@ -159,6 +160,7 @@
 		F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PricingConfigTests.swift; sourceTree = "<group>"; };
 		F5B16E5086378FC5F1FB99B7 /* DeepSeekConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeepSeekConfig.swift; sourceTree = "<group>"; };
 		FDC5637359BEB944E9D3CCBF /* AppSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettingsTests.swift; sourceTree = "<group>"; };
+		FFDCAAE14BD9036817E76412 /* ScreenshotCaptureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotCaptureTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -274,6 +276,7 @@
 				B7642693081C015460F29656 /* PopupViewTests.swift */,
 				F1A08D1144E23903C7B0E620 /* PricingConfigTests.swift */,
 				A006AE07509E44D69394467F /* PricingInfoViewTests.swift */,
+				FFDCAAE14BD9036817E76412 /* ScreenshotCaptureTests.swift */,
 				AA5BCA9B95A7CEA9C3AA8ACD /* SecurityRegressionTests.swift */,
 				CFCFEBC093EACF2D3C9BD4EA /* SettingsViewTests.swift */,
 				A2DAAE446EE1476FD115A663 /* SystemLoginItemServiceTests.swift */,
@@ -473,6 +476,7 @@
 				CBE9218EB03A42E459731718 /* PopupViewTests.swift in Sources */,
 				D3BDC9FCFC8C64CE61DBC4C2 /* PricingConfigTests.swift in Sources */,
 				D83D6404A0AEAD24394253D4 /* PricingInfoViewTests.swift in Sources */,
+				4CBEF0CB72704C65CE2C834D /* ScreenshotCaptureTests.swift in Sources */,
 				0C5400C0854C91484F4A8DE2 /* SecurityRegressionTests.swift in Sources */,
 				9CA1E4E24C66896C1B4EBCDD /* SettingsViewTests.swift in Sources */,
 				4E489FA8CA13FB53807F3949 /* SystemLoginItemServiceTests.swift in Sources */,
