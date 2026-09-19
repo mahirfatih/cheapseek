@@ -116,7 +116,7 @@ reason in the skip message. The other four tests assert without relying on the s
 
 ## CI
 
-`.github/workflows/ci.yml` (`macos-latest`, on push / PR / manual dispatch):
+`.github/workflows/ci.yml` (`macos-latest`, **manual dispatch only**):
 
 - Installs XcodeGen, then `xcodegen generate` (`project.yml` is canonical).
 - Builds the app.
