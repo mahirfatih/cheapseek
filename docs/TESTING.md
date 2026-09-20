@@ -98,23 +98,34 @@ xcodebuild -project CheapSeek.xcodeproj \
 
 ## UI Tests
 
-Runs against the real app (`-UITestMode 1`, which disables real notification scheduling and
-launch-at-login registration) and asserts via accessibility identifiers. Run locally with
+Runs against the real app and asserts via accessibility identifiers. Run locally with
 `./test/test.sh --ui`.
+
+### UI test mode
+
+A menu-bar-only agent (`LSUIElement`) has no hittable menu bar, and macOS exposes no public API to
+open the `MenuBarExtra` popup, so the UI tests launch with test-only arguments:
+
+- **`-UITestMode 1`** — disables real notification scheduling and launch-at-login registration,
+  renders the status block at a **fixed instant** (Monday 02:00 UTC → deterministic peak) instead
+  of the wall-clock `TimelineView`, and presents the popup in a plain window so the `popup.*`
+  identifiers are reachable.
+- **`-UITestSettings`** — additionally presents the Settings screen in a plain window.
+
+Both flags are test-only; production behavior is identical when they are absent.
 
 | Test | Result | What it checks |
 | :--- | :--- | :--- |
 | `testAppLaunches` | **assert** | The app is running after launch. |
-| `testSettingsOpensAndListsLanguages` | **assert** | Settings opens via the app menu; `settings.language` lists exactly 17 languages. |
-| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover, and the search field filters to Tokyo. |
-| `testQuitMenuItemExists` | **assert** | The app menu exposes a Quit item. |
-| `testPopupOpensAndShowsStatus` | **assert / skip** | Opens the `MenuBarExtra` popup via the status item and checks `popup.status`; `XCTSkip` when macOS does not expose the status item. |
+| `testSettingsOpensAndListsLanguages` | **assert** | `settings.language` lists exactly 17 languages. |
+| `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover and the search field filters to Tokyo. |
+| `testQuitMenuItemExists` | **assert** | The Quit command (⌘Q) terminates the app. |
+| `testPopupOpensAndShowsStatus` | **assert** | `popup.root`, `popup.status` (peak/off-peak), `popup.countdown`, and the history toggle/chart. |
+| `testPopupPricingSheetOpens` | **assert** | `popup.pricing.button` opens `pricing.root` with a model row. |
+| `testPopupQuitButtonExists` | **assert** | `popup.quit.button` exists and is hittable. |
 
-macOS 14.x does not reliably expose third-party `MenuBarExtra` status items to the accessibility
-tree, and there is no public API to open the popup programmatically, so **only
-`testPopupOpensAndShowsStatus` may skip** — with the exact `operatingSystemVersionString` and
-reason in the skip message. The other four tests assert without relying on the status item
-(Settings opens through the app menu). UI tests are intended to run **locally**; see CI below.
+All **7 UI tests assert real behavior; none skip**. Tested on macOS **26.6.2 (Build 25G83)**; the
+deployment target is macOS 14+. UI tests are intended to run **locally**; see CI below.
 
 ## CI
 
@@ -140,7 +151,7 @@ reason in the skip message. The other four tests assert without relying on the s
 
 ## Deliberately Out of Scope
 
-- **Menu bar (`MenuBarExtra`) popup automation:** the status item and its `.window` popup are not reliably exposed to XCUITest on macOS 14.x — only `testPopupOpensAndShowsStatus` skips (with the OS version + reason); app launch, Settings, the timezone picker, and Quit are asserted instead.
+- **Real `MenuBarExtra` click-through:** the status item is not reliably exposed to XCUITest and macOS has no public API to open the popup, so UI tests use test-only plain windows (`-UITestMode` / `-UITestSettings`); the production popup remains covered by the unit view tests and manual verification.
 - **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
 - **Menu bar tint rendering:** macOS may render the label as a monochrome template, so the app intentionally avoids color and uses `leaf`/`flame.fill` plus text; visual appearance is verified manually.
 - **Notification delivery:** authorization prompts and actual banner delivery depend on a signed app and user approval; `NotificationManager` is tested through a mock client, while real delivery is verified manually.

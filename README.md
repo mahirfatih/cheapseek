@@ -30,7 +30,7 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (214 passing; includes security, config, ViewInspector and ImageRenderer view tests) + XCUITest (launch, settings, timezone picker; popup best-effort); `ScreenshotCaptureTests` is gated and skips by default
+- **Testing:** XCTest unit tests (214 passing; includes security, config, ViewInspector and ImageRenderer view tests) + XCUITest (7 tests: launch, settings, timezone picker, popup — all assert); `ScreenshotCaptureTests` is gated and skips by default
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -217,7 +217,7 @@ CheapSeek/
 │   ├── ScreenshotCaptureTests.swift     # Offscreen light/dark PNG rendering (gated)
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
-│   └── CheapSeekUITests.swift           # Launch, settings, timezone picker; popup best-effort
+│   └── CheapSeekUITests.swift           # Launch, settings, timezone picker, popup (all assert)
 ├── scripts/
 │   └── bump-version.sh                  # Bump MARKETING_VERSION / CURRENT_PROJECT_VERSION
 ├── test/
@@ -266,8 +266,8 @@ CheapSeek/
 ```
 
 - Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
-- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10); `ScreenshotCaptureTests` (1) is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — **214 unit tests** (excluding the gated capture test), plus `CheapSeekUITests` (launch, settings, timezone picker; popup best-effort).
-- UI tests are **local-only**; on macOS the `MenuBarExtra` status item is not always exposed to accessibility, so the popup/settings checks **skip (`XCTSkip`)** rather than fail.
+- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10); `ScreenshotCaptureTests` (1) is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — **214 unit tests** (excluding the gated capture test), plus `CheapSeekUITests` (7 tests: launch, settings, timezone picker, popup — all assert).
+- UI tests are **local-only** and run under test-only launch flags (`-UITestMode` / `-UITestSettings`, which present the popup and Settings in plain windows); all 7 assert real behavior with no skips.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **coverage gate** (`CheapSeek.app` ≥ 95%). UI tests are local-only (macOS XCUITest needs an interactive session).
 
 ---
