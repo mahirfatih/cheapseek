@@ -32,6 +32,7 @@ struct PricingInfoView: View {
             LinksSection(config: config)
         }
         .padding()
+        .accessibilityIdentifier("pricing.root")
     }
 }
 
