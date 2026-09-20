@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Searchable, region-grouped timezone picker with live UTC offsets.
 - History backfill: gaps while the app was closed are recomputed on launch and on timezone change.
-- ViewInspector + `ImageRenderer` unit-test layers and a 95% line-coverage gate in CI.
+- ViewInspector + `ImageRenderer` unit-test layers, **95.54%** measured `CheapSeek.app` line coverage, and a 95% line-coverage gate in CI.
 
 ### Changed
 

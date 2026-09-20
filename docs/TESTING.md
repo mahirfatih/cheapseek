@@ -166,6 +166,8 @@ deployment target is macOS 14+. UI tests are intended to run **locally**; see CI
 
 **CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
+The figure above is the local full run (both system-boundary tests included). CI skips `SystemUserNotificationCenterAdapterTests` and `SystemLoginItemServiceTests`, so its number can differ by roughly 0.5 percentage points; the gate is 95%.
+
 | File | Line coverage | Notes |
 | :--- | :--- | :--- |
 | `AppLanguage.swift` | 100.00% | pure logic, no I/O |
