@@ -58,7 +58,7 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 
 ## 📸 Screenshots
 
-All screenshots use the English UI with a sample timezone (`America/Los_Angeles`). Click a thumbnail to open the full-size image.
+All screenshots use the English UI with a sample timezone (`America/Los Angeles`). Click a thumbnail to open the full-size image.
 
 | | Light | Dark |
 | :--- | :---: | :---: |
