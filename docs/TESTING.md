@@ -160,63 +160,58 @@ deployment target is macOS 14+. UI tests are intended to run **locally**; see CI
 
 ## Coverage
 
-### Coverage Expectations
+### Measured Coverage (2026-09-20, local macOS run)
 
-| Module | Target Coverage |
-| :--- | :--- |
-| `PeakCalculator.swift` | **90%+** |
-| `CountdownFormatter.swift` | **100%** |
-| `NotificationPlanner.swift` | **90%+** |
-| `HistoryAggregator.swift` | **90%+** |
-| `HistoryStore.swift` | **90%+** |
-| `NotificationManager.swift` | **80%+** |
-| `AppSettings.swift` | **70%+** |
-| `AppModel.swift` | **70%+** |
-| `Clock.swift` | **70%+** |
-| SwiftUI views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `CheapSeekApp`) | Covered by UI tests / manual verification; excluded from strict gating |
+`CheapSeek.app` line coverage: **95.54%** (2742/2870 lines).
 
-### Measured Coverage (2026-09-18, local macOS run)
+**CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
-`CheapSeek.app` line coverage: **96.69%** (CI gate ≥ 95% ✅ — remaining lines are framework-deferred closures, property-wrapper attribution, dead fallbacks, the UI-test-only window bootstrap, and system boundaries; see "Excluded from coverage")
+| File | Line coverage | Notes |
+| :--- | :--- | :--- |
+| `AppLanguage.swift` | 100.00% | pure logic, no I/O |
+| `AppModel.swift` | 100.00% | state/orchestration, injected dependencies |
+| `AppSettings.swift` | 100.00% | `UserDefaults` persistence, in-memory suite in tests |
+| `Clock.swift` | 100.00% | pure scheduling logic |
+| `CountdownFormatter.swift` | 100.00% | pure formatting |
+| `DeepSeekConfig.swift` | 100.00% | pure config |
+| `MenuBarLabel.swift` | 100.00% | pure label logic |
+| `NotificationManager.swift` | 100.00% | injected notification center |
+| `PeakStatus.swift` | 100.00% | pure value type |
+| `SystemUserNotificationCenterAdapter.swift` | 100.00% | system boundary — exercised locally; CI skips this test |
+| `TimeZoneLabel.swift` | 100.00% | pure formatting |
+| `HistoryChartView.swift` | 99.24% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryAggregator.swift` | 98.59% | pure aggregation |
+| `PricingInfoView.swift` | 98.39% | SwiftUI view — ViewInspector + ImageRenderer |
+| `NotificationPlanner.swift` | 97.70% | pure planning |
+| `PopupView.swift` | 97.47% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryStore.swift` | 97.44% | file persistence, temp dirs in tests |
+| `TimeZonePicker.swift` | 97.39% | SwiftUI view — ViewInspector + ImageRenderer |
+| `SettingsView.swift` | 96.15% | SwiftUI view — ViewInspector + ImageRenderer |
+| `PeakCalculator.swift` | 96.03% | pure logic; remainder is `xccov` partial-line subranges |
+| `TimeZoneCatalog.swift` | 92.96% | pure catalog; remainder is `xccov` partial-line subranges |
+| `CheapSeekApp.swift` | 40.19% | `@main`/scene glue + UI-test-only window bootstrap |
 
-| File | Line Coverage |
-| :--- | :--- |
-| `AppLanguage.swift` | **100.00%** |
-| `AppModel.swift` | **100.00%** |
-| `AppSettings.swift` | **100.00%** |
-| `CheapSeekApp.swift` | 56.52% (`@main`/scene glue + UI-test-only window bootstrap) |
-| `Clock.swift` | **100.00%** |
-| `CountdownFormatter.swift` | **100.00%** |
-| `DeepSeekConfig.swift` | **100.00%** |
-| `MenuBarLabel.swift` | **100.00%** |
-| `NotificationManager.swift` | **100.00%** |
-| `PeakStatus.swift` | **100.00%** |
-| `SystemUserNotificationCenterAdapter.swift` | **100.00%** (full local run; CI skips it) |
-| `TimeZoneLabel.swift` | **100.00%** |
-| `HistoryChartView.swift` | 99.22% (SwiftUI view) |
-| `HistoryAggregator.swift` | 98.59% |
-| `PricingInfoView.swift` | 98.38% (SwiftUI view) |
-| `NotificationPlanner.swift` | 97.70% |
-| `PopupView.swift` | 97.55% (SwiftUI view) |
-| `HistoryStore.swift` | 97.44% |
-| `TimeZonePicker.swift` | 97.39% (SwiftUI view) |
-| `SettingsView.swift` | 96.04% (SwiftUI view) |
-| `PeakCalculator.swift` | 96.03% |
-| `TimeZoneCatalog.swift` | 92.96% |
+`DesignSystem.swift` is the only file under `CheapSeek/` absent from the report: it contains only `static let` constants, which `xccov` does not instrument.
 
-*Re-measure with `./test/test.sh --coverage`.*
+### How to reproduce
+
+```bash
+./test/test.sh --coverage                                              # writes test/TestResults/Test_<stamp>.xcresult
+xcrun xccov view --report --only-targets  <xcresult>                   # app-wide total
+xcrun xccov view --report --files-for-target CheapSeek.app <xcresult>  # per-file table above
+```
 
 ### Excluded from coverage
 
-Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99% and the target to **97.70%**.
+Views are covered in two layers: **ViewInspector** evaluates each view's `body` and lets tests tap controls, and **`ImageRenderer`** renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures that ViewInspector does not materialize. Together they lifted view coverage from ~0% to ~96–99%.
 
-The remaining `CheapSeek.app` lines are excluded by design (the gate is set to the highest stable measured value, `0.95`):
+The remaining uncovered `CheapSeek.app` lines (the ~4.5% below 100% in the measurement above) fall into these buckets — the CI gate, `0.95`, is a floor *below* the measured value, not a value derived from these exclusions:
 
 - **Framework-deferred closures that offscreen rendering still skips** — a SwiftUI `Picker`'s menu rows (e.g. the language list) and a `.sheet`'s content closure are built only when the menu/sheet is actually presented. Affected: a few lines in `SettingsView`, `TimeZonePicker`'s popover body, and `PopupView`'s `PopupHost` `openSettings`/`terminate` glue.
 - **Property-wrapper attribution** — `@State`/`@Environment` storage initializers are sometimes reported as uncovered even though the view is constructed and rendered.
 - **Dead fallback** — `PricingInfoView`'s `fallbackWindowText` requires `Calendar.date(from:)` to fail, which does not happen for valid windows.
 - **System boundaries** — `SystemUserNotificationCenterAdapter` and `SystemLoginItemService.register/unregister` call the real `UNUserNotificationCenter`/`SMAppService`; they are exercised with bounded waits, but callbacks and side effects are OS-owned.
-- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the `-UITestSettings` window bootstrap, `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
+- **`@main` / scene glue** — `CheapSeekApp`'s `MenuBarExtra`/`Settings` scene wiring, the UI-test-only window bootstraps (`-UITestMode` popup window and `-UITestSettings`), `NoopLoginItemService`, and `PopupHost`'s environment read are entry-point/UI-test glue.
 
 `xccov` additionally counts partial-line **subranges** (optional chaining, short-circuit operators, `OSLog` autoclosures). That is why a few pure/state files (e.g. `TimeZoneCatalog`, `PeakCalculator`) report 93–96% despite every branch having a test.
 
