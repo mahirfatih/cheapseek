@@ -1,6 +1,6 @@
 import XCTest
 
-// UI test audit (macOS 26.x / 14+):
+// UI test audit (macOS 26.6.2 / Build 25G83 tested; macOS 14+ target) — 7 tests, 0 skips:
 // - testAppLaunches ................... assert — app is running after launch.
 // - testSettingsOpensAndListsLanguages  assert — Settings is shown in a plain window under
 //                                                `-UITestSettings` and the language picker lists
@@ -8,14 +8,16 @@ import XCTest
 // - testSettingsTimezonePickerOpens ... assert — the timezone picker opens and its search field
 //                                                filters the list.
 // - testQuitMenuItemExists ............ assert — the Quit command (⌘Q) terminates the app.
-// - testPopupOpensAndShowsStatus ...... assert when the status item is exposed; otherwise
-//                                                XCTSkip. macOS does not reliably expose
-//                                                third-party MenuBarExtra status items to the
-//                                                accessibility tree, and there is no public API
-//                                                to open the MenuBarExtra popup programmatically.
+// - testPopupOpensAndShowsStatus ...... assert — `-UITestMode` presents the popup in a plain
+//                                                window; the status badge, countdown, and history
+//                                                toggle/chart are asserted.
+// - testPopupPricingSheetOpens ........ assert — the popup's pricing button opens the pricing
+//                                                view with at least one model row.
+// - testPopupQuitButtonExists ......... assert — the popup's quit button exists and is hittable.
 //
-// A menu-bar-only agent (LSUIElement) has no hittable menu bar, so Settings cannot be opened
-// through the app menu in tests; `-UITestSettings` (test-only) presents it in a plain window.
+// A menu-bar-only agent (LSUIElement) has no hittable menu bar and macOS exposes no public API
+// to open the MenuBarExtra popup, so `-UITestMode` (popup) and `-UITestSettings` (Settings)
+// present those surfaces in plain windows for UI testing. These flags are test-only.
 final class CheapSeekUITests: XCTestCase {
 
     override func setUp() {
@@ -85,39 +87,61 @@ final class CheapSeekUITests: XCTestCase {
                        "⌘Q should terminate the app")
     }
 
-    func testPopupOpensAndShowsStatus() throws {
+    func testPopupOpensAndShowsStatus() {
         let app = launch()
 
-        guard let statusItem = locateStatusItem(app), statusItem.waitForExistence(timeout: 5) else {
-            throw XCTSkip(
-                "MenuBarExtra status item is not exposed to accessibility on "
-                + "\(ProcessInfo.processInfo.operatingSystemVersionString); no public API opens the popup."
-            )
-        }
-        statusItem.click()
+        let root = firstElement(app, identifier: "popup.root")
+        XCTAssertTrue(root.waitForExistence(timeout: 10), "Popup did not open")
 
         let badge = firstElement(app, identifier: "popup.status")
-        guard badge.waitForExistence(timeout: 5) else {
-            throw XCTSkip(
-                "Status item clicked but the MenuBarExtra popup did not open on "
-                + "\(ProcessInfo.processInfo.operatingSystemVersionString)."
-            )
+        XCTAssertTrue(badge.waitForExistence(timeout: 5), "Popup status badge missing")
+        let status = (badge.value as? String) ?? ""
+        XCTAssertTrue(["peak", "offPeak"].contains(status),
+                      "Popup status should report peak/off-peak, got \(status)")
+
+        let countdown = firstElement(app, identifier: "popup.countdown")
+        XCTAssertTrue(countdown.waitForExistence(timeout: 5), "Popup countdown missing")
+
+        let toggle = firstElement(app, identifier: "popup.history.toggle")
+        XCTAssertTrue(toggle.waitForExistence(timeout: 5), "History toggle missing")
+
+        let chart = firstElement(app, identifier: "popup.history.chart")
+        if !chart.exists {
+            toggle.click()
         }
-        XCTAssertTrue(badge.exists, "Popup status badge should be visible")
-        XCTAssertFalse(
-            badge.label.isEmpty,
-            "Popup status badge should expose its live peak/off-peak status text"
-        )
+        XCTAssertTrue(chart.waitForExistence(timeout: 5), "History chart did not appear")
+    }
+
+    func testPopupPricingSheetOpens() {
+        let app = launch()
+
+        let pricingButton = firstElement(app, identifier: "popup.pricing.button")
+        XCTAssertTrue(pricingButton.waitForExistence(timeout: 10), "Pricing button missing")
+        pricingButton.click()
+
+        let pricingRoot = firstElement(app, identifier: "pricing.root")
+        XCTAssertTrue(pricingRoot.waitForExistence(timeout: 10), "Pricing view did not open")
+
+        let modelRow = app.staticTexts["DeepSeek-V4.1-Flash"]
+        XCTAssertTrue(modelRow.waitForExistence(timeout: 5), "Pricing model row missing")
+    }
+
+    func testPopupQuitButtonExists() {
+        let app = launch()
+
+        let quitButton = firstElement(app, identifier: "popup.quit.button")
+        XCTAssertTrue(quitButton.waitForExistence(timeout: 10), "Quit button missing")
+        XCTAssertTrue(quitButton.isHittable, "Quit button should be hittable")
     }
 
     // MARK: - Helpers
 
     private func launch(settingsWindow: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
+        // `-UITestMode` disables real notifications/launch-at-login and presents the
+        // popup in a plain window; `-UITestSettings` additionally opens Settings.
         app.launchArguments = ["-UITestMode", "1"]
         if settingsWindow {
-            // Menu-bar-only agents have no hittable menu bar, so `-UITestSettings`
-            // presents the Settings screen in a plain window for UI testing.
             app.launchArguments.append("-UITestSettings")
         }
         app.launch()
@@ -126,18 +150,5 @@ final class CheapSeekUITests: XCTestCase {
 
     private func firstElement(_ app: XCUIApplication, identifier: String) -> XCUIElement {
         app.descendants(matching: .any).matching(identifier: identifier).firstMatch
-    }
-
-    private func locateStatusItem(_ app: XCUIApplication) -> XCUIElement? {
-        if app.statusItems.count > 0 {
-            return app.statusItems.firstMatch
-        }
-        for bundleID in ["com.apple.SystemUIServer", "com.apple.controlcenter"] {
-            let owner = XCUIApplication(bundleIdentifier: bundleID)
-            if owner.statusItems.count > 0 {
-                return owner.statusItems.firstMatch
-            }
-        }
-        return nil
     }
 }
