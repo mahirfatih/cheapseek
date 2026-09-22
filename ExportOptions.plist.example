@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Example export options for a Developer ID (outside the App Store) build.
+
+  ExportOptions.plist itself is gitignored (it carries your team id). Copy this
+  file and set your teamID:
+
+      cp ExportOptions.plist.example ExportOptions.plist
+      # edit teamID below, then:
+      xcodebuild -exportArchive -archivePath build/CheapSeek.xcarchive \
+        -exportOptionsPlist ExportOptions.plist -exportPath build/export
+-->
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>developer-id</string>
+    <key>teamID</key>
+    <string>YOUR_TEAM_ID</string>
+    <key>signingStyle</key>
+    <string>automatic</string>
+    <key>destination</key>
+    <string>export</string>
+</dict>
+</plist>
