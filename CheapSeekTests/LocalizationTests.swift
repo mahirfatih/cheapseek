@@ -27,7 +27,8 @@ final class LocalizationTests: XCTestCase {
         "notification.peak_start.title", "notification.peak_start.body",
         "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty",
         "history.reset",
-        "timezone.search", "timezone.no_results"
+        "timezone.search", "timezone.no_results",
+        "about", "about.version", "about.website", "about.contact", "about.copyright"
     ]
 
     private var cheapSeekDir: URL {
@@ -79,7 +80,10 @@ final class LocalizationTests: XCTestCase {
             "notification.peak_start.title", "notification.peak_start.body",
             "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty",
             "history.reset",
-            "menu_bar.status.cheap", "menu_bar.status.peak"
+            "menu_bar.status.cheap", "menu_bar.status.peak",
+            // `about.version`/`about.contact` legitimately match English in some
+            // languages (e.g. "Version"/"Contact"), so only these are strict.
+            "about", "about.website"
         ]
 
         for lang in languages where lang != "en" {

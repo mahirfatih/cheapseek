@@ -67,6 +67,7 @@ final class ViewRenderTests: XCTestCase {
         render(PricingInfoView(config: .fallback, timeZone: .gmt, scrollable: false))
         render(PopupInfoContent(config: .fallback, timeZone: .gmt, onClose: {}))
         render(SettingsPricingSheet(config: .fallback, timeZone: .gmt, onClose: {}))
+        render(AboutView(onClose: {}))
     }
 
     @MainActor
@@ -126,12 +127,18 @@ final class ViewRenderTests: XCTestCase {
     // MARK: - Interaction
 
     func testPopupActionButtonsInvokeClosures() throws {
-        var settings = false, info = false, quit = false
-        let view = PopupActionButtons(onSettings: { settings = true }, onInfo: { info = true }, onQuit: { quit = true })
+        var settings = false, pricing = false, about = false, quit = false
+        let view = PopupActionButtons(
+            onSettings: { settings = true },
+            onPricing: { pricing = true },
+            onAbout: { about = true },
+            onQuit: { quit = true }
+        )
         let buttons = try view.inspect().findAll(ViewType.Button.self)
         for button in buttons { try button.tap() }
         XCTAssertTrue(settings)
-        XCTAssertTrue(info)
+        XCTAssertTrue(pricing)
+        XCTAssertTrue(about)
         XCTAssertTrue(quit)
     }
 
@@ -207,11 +214,12 @@ extension ViewRenderTests {
         try buttons[buttons.count - 1].tap()
     }
 
-    func testPopupInfoButtonTogglesInfo() throws {
+    func testPopupActionButtonsToggleSheets() throws {
         let view = PopupView(model: makeModel(now: utcDate(5, 2)))
         let buttons = try view.inspect().findAll(ViewType.Button.self)
-        // settings, info, quit
+        // settings (0), pricing (1), about (2), quit (3)
         try buttons[1].tap()
+        try buttons[2].tap()
     }
 
     func testPopupHistoryDisclosureToggles() throws {
