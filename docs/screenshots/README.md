@@ -1,6 +1,6 @@
 # CheapSeek — Screenshots
 
-English UI in both appearances (sample timezone `America/Los_Angeles`), rendered from the real SwiftUI views with `ImageRenderer`. Click a thumbnail to open the full-size PNG.
+English UI in both appearances (sample timezone `America/Los Angeles`), rendered from the real SwiftUI views with `ImageRenderer`. Click a thumbnail to open the full-size PNG.
 
 > Regenerate with [`test/capture-screenshots.sh`](../../test/capture-screenshots.sh) after any UI-affecting change, and commit the refreshed PNGs together with the change.
 
