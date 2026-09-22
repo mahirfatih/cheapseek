@@ -46,20 +46,20 @@ The array is JSON-encoded with `JSONEncoder` and stored under the single key `hi
 
 ### Recording (event-based)
 
-A sample is appended only when the peak/off-peak **state changes** (not every tick), so a typical day stores a handful of entries. `HistoryStore.record(isPeak:at:)` prunes first, then appends only if the new state differs from the last sample.
+A sample is appended only when the peak/off-peak **state changes** (not every tick), so a typical day stores a handful of entries. `HistoryStore.record(isPeak:at:retentionDays:timeZone:)` prunes without persisting first, then persists once only if a new state is appended.
 
 ### Retention
 
-`HistoryStore.defaultRetentionDays = 7`. `prune(now:retentionDays:)` drops samples older than `now - 7 days`, but keeps **one sample before the cutoff as an anchor** so the interval spanning the cutoff is still counted by the aggregator. Pruning runs on every record.
+`HistoryStore.defaultRetentionDays = 7`. When the display timezone is supplied, `prune(now:retentionDays:timeZone:)` cuts off at the start of the calendar day seven days ago; without a timezone it retains the previous fixed `now - 7 days` behavior. In both cases it keeps **one sample before the cutoff as an anchor** so the interval spanning the cutoff is still counted by the aggregator. Pruning runs on every record.
 
 ### Backfill
 
-While the app is closed no samples are written, so the gap is repaired on the next launch and whenever the timezone changes. `HistoryStore.backfill(from:to:schedule:)` recomputes the true transitions with the pure `PeakCalculator`, inserts the boundary samples plus a final sample at `now`, caps the addition to `defaultMaxBackfillSamples = 50`, and skips timestamps that already exist (idempotent).
+While the app is closed no samples are written, so the gap is repaired on the next launch and whenever the timezone changes. `HistoryStore.backfill(from:to:schedule:retentionDays:maxSamples:timeZone:)` recomputes the true transitions with the pure `PeakCalculator`, inserts the boundary samples plus a final sample at `now`, caps the addition to `defaultMaxBackfillSamples = 50`, and skips timestamps that already exist (idempotent).
 
 ### Aggregation
 
-`HistoryAggregator.dailyDistribution(samples:now:days:timeZone:)` is pure. It builds exactly 7 calendar-day buckets ending with `now`'s day, turns consecutive samples into intervals (the earlier sample's state carries forward, the last interval runs to `now`), then clips and splits each interval at local day boundaries. DST-sized days (23h/25h) fall out naturally from the injected calendar and timezone. The result feeds `HistoryChartView` (Swift Charts).
+`HistoryAggregator.dailyDistribution(samples:now:days:timeZone:)` is pure. It builds exactly 7 calendar-day buckets ending with `now`'s day, turns consecutive samples into intervals (the earlier sample's state carries forward, the last interval runs to `now`), then clips and splits each interval at local day boundaries. DST-sized days (23h/25h) fall out naturally from the injected calendar and timezone. Each bucket also records whether it is the in-progress current day and the full calendar-day length, so `HistoryChartView` can normalize completed days to 100% while honestly leaving the current day partial. The result feeds `HistoryChartView` (Swift Charts).
 
 ### Reset
 
-`HistoryStore.removeAll()` clears the `history.samples.v1` key. In tests and previews, `HistoryStore(defaults: nil)` (`HistoryStore.inMemory`) keeps everything in memory and writes nothing.
+`HistoryStore.removeAll()` removes the `history.samples.v1` key. Settings exposes this as a confirmed **Clear History** action through `AppModel.clearHistory()`, which also reaggregates the chart. In tests and previews, `HistoryStore(defaults: nil)` (`HistoryStore.inMemory`) keeps everything in memory and writes nothing.
