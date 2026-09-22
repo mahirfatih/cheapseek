@@ -49,7 +49,7 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - ⚙️ **Settings** — language, searchable timezone picker, notifications (permission, before-peak warning, transition alerts, quiet hours), launch at login, refresh interval (30–300s), history reset (with confirmation)
 - 💰 **Pricing info** — DeepSeek model rates (peak/off-peak, per 1M tokens) with links to the pricing page and API docs
 - 🌗 **Light & dark mode** — follows your system appearance automatically
-- 🪶 **Minimal** — release build under 1 MB
+- 🪶 **Minimal** — release build ~4.6 MB
 - 🔔 **Local notifications** — an optional 5-minute warning before peak and/or an alert when off-peak starts, scheduled entirely on-device with quiet-hours support
 - 📊 **7-day history** — a collapsible percentage-normalized stacked-bar chart of peak share for the last 7 days, with the in-progress day marked separately, built from on-device state changes (no network)
 - 🔒 **No tracking, no telemetry, no network calls**
