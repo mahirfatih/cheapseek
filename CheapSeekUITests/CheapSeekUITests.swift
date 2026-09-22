@@ -48,6 +48,9 @@ final class CheapSeekUITests: XCTestCase {
         XCTAssertEqual(menu.menuItems.count, 17, "Expected exactly 17 languages")
 
         app.typeKey(.escape, modifierFlags: [])
+
+        let clearHistory = firstElement(app, identifier: "settings.clearHistory")
+        XCTAssertTrue(clearHistory.waitForExistence(timeout: 10), "Clear history action missing")
     }
 
     func testSettingsTimezonePickerOpens() throws {

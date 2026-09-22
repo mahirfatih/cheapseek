@@ -26,6 +26,7 @@ final class LocalizationTests: XCTestCase {
         "notification.offpeak_start.title", "notification.offpeak_start.body",
         "notification.peak_start.title", "notification.peak_start.body",
         "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty",
+        "history.reset",
         "timezone.search", "timezone.no_results"
     ]
 
@@ -77,6 +78,7 @@ final class LocalizationTests: XCTestCase {
             "notification.offpeak_start.title", "notification.offpeak_start.body",
             "notification.peak_start.title", "notification.peak_start.body",
             "history.title", "history.last7days", "history.peak", "history.offpeak", "history.empty",
+            "history.reset",
             "menu_bar.status.cheap", "menu_bar.status.peak"
         ]
 

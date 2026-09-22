@@ -68,6 +68,43 @@ final class HistoryAggregatorTests: XCTestCase {
         XCTAssertEqual(jan2?.offPeakMinutes, 1440)
     }
 
+    func testCompletedDaysNormalizeToFullDayShare() {
+        var samples: [HistorySample] = []
+        for offset in 0...7 {
+            samples.append(HistorySample(
+                timestamp: date(2026, 1, 1 + offset),
+                isPeak: offset % 2 == 0
+            ))
+        }
+        let days = HistoryAggregator.dailyDistribution(
+            samples: samples, now: date(2026, 1, 8, 12), timeZone: utc
+        )
+
+        let completedDays = days.dropLast()
+        XCTAssertFalse(completedDays.contains(where: \.isCurrentDay))
+        for day in completedDays {
+            XCTAssertEqual(day.dayLengthMinutes, 1440)
+            XCTAssertEqual(day.peakShare + day.offPeakShare, 1, accuracy: 0.000_001)
+        }
+    }
+
+    func testCurrentDayIsFlaggedAndOnlyShowsElapsedTime() {
+        let samples = [
+            HistorySample(timestamp: date(2026, 1, 10, 10), isPeak: true),
+            HistorySample(timestamp: date(2026, 1, 10, 11), isPeak: false)
+        ]
+        let days = HistoryAggregator.dailyDistribution(
+            samples: samples, now: date(2026, 1, 10, 11, 30), timeZone: utc
+        )
+
+        let today = bucket(for: date(2026, 1, 10), in: days, timeZone: utc)
+        XCTAssertEqual(today?.isCurrentDay, true)
+        XCTAssertEqual(today?.dayLengthMinutes, 1440)
+        XCTAssertEqual(today?.peakShare ?? -1, 60.0 / 1440.0, accuracy: 0.000_001)
+        XCTAssertEqual(today?.offPeakShare ?? -1, 30.0 / 1440.0, accuracy: 0.000_001)
+        XCTAssertEqual(days.filter(\.isCurrentDay).count, 1)
+    }
+
     func testTimezoneChangeReassignsDays() {
         let instant = date(2026, 1, 5, 23, 30)
         let samples = [HistorySample(timestamp: instant.addingTimeInterval(-3600), isPeak: false)]
@@ -90,6 +127,7 @@ final class HistoryAggregatorTests: XCTestCase {
 
         let day = bucket(for: march8, in: days, timeZone: newYork)
         XCTAssertEqual(day?.offPeakMinutes, 1380)
+        XCTAssertEqual(day?.dayLengthMinutes, 1380)
     }
 
     func testDSTFallBackDayHas1500Minutes() {
@@ -102,6 +140,7 @@ final class HistoryAggregatorTests: XCTestCase {
 
         let day = bucket(for: november1, in: days, timeZone: newYork)
         XCTAssertEqual(day?.offPeakMinutes, 1500)
+        XCTAssertEqual(day?.dayLengthMinutes, 1500)
     }
 
     func testWindowClipsOlderSamples() {

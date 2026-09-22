@@ -1,6 +1,7 @@
 import XCTest
 import SwiftUI
 import ViewInspector
+import Localize_Swift
 import UserNotifications
 @testable import CheapSeek
 
@@ -86,6 +87,17 @@ final class SettingsViewTests: XCTestCase {
         // language + launch-at-login bindings
         XCTAssertFalse(view.languageBinding.wrappedValue.isEmpty)
         _ = view.launchAtLoginBinding.wrappedValue
+    }
+
+    func testClearHistoryButtonExists() throws {
+        let previousLanguage = Localize.currentLanguage()
+        Localize.setCurrentLanguage("en")
+        defer { Localize.setCurrentLanguage(previousLanguage) }
+
+        let (view, _, _) = makeView()
+        _ = view.body
+        _ = view.content
+        _ = try view.inspect().find(button: "Clear History")
     }
 
     func testOpenNotificationSettingsDoesNotCrash() {
