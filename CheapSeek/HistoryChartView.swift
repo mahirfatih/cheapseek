@@ -57,20 +57,20 @@ struct HistoryChartView: View {
                 RuleMark(x: .value(daySeries, currentDay.date, unit: .day))
                     .foregroundStyle(.secondary)
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
-                    .annotation(position: .top, alignment: .center) {
-                        Text("now_label".localized())
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .accessibilityIdentifier("popup.history.today")
-                    }
+                    .accessibilityLabel(Text("now_label".localized()))
             }
         }
         .chartForegroundStyleScale(domain: [offPeakLabel, peakLabel], range: [.green.opacity(0.55), .red])
         .chartYScale(domain: 0...1)
         .chartXAxis {
-            AxisMarks(values: .stride(by: .day)) { _ in
+            AxisMarks(values: .stride(by: .day)) { value in
                 AxisGridLine()
-                AxisValueLabel(format: weekdayFormat)
+                AxisValueLabel {
+                    if let date = value.as(Date.self) {
+                        Text(date, format: weekdayFormat)
+                            .bold(isCurrentDay(date))
+                    }
+                }
             }
         }
         .chartYAxis {
@@ -86,8 +86,13 @@ struct HistoryChartView: View {
         .chartLegend(position: .bottom, alignment: .leading, spacing: 4)
         .environment(\.calendar, calendar)
         .environment(\.timeZone, timeZone)
-        .frame(height: 120)
+        .frame(width: 200, height: 120)
         .accessibilityLabel("history.last7days".localized())
+    }
+
+    private func isCurrentDay(_ date: Date) -> Bool {
+        guard let currentDay else { return false }
+        return calendar.isDate(date, inSameDayAs: currentDay.date)
     }
 
     var calendar: Calendar {
