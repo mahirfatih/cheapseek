@@ -102,7 +102,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 ## Quality, testing, and project management
 
 - **Test:** **220 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **5 UI testi** (açılış, Ayarlar ve saat dilimi seçici assert edilir; menü çubuğu popup'ı best-effort'tur ve macOS durum öğesini açığa çıkarmazsa atlar).
-- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,39** (son yerel tam koşum), CI kapısı **≥%95**.
+- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,37** (son yerel tam koşum), CI kapısı **≥%95**.
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — SwiftLint (`--strict`) işi, `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
 - **Proje yönetimi:** `project.yml` (XcodeGen) tek doğruluk kaynağı; doküman/asset `docs/diagrams/` (Archify) ve `docs/screenshots/` altında.
 - **Sürüm:** `project.yml`'de `MARKETING_VERSION` artırılır; uygulama arşivlenir, imzalanır, dışa aktarılır, notarize edilir, staple'lanır ve dağıtım için paketlenir.

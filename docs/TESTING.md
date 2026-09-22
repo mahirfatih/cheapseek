@@ -162,7 +162,7 @@ deployment target is macOS 14+. UI tests are intended to run **locally**; see CI
 
 ### Measured Coverage (2026-09-22, local macOS run)
 
-`CheapSeek.app` line coverage: **95.39%** (2875/3014 lines).
+`CheapSeek.app` line coverage: **95.37%** (2883/3023 lines).
 
 **CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
@@ -181,7 +181,7 @@ The figure above is the local full run (both system-boundary tests included). CI
 | `PeakStatus.swift` | 100.00% | pure value type |
 | `SystemUserNotificationCenterAdapter.swift` | 100.00% | system boundary — exercised locally; CI skips this test |
 | `TimeZoneLabel.swift` | 100.00% | pure formatting |
-| `HistoryChartView.swift` | 98.29% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryChartView.swift` | 97.83% | SwiftUI view — ViewInspector + ImageRenderer |
 | `HistoryAggregator.swift` | 97.85% | pure aggregation |
 | `PricingInfoView.swift` | 98.39% | SwiftUI view — ViewInspector + ImageRenderer |
 | `NotificationPlanner.swift` | 97.70% | pure planning |

@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - History backfill: gaps while the app was closed are recomputed on launch and on timezone change.
 - Percentage-normalized 7-day history chart with a separate in-progress-day marker.
 - Confirmed Settings action for clearing history.
-- ViewInspector + `ImageRenderer` unit-test layers, **95.39%** measured `CheapSeek.app` line coverage, and a 95% line-coverage gate in CI.
+- ViewInspector + `ImageRenderer` unit-test layers, **95.37%** measured `CheapSeek.app` line coverage, and a 95% line-coverage gate in CI.
 
 ### Changed
 
