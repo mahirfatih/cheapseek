@@ -101,7 +101,7 @@ Peak windows are **UTC** and applied Monday–Friday; weekends are always off-pe
 
 ## Quality, testing, and project management
 
-- **Tests:** **220 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **5 UI tests** (launch, Settings, timezone picker asserted; the menu bar popup is best-effort and skips when macOS does not expose the status item).
+- **Tests:** **220 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **7 UI tests** (launch, Settings, timezone picker, popup — all assert).
 - **Coverage:** `CheapSeek.app` line coverage **95.37%** (latest local full run) with a CI gate of **≥95%**.
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) on **manual dispatch (`workflow_dispatch`) only** — a SwiftLint (`--strict`) job, `xcodegen generate`, build, unit tests with coverage, and the coverage gate.
 - **Project management:** `project.yml` (XcodeGen) is the single source of truth; docs and assets live in `docs/diagrams/` (Archify) and `docs/screenshots/`.
