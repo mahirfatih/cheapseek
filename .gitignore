@@ -8,7 +8,24 @@ yarn.lock
 .env.*
 /logs
 build/
+dist/
 DerivedData/
 *.xcresult
 test/TestResults/
 xcuserdata/
+
+# Signing & secrets (never commit)
+Local.xcconfig
+Secrets.xcconfig
+*.local.xcconfig
+*.mobileprovision
+*.provisionprofile
+*.p12
+*.cer
+*.pem
+*.key
+ExportOptions.plist
+
+# Generated Xcode project (XcodeGen regenerates it from project.yml)
+*.xcodeproj/
+*.xcworkspace/
