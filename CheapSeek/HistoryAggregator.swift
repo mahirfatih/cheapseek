@@ -5,8 +5,38 @@ struct DayDistribution: Identifiable, Equatable {
     let date: Date
     let peakMinutes: Double
     let offPeakMinutes: Double
+    /// Whether this bucket is the in-progress day containing `now`.
+    let isCurrentDay: Bool
+    /// The full calendar-day length (normally 1440 minutes; DST days differ).
+    /// Bars are normalized against this value so completed days have equal height
+    /// and the current day honestly shows only elapsed time.
+    let dayLengthMinutes: Double
+
+    init(
+        date: Date,
+        peakMinutes: Double,
+        offPeakMinutes: Double,
+        isCurrentDay: Bool = false,
+        dayLengthMinutes: Double = 1440
+    ) {
+        self.date = date
+        self.peakMinutes = peakMinutes
+        self.offPeakMinutes = offPeakMinutes
+        self.isCurrentDay = isCurrentDay
+        self.dayLengthMinutes = dayLengthMinutes
+    }
 
     var totalMinutes: Double { peakMinutes + offPeakMinutes }
+
+    var peakShare: Double {
+        guard dayLengthMinutes > 0 else { return 0 }
+        return peakMinutes / dayLengthMinutes
+    }
+
+    var offPeakShare: Double {
+        guard dayLengthMinutes > 0 else { return 0 }
+        return offPeakMinutes / dayLengthMinutes
+    }
     var id: Date { date }
 }
 
@@ -66,10 +96,13 @@ struct HistoryAggregator {
         }
 
         return dayStarts.enumerated().map { index, date in
-            DayDistribution(
+            let dayLengthMinutes = calendar.dateInterval(of: .day, for: date)?.duration ?? 86_400
+            return DayDistribution(
                 date: date,
                 peakMinutes: peakSeconds[index] / 60,
-                offPeakMinutes: offPeakSeconds[index] / 60
+                offPeakMinutes: offPeakSeconds[index] / 60,
+                isCurrentDay: index == dayStarts.count - 1,
+                dayLengthMinutes: dayLengthMinutes / 60
             )
         }
     }
