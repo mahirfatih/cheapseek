@@ -1,0 +1,12 @@
+// Copy this file to Config/Local.xcconfig and set your Apple Developer team id.
+//
+// Config/Local.xcconfig is gitignored — NEVER commit the real team id.
+//
+//   cp Config/Local.xcconfig.example Config/Local.xcconfig
+//   # then edit DEVELOPMENT_TEAM below
+
+DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// For a Developer ID distribution build, uncomment:
+// CODE_SIGN_IDENTITY = Developer ID Application
+// CODE_SIGN_STYLE = Manual
