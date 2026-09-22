@@ -32,7 +32,11 @@ The key point: **there is no network call and no account.** The verdict is compu
 - **Today's Schedule:** every peak/off-peak segment for the day in your timezone.
 - **Next Change:** a live countdown to the next transition (`in 3h 42m to Peak`).
 - A collapsible **History** chart (last 7 days, peak share normalized against each calendar day; the in-progress day is marked separately).
-- Actions: **Settings**, **Info** (pricing), **Quit**.
+- Actions: **Settings**, **Pricing**, **About**, **Quit**.
+
+### About
+
+- App icon, name, and version, with links to **labrus.com** and **info@labrus.com** (reachable from the popup footer and the Settings header).
 
 ### Pricing / info
 
@@ -101,8 +105,8 @@ Peak windows are **UTC** and applied Monday–Friday; weekends are always off-pe
 
 ## Quality, testing, and project management
 
-- **Tests:** **220 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **7 UI tests** (launch, Settings, timezone picker, popup — all assert).
-- **Coverage:** `CheapSeek.app` line coverage **95.37%** (latest local full run) with a CI gate of **≥95%**.
+- **Tests:** **224 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **7 UI tests** (launch, Settings, timezone picker, popup — all assert).
+- **Coverage:** `CheapSeek.app` line coverage **95.22%** (latest local full run) with a CI gate of **≥95%**.
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) on **manual dispatch (`workflow_dispatch`) only** — a SwiftLint (`--strict`) job, `xcodegen generate`, build, unit tests with coverage, and the coverage gate.
 - **Project management:** `project.yml` (XcodeGen) is the single source of truth; docs and assets live in `docs/diagrams/` (Archify) and `docs/screenshots/`.
 - **Release:** `MARKETING_VERSION` in `project.yml` is bumped, then the app is archived, signed, exported, notarized, stapled, and packaged for distribution.

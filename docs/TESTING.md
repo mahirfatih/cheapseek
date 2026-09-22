@@ -39,6 +39,7 @@ xcodebuild -project CheapSeek.xcodeproj \
         │         │  HistoryAggregatorTests, HistoryStoreTests,
         │         │  LocalizationTests, PricingConfigTests,
         │         │  TimeZoneCatalogTests, TimeZoneLabelTests,
+        │         │  AboutViewTests,
         │         │  SecurityRegressionTests,
         │         │  ScreenshotCaptureTests (gated/skipped by default)
         └─────────┘
@@ -66,6 +67,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `ClockTests` (3) | Ticks fire on schedule, restarting cancels the previous task, stop without start is safe. | Real async clock with short intervals + expectations |
 | `PeakStatusTests` (6) | `isPeak` init, titles/colors/symbols, badge body + accessibility label. | Pure values + ViewInspector |
 | `PricingInfoViewTests` (3) | Scrollable/flat render, every model row, links present. | ViewInspector |
+| `AboutViewTests` (4) | About sheet renders; version readable; website/contact links point to Labrus. | ViewInspector + ImageRenderer |
 | `PopupViewTests` (6) | Popup/subviews render, status helpers, action buttons. | ViewInspector |
 | `SettingsViewTests` (7) | Default/notification/quiet/denied variants render, clear-history action, bindings read/write, quiet date math, pricing sheet. | ViewInspector |
 | `TimeZonePickerTests` (6) | Selected label, grouped content, empty result, selection callback, system entry. | ViewInspector |
@@ -162,7 +164,7 @@ deployment target is macOS 14+. UI tests are intended to run **locally**; see CI
 
 ### Measured Coverage (2026-09-22, local macOS run)
 
-`CheapSeek.app` line coverage: **95.37%** (2883/3023 lines).
+`CheapSeek.app` line coverage: **95.22%** (3111/3267 lines).
 
 **CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
@@ -181,14 +183,15 @@ The figure above is the local full run (both system-boundary tests included). CI
 | `PeakStatus.swift` | 100.00% | pure value type |
 | `SystemUserNotificationCenterAdapter.swift` | 100.00% | system boundary — exercised locally; CI skips this test |
 | `TimeZoneLabel.swift` | 100.00% | pure formatting |
+| `AboutView.swift` | 95.18% | SwiftUI view — ViewInspector + ImageRenderer |
 | `HistoryChartView.swift` | 97.83% | SwiftUI view — ViewInspector + ImageRenderer |
 | `HistoryAggregator.swift` | 97.85% | pure aggregation |
 | `PricingInfoView.swift` | 98.39% | SwiftUI view — ViewInspector + ImageRenderer |
 | `NotificationPlanner.swift` | 97.70% | pure planning |
-| `PopupView.swift` | 97.47% | SwiftUI view — ViewInspector + ImageRenderer |
+| `PopupView.swift` | 96.79% | SwiftUI view — ViewInspector + ImageRenderer |
 | `HistoryStore.swift` | 96.91% | file persistence, temp dirs in tests |
 | `TimeZonePicker.swift` | 97.39% | SwiftUI view — ViewInspector + ImageRenderer |
-| `SettingsView.swift` | 95.47% | SwiftUI view — ViewInspector + ImageRenderer |
+| `SettingsView.swift` | 95.20% | SwiftUI view — ViewInspector + ImageRenderer |
 | `PeakCalculator.swift` | 96.03% | pure logic; remainder is `xccov` partial-line subranges |
 | `TimeZoneCatalog.swift` | 92.96% | pure catalog; remainder is `xccov` partial-line subranges |
 | `CheapSeekApp.swift` | 40.19% | `@main`/scene glue + UI-test-only window bootstrap |

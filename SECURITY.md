@@ -94,5 +94,6 @@ xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek \
 | Localize-Swift pulled from upstream SPM did not build for macOS (iOS-only `import UIKit`) | Medium (A06 / supply chain) | Vendored 3.2.0 locally under `Packages/` — no remote resolution |
 | Settings window could not open on macOS 26 (private `showSettingsWindow:` selector removed) | Low (UX) | Modern `openSettings` action with a macOS 14 selector fallback |
 | Launch-at-login silently failed for ad-hoc signed builds | Low | `SMAppService` errors are caught and surfaced in Settings |
+| Signing secrets could be committed by accident | Low | The Apple team id lives in gitignored `Config/Local.xcconfig`; `.gitignore` excludes `*.p12`/`*.cer`/`*.pem`/`*.key`, provisioning profiles, and `ExportOptions.plist` |
 
 **Version:** `CFBundleShortVersionString 1.0.0` (`CFBundleVersion 1`), set via `project.yml` (`MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`).
