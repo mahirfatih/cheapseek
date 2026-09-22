@@ -65,3 +65,9 @@
 "history.reset" = "기록 지우기";
 "timezone.no_results" = "일치하는 시간대가 없습니다";
 "timezone.search" = "시간대 검색";
+
+"about" = "정보";
+"about.version" = "버전 %@";
+"about.website" = "웹사이트";
+"about.contact" = "연락처";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

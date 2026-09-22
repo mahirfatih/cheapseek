@@ -1,6 +1,7 @@
 import XCTest
 import SwiftUI
 import AppKit
+import Localize_Swift
 @testable import CheapSeek
 
 /// Renders the main screens offscreen with SwiftUI's `ImageRenderer` and writes
@@ -124,6 +125,14 @@ final class ScreenshotCaptureTests: XCTestCase {
             scheme: scheme,
             to: directory
         )
+
+        try capture(
+            "about",
+            AboutView(onClose: {}),
+            size: size,
+            scheme: scheme,
+            to: directory
+        )
     }
 
     func testCaptureScreenshots() throws {
@@ -139,6 +148,10 @@ final class ScreenshotCaptureTests: XCTestCase {
 
         let outputDirectory = URL(fileURLWithPath: outputPath, isDirectory: true)
         try FileManager.default.createDirectory(at: outputDirectory, withIntermediateDirectories: true)
+
+        // The gallery is documented as the English UI; pin it regardless of the
+        // machine's current language.
+        Localize.setCurrentLanguage("en")
 
         for scheme in [ColorScheme.light, .dark] {
             try captureScreens(scheme: scheme, to: outputDirectory)

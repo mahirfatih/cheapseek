@@ -30,6 +30,7 @@ struct PopupView: View {
     var fixedNow: Date?
     @State private var showInfo: Bool
     @State private var showHistory: Bool
+    @State private var showAbout = false
 
     init(
         model: AppModel,
@@ -59,6 +60,9 @@ struct PopupView: View {
             }
         }
         .id(model.languageRevision)
+        .sheet(isPresented: $showAbout) {
+            AboutView { showAbout = false }
+        }
     }
 
     private var statusContent: some View {
@@ -79,8 +83,11 @@ struct PopupView: View {
 
             PopupActionButtons(
                 onSettings: onOpenSettings,
-                onInfo: {
+                onPricing: {
                     showInfo = true
+                },
+                onAbout: {
+                    showAbout = true
                 },
                 onQuit: onQuit
             )
@@ -263,19 +270,27 @@ struct PopupHistorySection: View {
 /// The footer action buttons.
 struct PopupActionButtons: View {
     let onSettings: () -> Void
-    let onInfo: () -> Void
+    let onPricing: () -> Void
+    let onAbout: () -> Void
     let onQuit: () -> Void
 
     var body: some View {
         HStack {
             Button("settings".localized(), action: onSettings)
-            Button(action: onInfo) {
+            Button(action: onPricing) {
+                Image(systemName: "dollarsign.circle")
+            }
+            .buttonStyle(.borderless)
+            .help("pricing".localized())
+            .accessibilityLabel("pricing".localized())
+            .accessibilityIdentifier("popup.pricing.button")
+            Button(action: onAbout) {
                 Image(systemName: "info.circle")
             }
             .buttonStyle(.borderless)
-            .help("info".localized())
-            .accessibilityLabel("info".localized())
-            .accessibilityIdentifier("popup.pricing.button")
+            .help("about".localized())
+            .accessibilityLabel("about".localized())
+            .accessibilityIdentifier("popup.about.button")
             Spacer()
             Button("quit".localized(), action: onQuit)
                 .accessibilityIdentifier("popup.quit.button")

@@ -65,3 +65,9 @@
 "history.reset" = "ইতিহাস মুছুন";
 "timezone.no_results" = "কোনো মিলে যাওয়া সময় অঞ্চল নেই";
 "timezone.search" = "সময় অঞ্চল খুঁজুন";
+
+"about" = "সম্পর্কে";
+"about.version" = "সংস্করণ %@";
+"about.website" = "ওয়েবসাইট";
+"about.contact" = "যোগাযোগ";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

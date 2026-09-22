@@ -65,3 +65,9 @@
 "history.reset" = "Hapus riwayat";
 "timezone.no_results" = "Tidak ada zona waktu yang cocok";
 "timezone.search" = "Cari zona waktu";
+
+"about" = "Tentang";
+"about.version" = "Versi %@";
+"about.website" = "Situs web";
+"about.contact" = "Kontak";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

@@ -51,6 +51,9 @@ final class CheapSeekUITests: XCTestCase {
 
         let clearHistory = firstElement(app, identifier: "settings.clearHistory")
         XCTAssertTrue(clearHistory.waitForExistence(timeout: 10), "Clear history action missing")
+
+        let about = firstElement(app, identifier: "settings.about")
+        XCTAssertTrue(about.waitForExistence(timeout: 10), "About button missing")
     }
 
     func testSettingsTimezonePickerOpens() throws {
@@ -113,6 +116,9 @@ final class CheapSeekUITests: XCTestCase {
             toggle.click()
         }
         XCTAssertTrue(chart.waitForExistence(timeout: 5), "History chart did not appear")
+
+        let about = firstElement(app, identifier: "popup.about.button")
+        XCTAssertTrue(about.waitForExistence(timeout: 5), "About button missing")
     }
 
     func testPopupPricingSheetOpens() {

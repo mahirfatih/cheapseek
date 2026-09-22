@@ -8,6 +8,7 @@ struct SettingsView: View {
 
     @State private var showInfo: Bool
     @State private var showClearHistoryConfirmation = false
+    @State private var showAbout = false
 
     init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel, showInfo: Bool = false) {
         self.settings = settings
@@ -39,11 +40,21 @@ struct SettingsView: View {
                 Button {
                     showInfo = true
                 } label: {
+                    Image(systemName: "dollarsign.circle")
+                }
+                .buttonStyle(.borderless)
+                .help("pricing".localized())
+                .accessibilityLabel("pricing".localized())
+                .accessibilityIdentifier("settings.pricing")
+                Button {
+                    showAbout = true
+                } label: {
                     Image(systemName: "info.circle")
                 }
                 .buttonStyle(.borderless)
-                .help("info".localized())
-                .accessibilityLabel("info".localized())
+                .help("about".localized())
+                .accessibilityLabel("about".localized())
+                .accessibilityIdentifier("settings.about")
             }
 
             Form {
@@ -146,6 +157,9 @@ struct SettingsView: View {
             SettingsPricingSheet(config: config, timeZone: settings.timeZone) {
                 showInfo = false
             }
+        }
+        .sheet(isPresented: $showAbout) {
+            AboutView { showAbout = false }
         }
         .onChange(of: settings.updateInterval) { _, newValue in
             handleUpdateIntervalChange(newValue)

@@ -65,3 +65,9 @@
 "history.reset" = "Cancella cronologia";
 "timezone.no_results" = "Nessun fuso orario corrispondente";
 "timezone.search" = "Cerca fusi orari";
+
+"about" = "Informazioni";
+"about.version" = "Versione %@";
+"about.website" = "Sito web";
+"about.contact" = "Contatto";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";
