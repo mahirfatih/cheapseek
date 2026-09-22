@@ -26,7 +26,11 @@ packages:
   # stays dependency-free; used to inspect SwiftUI view trees in unit tests.
   ViewInspector:
     url: https://github.com/nalexn/ViewInspector
-    from: 0.10.0
+    exactVersion: "0.10.3"
+# Local, gitignored signing overrides (team id) are merged via Config/Base.xcconfig.
+configFiles:
+  Debug: Config/Base.xcconfig
+  Release: Config/Base.xcconfig
 targets:
   CheapSeek:
     type: application
@@ -47,8 +51,6 @@ targets:
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         SWIFT_VERSION: "5.9"
         MACOSX_DEPLOYMENT_TARGET: "14.0"
-        CODE_SIGN_STYLE: Automatic
-        CODE_SIGN_IDENTITY: "-"
   CheapSeekTests:
     type: bundle.unit-test
     platform: macOS
