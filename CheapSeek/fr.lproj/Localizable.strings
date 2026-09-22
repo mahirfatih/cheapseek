@@ -62,5 +62,6 @@
 "history.peak" = "Pointe";
 "history.offpeak" = "Creuses";
 "history.empty" = "Pas encore de données";
+"history.reset" = "Effacer l’historique";
 "timezone.no_results" = "Aucun fuseau horaire correspondant";
 "timezone.search" = "Rechercher un fuseau horaire";

@@ -62,5 +62,6 @@
 "history.peak" = "Kilele";
 "history.offpeak" = "Saa za Chini";
 "history.empty" = "Hakuna data bado";
+"history.reset" = "Futa historia";
 "timezone.no_results" = "Hakuna saa za eneo zinazolingana";
 "timezone.search" = "Tafuta saa za eneo";

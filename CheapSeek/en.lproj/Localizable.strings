@@ -62,5 +62,6 @@
 "history.peak" = "Peak";
 "history.offpeak" = "Off-Peak";
 "history.empty" = "No data yet";
+"history.reset" = "Clear History";
 "timezone.no_results" = "No matching timezones";
 "timezone.search" = "Search timezones";

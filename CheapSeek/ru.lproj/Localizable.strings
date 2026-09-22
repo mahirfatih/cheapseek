@@ -62,5 +62,6 @@
 "history.peak" = "Пик";
 "history.offpeak" = "Вне пика";
 "history.empty" = "Пока нет данных";
+"history.reset" = "Очистить историю";
 "timezone.no_results" = "Нет подходящих часовых поясов";
 "timezone.search" = "Поиск часовых поясов";

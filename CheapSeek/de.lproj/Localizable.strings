@@ -62,5 +62,6 @@
 "history.peak" = "Spitzenzeit";
 "history.offpeak" = "Nebenzeit";
 "history.empty" = "Noch keine Daten";
+"history.reset" = "Verlauf löschen";
 "timezone.no_results" = "Keine passenden Zeitzonen";
 "timezone.search" = "Zeitzonen suchen";

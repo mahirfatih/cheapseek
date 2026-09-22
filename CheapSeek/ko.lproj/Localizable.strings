@@ -62,5 +62,6 @@
 "history.peak" = "피크";
 "history.offpeak" = "비피크";
 "history.empty" = "아직 데이터가 없습니다";
+"history.reset" = "기록 지우기";
 "timezone.no_results" = "일치하는 시간대가 없습니다";
 "timezone.search" = "시간대 검색";

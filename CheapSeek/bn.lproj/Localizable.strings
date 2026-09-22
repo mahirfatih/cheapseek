@@ -62,5 +62,6 @@
 "history.peak" = "পিক";
 "history.offpeak" = "অফ-পিক";
 "history.empty" = "এখনও কোনো ডেটা নেই";
+"history.reset" = "ইতিহাস মুছুন";
 "timezone.no_results" = "কোনো মিলে যাওয়া সময় অঞ্চল নেই";
 "timezone.search" = "সময় অঞ্চল খুঁজুন";

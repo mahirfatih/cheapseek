@@ -62,5 +62,6 @@
 "history.peak" = "Punta";
 "history.offpeak" = "Non di punta";
 "history.empty" = "Nessun dato ancora";
+"history.reset" = "Cancella cronologia";
 "timezone.no_results" = "Nessun fuso orario corrispondente";
 "timezone.search" = "Cerca fusi orari";

@@ -62,5 +62,6 @@
 "history.peak" = "व्यस्त";
 "history.offpeak" = "कम भीड़";
 "history.empty" = "अभी कोई डेटा नहीं";
+"history.reset" = "इतिहास साफ़ करें";
 "timezone.no_results" = "कोई मेल खाता समय क्षेत्र नहीं";
 "timezone.search" = "समय क्षेत्र खोजें";
