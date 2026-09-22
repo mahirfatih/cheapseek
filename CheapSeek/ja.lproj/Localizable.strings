@@ -65,3 +65,9 @@
 "history.reset" = "履歴を消去";
 "timezone.no_results" = "一致するタイムゾーンがありません";
 "timezone.search" = "タイムゾーンを検索";
+
+"about" = "このアプリについて";
+"about.version" = "バージョン %@";
+"about.website" = "ウェブサイト";
+"about.contact" = "連絡先";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

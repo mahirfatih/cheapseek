@@ -65,3 +65,9 @@
 "history.reset" = "Padam sejarah";
 "timezone.no_results" = "Tiada zon waktu sepadan";
 "timezone.search" = "Cari zon waktu";
+
+"about" = "Perihal";
+"about.version" = "Versi %@";
+"about.website" = "Laman web";
+"about.contact" = "Hubungi";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

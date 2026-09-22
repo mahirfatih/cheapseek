@@ -65,3 +65,9 @@
 "history.reset" = "Xóa lịch sử";
 "timezone.no_results" = "Không có múi giờ phù hợp";
 "timezone.search" = "Tìm múi giờ";
+
+"about" = "Giới thiệu";
+"about.version" = "Phiên bản %@";
+"about.website" = "Trang web";
+"about.contact" = "Liên hệ";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

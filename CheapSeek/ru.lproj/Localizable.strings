@@ -65,3 +65,9 @@
 "history.reset" = "Очистить историю";
 "timezone.no_results" = "Нет подходящих часовых поясов";
 "timezone.search" = "Поиск часовых поясов";
+
+"about" = "О программе";
+"about.version" = "Версия %@";
+"about.website" = "Веб-сайт";
+"about.contact" = "Контакт";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

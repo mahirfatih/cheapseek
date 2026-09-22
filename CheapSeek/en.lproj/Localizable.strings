@@ -65,3 +65,9 @@
 "history.reset" = "Clear History";
 "timezone.no_results" = "No matching timezones";
 "timezone.search" = "Search timezones";
+
+"about" = "About";
+"about.version" = "Version %@";
+"about.website" = "Website";
+"about.contact" = "Contact";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

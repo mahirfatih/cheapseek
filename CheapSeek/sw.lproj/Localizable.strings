@@ -65,3 +65,9 @@
 "history.reset" = "Futa historia";
 "timezone.no_results" = "Hakuna saa za eneo zinazolingana";
 "timezone.search" = "Tafuta saa za eneo";
+
+"about" = "Kuhusu";
+"about.version" = "Toleo %@";
+"about.website" = "Tovuti";
+"about.contact" = "Wasiliana";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

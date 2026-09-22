@@ -65,3 +65,9 @@
 "history.reset" = "Geçmişi Temizle";
 "timezone.no_results" = "Eşleşen saat dilimi yok";
 "timezone.search" = "Saat dilimi ara";
+
+"about" = "Hakkında";
+"about.version" = "Sürüm %@";
+"about.website" = "Web sitesi";
+"about.contact" = "İletişim";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";

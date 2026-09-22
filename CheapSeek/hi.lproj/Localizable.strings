@@ -65,3 +65,9 @@
 "history.reset" = "इतिहास साफ़ करें";
 "timezone.no_results" = "कोई मेल खाता समय क्षेत्र नहीं";
 "timezone.search" = "समय क्षेत्र खोजें";
+
+"about" = "परिचय";
+"about.version" = "संस्करण %@";
+"about.website" = "वेबसाइट";
+"about.contact" = "संपर्क";
+"about.copyright" = "© 2026 Labrus Yazılım A.Ş.";
