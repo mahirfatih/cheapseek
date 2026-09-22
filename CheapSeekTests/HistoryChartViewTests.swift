@@ -6,11 +6,17 @@ import Localize_Swift
 
 final class HistoryChartViewTests: XCTestCase {
 
-    private func day(_ day: Int, peak: Double, offPeak: Double) -> DayDistribution {
+    private func day(_ day: Int, peak: Double, offPeak: Double, isCurrentDay: Bool = false) -> DayDistribution {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = .gmt
         let date = calendar.date(from: DateComponents(year: 2026, month: 1, day: day)) ?? Date()
-        return DayDistribution(date: date, peakMinutes: peak, offPeakMinutes: offPeak)
+        return DayDistribution(
+            date: date,
+            peakMinutes: peak,
+            offPeakMinutes: offPeak,
+            isCurrentDay: isCurrentDay,
+            dayLengthMinutes: 1440
+        )
     }
 
     func testEmptyStateRendersLocalizedMessage() throws {
@@ -35,6 +41,18 @@ final class HistoryChartViewTests: XCTestCase {
     func testChartWithDataRenders() {
         let days = (1...7).map { day($0, peak: 30, offPeak: 90) }
         let view = HistoryChartView(days: days, timeZone: .gmt)
+        _ = view.body
+        _ = try? view.inspect()
+    }
+
+    func testCurrentDayIsExposedForAnnotation() {
+        var days = (1...6).map { day($0, peak: 60, offPeak: 1380) }
+        days.append(day(7, peak: 30, offPeak: 90, isCurrentDay: true))
+        let view = HistoryChartView(days: days, timeZone: .gmt)
+
+        XCTAssertEqual(view.currentDay?.peakMinutes, 30)
+        XCTAssertEqual(view.currentDay?.offPeakMinutes, 90)
+        XCTAssertTrue(view.currentDay?.isCurrentDay ?? false)
         _ = view.body
         _ = try? view.inspect()
     }

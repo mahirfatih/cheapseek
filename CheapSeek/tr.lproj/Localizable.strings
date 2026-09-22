@@ -62,5 +62,6 @@
 "history.peak" = "Yoğun";
 "history.offpeak" = "Yoğun Değil";
 "history.empty" = "Henüz veri yok";
+"history.reset" = "Geçmişi Temizle";
 "timezone.no_results" = "Eşleşen saat dilimi yok";
 "timezone.search" = "Saat dilimi ara";

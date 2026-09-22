@@ -90,29 +90,33 @@ final class AppModel {
     /// Fills the gap since the last recorded sample with the true peak/off-peak
     /// transitions, then reaggregates. Runs on launch and after a timezone change.
     func backfillHistory() {
-        guard let lastSample = history.samples.last?.timestamp else { return }
-        history.backfill(from: lastSample, to: now, schedule: config.schedule)
+        if let lastSample = history.samples.last?.timestamp {
+            history.backfill(from: lastSample, to: now, schedule: config.schedule, timeZone: timeZone)
+        }
         refreshHistory()
     }
 
     /// Reaggregates history, e.g. after a timezone change.
-    func refreshHistory() {
+    func refreshHistory(now: Date? = nil) {
+        let effectiveNow = now ?? self.now
         historyDays = HistoryAggregator.dailyDistribution(
             samples: history.samples,
-            now: now,
+            now: effectiveNow,
             timeZone: timeZone
         )
+    }
+
+    func clearHistory() {
+        history.removeAll()
+        refreshHistory()
     }
 
     private func recordHistory(at date: Date) {
         history.record(
             isPeak: PeakCalculator.isPeak(at: date, schedule: config.schedule),
-            at: date
-        )
-        historyDays = HistoryAggregator.dailyDistribution(
-            samples: history.samples,
-            now: now,
+            at: date,
             timeZone: timeZone
         )
+        refreshHistory(now: date)
     }
 }

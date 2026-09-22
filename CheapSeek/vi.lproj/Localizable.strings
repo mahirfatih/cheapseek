@@ -62,5 +62,6 @@
 "history.peak" = "Cao điểm";
 "history.offpeak" = "Thấp điểm";
 "history.empty" = "Chưa có dữ liệu";
+"history.reset" = "Xóa lịch sử";
 "timezone.no_results" = "Không có múi giờ phù hợp";
 "timezone.search" = "Tìm múi giờ";

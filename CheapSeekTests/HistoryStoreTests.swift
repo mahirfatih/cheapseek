@@ -63,11 +63,32 @@ final class HistoryStoreTests: XCTestCase {
         XCTAssertEqual(store.samples.first?.timestamp, date(3))
     }
 
+    func testPruneUsesCalendarDayBoundaryAcrossDST() {
+        let newYork = TimeZone(identifier: "America/New_York")!
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: false, at: local(newYork, 2026, 2, 28, 22, 30), retentionDays: 100, timeZone: newYork)
+        store.record(isPeak: true, at: local(newYork, 2026, 2, 28, 23, 30), retentionDays: 100, timeZone: newYork)
+        store.record(isPeak: false, at: local(newYork, 2026, 3, 1, 12), retentionDays: 100, timeZone: newYork)
+
+        store.prune(now: local(newYork, 2026, 3, 8), retentionDays: 7, timeZone: newYork)
+
+        // The 1 March calendar-day cutoff keeps the 28 February 23:30 sample only
+        // as the spanning anchor; the earlier sample is outside the window.
+        XCTAssertEqual(store.samples.map(\.timestamp), [
+            local(newYork, 2026, 2, 28, 23, 30),
+            local(newYork, 2026, 3, 1, 12)
+        ])
+    }
+
     func testRemoveAll() {
-        let store = HistoryStore(defaults: makeDefaults())
+        let defaults = makeDefaults()
+        let store = HistoryStore(defaults: defaults)
         store.record(isPeak: true, at: date(1))
         store.removeAll()
+
         XCTAssertTrue(store.samples.isEmpty)
+        XCTAssertNil(defaults.data(forKey: "history.samples.v1"))
+        XCTAssertTrue(HistoryStore(defaults: defaults).samples.isEmpty)
     }
 
     func testInMemoryStoreDoesNotPersist() {

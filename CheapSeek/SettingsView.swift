@@ -7,6 +7,7 @@ struct SettingsView: View {
     let model: AppModel
 
     @State private var showInfo: Bool
+    @State private var showClearHistoryConfirmation = false
 
     init(settings: AppSettings, config: DeepSeekConfig = .fallback, model: AppModel, showInfo: Bool = false) {
         self.settings = settings
@@ -119,6 +120,15 @@ struct SettingsView: View {
                     Slider(value: $settings.updateInterval, in: AppSettings.updateIntervalRange, step: 10)
                         .accessibilityIdentifier("settings.refreshInterval")
                 }
+
+                Section {
+                    Button("history.reset".localized(), role: .destructive) {
+                        showClearHistoryConfirmation = true
+                    }
+                    .accessibilityIdentifier("settings.clearHistory")
+                } header: {
+                    Text("history.title".localized())
+                }
             }
             .formStyle(.grouped)
         }
@@ -126,6 +136,12 @@ struct SettingsView: View {
         .padding(.vertical, Spacing.lg)
         .frame(width: 440)
         .accessibilityIdentifier("settings.root")
+        .confirmationDialog("history.reset".localized(), isPresented: $showClearHistoryConfirmation) {
+            Button("history.reset".localized(), role: .destructive) {
+                model.clearHistory()
+            }
+            Button("close".localized(), role: .cancel) {}
+        }
         .sheet(isPresented: $showInfo) {
             SettingsPricingSheet(config: config, timeZone: settings.timeZone) {
                 showInfo = false

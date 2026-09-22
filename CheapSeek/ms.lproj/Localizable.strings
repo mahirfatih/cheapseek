@@ -62,5 +62,6 @@
 "history.peak" = "Sibuk";
 "history.offpeak" = "Tidak Sibuk";
 "history.empty" = "Belum ada data";
+"history.reset" = "Padam sejarah";
 "timezone.no_results" = "Tiada zon waktu sepadan";
 "timezone.search" = "Cari zon waktu";

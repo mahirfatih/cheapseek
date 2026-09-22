@@ -39,6 +39,11 @@ See [docs/TESTING.md](./docs/TESTING.md) for suite details and coverage expectat
 
 `test/capture-screenshots.sh` regenerates `docs/screenshots`.
 
+Screenshots are **never produced in CI** (`ScreenshotCaptureTests` is gated and
+skips by default), so they go stale silently. **Re-run the script and inspect
+the PNGs after any UI-affecting change** (views, chart, localization strings,
+light/dark appearance) and commit the refreshed images together with the change.
+
 ## Commit Message Format
 
 Write a **single, concise sentence** describing what the commit does, in the imperative mood:

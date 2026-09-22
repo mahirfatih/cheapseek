@@ -41,6 +41,23 @@ final class ScreenshotCaptureTests: XCTestCase {
         )
     }
 
+    /// A model with a representative week of history, so the popup screenshot
+    /// shows the normalized chart instead of the first-launch empty state.
+    private func makeModelWithHistory(now: Date) -> AppModel {
+        let settings = makeSettings()
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2, 8)) // Friday peak
+        store.backfill(from: utcDate(2, 8), to: now, schedule: .deepseekDefault)
+        return AppModel(
+            settings: settings,
+            config: .fallback,
+            clock: Clock(now: now),
+            notifications: .disabled,
+            history: store,
+            autoStart: false
+        )
+    }
+
     /// Rasterizes `view` at the given size and writes it under
     /// `directory/<light|dark>/<name>.png`.
     private func capture(
@@ -78,7 +95,7 @@ final class ScreenshotCaptureTests: XCTestCase {
 
         try capture(
             "popup",
-            PopupView(model: makeModel(now: now)),
+            PopupView(model: makeModelWithHistory(now: now)),
             size: size,
             scheme: scheme,
             to: directory
@@ -95,7 +112,7 @@ final class ScreenshotCaptureTests: XCTestCase {
         try capture(
             "settings",
             SettingsView(settings: makeSettings(), config: .fallback, model: makeModel(now: now)),
-            size: CGSize(width: 460, height: 560),
+            size: CGSize(width: 460, height: 720),
             scheme: scheme,
             to: directory
         )

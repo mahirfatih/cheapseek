@@ -62,5 +62,6 @@
 "history.peak" = "Punta";
 "history.offpeak" = "Valle";
 "history.empty" = "Aún no hay datos";
+"history.reset" = "Borrar historial";
 "timezone.no_results" = "No hay zonas horarias coincidentes";
 "timezone.search" = "Buscar zonas horarias";

@@ -120,7 +120,7 @@ final class AppModelTests: XCTestCase {
 
     func testBackfillOnLaunchWithEmptyStoreRecordsOnlyNow() {
         let store = HistoryStore(defaults: nil)
-        _ = AppModel(
+        let model = AppModel(
             settings: makeSettings(),
             config: .fallback,
             clock: Clock(now: utcDate(2026, 1, 5, 2)),
@@ -129,6 +129,8 @@ final class AppModelTests: XCTestCase {
         )
 
         XCTAssertEqual(store.samples, [HistorySample(timestamp: utcDate(2026, 1, 5, 2), isPeak: true)])
+        XCTAssertEqual(model.historyDays.count, 7)
+        XCTAssertTrue(model.historyDays.last?.isCurrentDay ?? false)
     }
 
     func testTickCallbackRecordsHistory() {
@@ -164,6 +166,32 @@ final class AppModelTests: XCTestCase {
         store.removeAll()
         model.refreshHistory()
         XCTAssertFalse(model.hasHistory)
+    }
+
+    func testClearHistoryEmptiesStoreAndChart() {
+        let settings = makeSettings()
+        let store = HistoryStore(defaults: nil)
+        store.record(isPeak: true, at: utcDate(2026, 1, 5, 1))
+        let model = AppModel(
+            settings: settings,
+            config: .fallback,
+            clock: Clock(now: utcDate(2026, 1, 5, 2)),
+            history: store,
+            autoStart: false
+        )
+        XCTAssertTrue(model.hasHistory)
+
+        model.clearHistory()
+
+        XCTAssertTrue(store.samples.isEmpty)
+        XCTAssertFalse(model.hasHistory)
+        XCTAssertEqual(model.historyDays.count, 7)
+        XCTAssertTrue(model.historyDays.allSatisfy { $0.totalMinutes == 0 })
+
+        settings.timeZoneIdentifier = "America/Los_Angeles"
+        model.backfillHistory()
+        XCTAssertEqual(model.historyDays.count, 7)
+        XCTAssertTrue(model.historyDays.allSatisfy { $0.totalMinutes == 0 })
     }
 
     private func startOfDay(_ date: Date, in timeZone: TimeZone) -> Date {

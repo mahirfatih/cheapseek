@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange)
 ![Languages](https://img.shields.io/badge/languages-17-green)
-![Tests](https://img.shields.io/badge/tests-214%20passing%20%281%20gated%29-brightgreen)
+![Tests](https://img.shields.io/badge/tests-220%20passing%20%281%20gated%29-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -30,7 +30,7 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (214 passing; includes security, config, ViewInspector and ImageRenderer view tests) + XCUITest (7 tests: launch, settings, timezone picker, popup — all assert); `ScreenshotCaptureTests` is gated and skips by default
+- **Testing:** XCTest unit tests (220 passing; includes security, config, ViewInspector and ImageRenderer view tests) + XCUITest (7 tests: launch, settings, timezone picker, popup — all assert); `ScreenshotCaptureTests` is gated and skips by default
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
 - **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
 - **Bundle ID:** `com.labrus.CheapSeek`
@@ -46,12 +46,12 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - 📅 **Today's full schedule** — every peak/off-peak window for the day
 - ⏳ **Next transition countdown** — "Next change in 3h 42m (to PEAK)", ticking live every second
 - 🌍 **17 languages** — English 🇺🇸, Turkish 🇹🇷, German 🇩🇪, Spanish 🇪🇸, Portuguese 🇵🇹, French 🇫🇷, Italian 🇮🇹, Chinese (Simplified) 🇨🇳, Hindi 🇮🇳, Bengali 🇧🇩, Russian 🇷🇺, Indonesian 🇮🇩, Malay 🇲🇾, Japanese 🇯🇵, Korean 🇰🇷, Vietnamese 🇻🇳, Swahili 🇹🇿
-- ⚙️ **Settings** — language, searchable timezone picker, notifications (permission, before-peak warning, transition alerts, quiet hours), launch at login, refresh interval (30–300s)
+- ⚙️ **Settings** — language, searchable timezone picker, notifications (permission, before-peak warning, transition alerts, quiet hours), launch at login, refresh interval (30–300s), history reset (with confirmation)
 - 💰 **Pricing info** — DeepSeek model rates (peak/off-peak, per 1M tokens) with links to the pricing page and API docs
 - 🌗 **Light & dark mode** — follows your system appearance automatically
-- 🪶 **Minimal** — release build under 1 MB
+- 🪶 **Minimal** — release build ~4.6 MB
 - 🔔 **Local notifications** — an optional 5-minute warning before peak and/or an alert when off-peak starts, scheduled entirely on-device with quiet-hours support
-- 📊 **7-day history** — a collapsible stacked-bar chart of peak vs. off-peak minutes for the last 7 days, built from on-device state changes (no network)
+- 📊 **7-day history** — a collapsible percentage-normalized stacked-bar chart of peak share for the last 7 days, with the in-progress day marked separately, built from on-device state changes (no network)
 - 🔒 **No tracking, no telemetry, no network calls**
 
 ---
@@ -62,7 +62,7 @@ All screenshots use the English UI with a sample timezone (`America/Los Angeles`
 
 | | Light | Dark |
 | :--- | :---: | :---: |
-| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup (dark)"></a> |
+| **Popup** | <a href="docs/screenshots/light/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/popup.png" width="220" alt="CheapSeek menu bar popup with history chart (light)"></a> | <a href="docs/screenshots/dark/popup.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/popup.png" width="220" alt="CheapSeek menu bar popup with history chart (dark)"></a> |
 | **Pricing** | <a href="docs/screenshots/light/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/pricing.png" width="260" alt="DeepSeek pricing info (light)"></a> | <a href="docs/screenshots/dark/pricing.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/pricing.png" width="260" alt="DeepSeek pricing info (dark)"></a> |
 | **Settings** | <a href="docs/screenshots/light/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/settings.png" width="320" alt="CheapSeek settings (light)"></a> | <a href="docs/screenshots/dark/settings.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/settings.png" width="320" alt="CheapSeek settings (dark)"></a> |
 | **Timezone picker** | <a href="docs/screenshots/light/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/light/timezone-picker.png" width="320" alt="Searchable timezone picker (light)"></a> | <a href="docs/screenshots/dark/timezone-picker.png" target="_blank" rel="noopener"><img src="docs/screenshots/dark/timezone-picker.png" width="320" alt="Searchable timezone picker (dark)"></a> |
@@ -76,7 +76,7 @@ graph TD
     subgraph App["Main Application — CheapSeek (macOS 14+)"]
         Entry["CheapSeekApp<br/>MenuBarExtra + Settings scene"]
         Popup["PopupView<br/>.window popup"]
-        Settings["SettingsView<br/>Language / Timezone / Toggles / Interval"]
+        Settings["SettingsView<br/>Language / Timezone / Toggles / Interval / History Reset"]
         Picker["TimeZonePicker<br/>searchable · grouped"]
         Zone["TimeZoneCatalog · TimeZoneLabel<br/>pure timezone helpers"]
         Model["AppModel<br/>@Observable state"]
@@ -101,7 +101,7 @@ graph TD
     Model -->|"timeZone · interval"| Config
     Model -->|"plan · schedule"| Notify
     Model -->|"samples"| History
-    History -->|"daily totals"| Chart["HistoryChartView<br/>Swift Charts"]
+    History -->|"daily shares"| Chart["HistoryChartView<br/>Swift Charts"]
     Chart -->|"chart"| Popup
     History -->|"persist"| Store["UserDefaults"]
     Config -->|"persist"| Store["UserDefaults"]
@@ -164,8 +164,8 @@ CheapSeek/
 │   ├── NotificationManager.swift        # Permission state + schedules transition notifications
 │   ├── NotificationPlanner.swift        # Pure peak/off-peak notification planning + quiet hours
 │   ├── HistoryStore.swift               # Event-based, on-device peak/off-peak history (UserDefaults)
-│   ├── HistoryAggregator.swift          # Pure per-day peak/off-peak minute aggregation
-│   ├── HistoryChartView.swift           # SwiftUI Charts stacked bar (last 7 days)
+│   ├── HistoryAggregator.swift          # Pure per-day peak/off-peak share aggregation
+│   ├── HistoryChartView.swift           # SwiftUI Charts normalized stacked bar (last 7 days)
 │   ├── PeakCalculator.swift             # Pure UTC peak/off-peak logic
 │   ├── PeakStatus.swift                 # PeakStatus enum + reusable PeakStatusBadge
 │   ├── DesignSystem.swift               # Shared spacing/layout tokens
@@ -178,11 +178,11 @@ CheapSeek/
 │   ├── Configuration.plist              # Bundled config: peak windows, model pricing, links
 │   ├── PrivacyInfo.xcprivacy            # Privacy manifest (UserDefaults reason CA92.1)
 │   ├── PopupView.swift                  # Menu bar popup (status, schedule, countdown, history, actions)
-│   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval)
+│   ├── SettingsView.swift               # Settings screen (language, timezone, toggles, interval, history reset)
 │   ├── TimeZonePicker.swift             # Searchable, region-grouped timezone picker
 │   ├── PricingInfoView.swift            # Pricing/info sheet (models, peak/off-peak rates, links)
 │   ├── Assets.xcassets/                 # App icon + accent color
-│   ├── en.lproj/Localizable.strings     # English (66 keys)
+│   ├── en.lproj/Localizable.strings     # English (67 keys)
 │   ├── tr.lproj/Localizable.strings     # Turkish
 │   ├── de.lproj/Localizable.strings     # Deutsch
 │   ├── es.lproj/Localizable.strings     # Español
@@ -266,9 +266,9 @@ CheapSeek/
 ```
 
 - Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
-- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (12), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (11), `HistoryStoreTests` (18), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (6), `TimeZonePickerTests` (6), `HistoryChartViewTests` (4), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10); `ScreenshotCaptureTests` (1) is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — **214 unit tests** (excluding the gated capture test), plus `CheapSeekUITests` (7 tests: launch, settings, timezone picker, popup — all assert).
+- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (13), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (13), `HistoryStoreTests` (19), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `PopupViewTests` (6), `SettingsViewTests` (7), `TimeZonePickerTests` (6), `HistoryChartViewTests` (5), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10); `ScreenshotCaptureTests` (1) is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — **220 unit tests** (excluding the gated capture test), plus `CheapSeekUITests` (7 tests: launch, settings, timezone picker, popup — all assert).
 - UI tests are **local-only** and run under test-only launch flags (`-UITestMode` / `-UITestSettings`, which present the popup and Settings in plain windows); all 7 assert real behavior with no skips.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **CI coverage gate** (`CheapSeek.app` ≥ 95%); the latest local full run measures **95.54%**. UI tests are local-only (macOS XCUITest needs an interactive session).
+- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **CI coverage gate** (`CheapSeek.app` ≥ 95%); the latest local full run measures **95.37%**. UI tests are local-only (macOS XCUITest needs an interactive session).
 
 ---
 

@@ -40,8 +40,13 @@ final class HistoryStore {
     /// Prunes old entries and appends a new sample only when the state changed.
     /// - Returns: `true` when a new sample was recorded.
     @discardableResult
-    func record(isPeak: Bool, at date: Date, retentionDays: Int = HistoryStore.defaultRetentionDays) -> Bool {
-        prune(now: date, retentionDays: retentionDays)
+    func record(
+        isPeak: Bool,
+        at date: Date,
+        retentionDays: Int = HistoryStore.defaultRetentionDays,
+        timeZone: TimeZone? = nil
+    ) -> Bool {
+        prune(now: date, retentionDays: retentionDays, timeZone: timeZone, persistChanges: false)
         guard samples.last?.isPeak != isPeak else { return false }
         samples.append(HistorySample(timestamp: date, isPeak: isPeak))
         persist()
@@ -61,7 +66,8 @@ final class HistoryStore {
         to now: Date,
         schedule: PeakSchedule,
         retentionDays: Int = HistoryStore.defaultRetentionDays,
-        maxSamples: Int = HistoryStore.defaultMaxBackfillSamples
+        maxSamples: Int = HistoryStore.defaultMaxBackfillSamples,
+        timeZone: TimeZone? = nil
     ) -> Int {
         guard lastSample < now else { return 0 }
 
@@ -82,21 +88,36 @@ final class HistoryStore {
 
         samples.append(contentsOf: newSamples)
         samples.sort { $0.timestamp < $1.timestamp }
-        prune(now: now, retentionDays: retentionDays)
+        prune(now: now, retentionDays: retentionDays, timeZone: timeZone)
         persist()
         return newSamples.count
     }
 
     /// Drops entries older than the retention window, keeping the most recent
     /// sample before the cutoff as an anchor so the spanning interval still counts.
-    func prune(now: Date, retentionDays: Int = HistoryStore.defaultRetentionDays) {
+    func prune(
+        now: Date,
+        retentionDays: Int = HistoryStore.defaultRetentionDays,
+        timeZone: TimeZone? = nil
+    ) {
+        prune(now: now, retentionDays: retentionDays, timeZone: timeZone, persistChanges: true)
+    }
+
+    private func prune(
+        now: Date,
+        retentionDays: Int,
+        timeZone: TimeZone?,
+        persistChanges: Bool
+    ) {
         guard retentionDays > 0 else { return }
-        let cutoff = now.addingTimeInterval(-Double(retentionDays) * 86_400)
+        let cutoff = Self.cutoff(for: now, retentionDays: retentionDays, timeZone: timeZone)
 
         guard let firstInWindow = samples.firstIndex(where: { $0.timestamp >= cutoff }) else {
             if samples.count > 1, let last = samples.last {
                 samples = [last]
-                persist()
+                if persistChanges {
+                    persist()
+                }
             }
             return
         }
@@ -104,13 +125,27 @@ final class HistoryStore {
         let keepFrom = max(0, firstInWindow - 1)
         if keepFrom > 0 {
             samples.removeFirst(keepFrom)
-            persist()
+            if persistChanges {
+                persist()
+            }
         }
+    }
+
+    private static func cutoff(for now: Date, retentionDays: Int, timeZone: TimeZone?) -> Date {
+        guard let timeZone else {
+            return now.addingTimeInterval(-Double(retentionDays) * 86_400)
+        }
+
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = timeZone
+        let startOfToday = calendar.startOfDay(for: now)
+        return calendar.date(byAdding: .day, value: -retentionDays, to: startOfToday)
+            ?? now.addingTimeInterval(-Double(retentionDays) * 86_400)
     }
 
     func removeAll() {
         samples = []
-        persist()
+        defaults?.removeObject(forKey: Self.storageKey)
     }
 
     private func persist() {

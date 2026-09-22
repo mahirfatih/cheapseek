@@ -26,35 +26,59 @@ struct HistoryChartView: View {
     var offPeakLabel: String { "history.offpeak".localized() }
     var peakLabel: String { "history.peak".localized() }
 
+    private let daySeries = "history.day.series"
+    private let statusSeries = "history.status.series"
+
+    /// The in-progress bucket, exposed for tests. Production always uses the
+    /// aggregator's last bucket; chart annotations are keyed from this value.
+    var currentDay: DayDistribution? {
+        days.last(where: \.isCurrentDay)
+    }
+
     private var chart: some View {
         Chart {
             ForEach(days) { day in
                 BarMark(
-                    x: .value("history.title".localized(), day.date, unit: .day),
-                    y: .value("unit_minutes".localized(), day.offPeakMinutes)
+                    x: .value(daySeries, day.date, unit: .day),
+                    y: .value("percent", day.offPeakShare)
                 )
-                .foregroundStyle(by: .value("history.title".localized(), offPeakLabel))
+                .foregroundStyle(by: .value(statusSeries, offPeakLabel))
+                .opacity(day.isCurrentDay ? 0.55 : 1)
 
                 BarMark(
-                    x: .value("history.title".localized(), day.date, unit: .day),
-                    y: .value("unit_minutes".localized(), day.peakMinutes)
+                    x: .value(daySeries, day.date, unit: .day),
+                    y: .value("percent", day.peakShare)
                 )
-                .foregroundStyle(by: .value("history.title".localized(), peakLabel))
+                .foregroundStyle(by: .value(statusSeries, peakLabel))
+                .opacity(day.isCurrentDay ? 0.75 : 1)
+            }
+
+            if let currentDay {
+                RuleMark(x: .value(daySeries, currentDay.date, unit: .day))
+                    .foregroundStyle(.secondary)
+                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [3, 3]))
+                    .accessibilityLabel(Text("now_label".localized()))
             }
         }
-        .chartForegroundStyleScale(domain: [offPeakLabel, peakLabel], range: [Color.green, Color.red])
+        .chartForegroundStyleScale(domain: [offPeakLabel, peakLabel], range: [.green.opacity(0.55), .red])
+        .chartYScale(domain: 0...1)
         .chartXAxis {
-            AxisMarks(values: .stride(by: .day)) { _ in
+            AxisMarks(values: .stride(by: .day)) { value in
                 AxisGridLine()
-                AxisValueLabel(format: weekdayFormat)
+                AxisValueLabel {
+                    if let date = value.as(Date.self) {
+                        Text(date, format: weekdayFormat)
+                            .bold(isCurrentDay(date))
+                    }
+                }
             }
         }
         .chartYAxis {
-            AxisMarks { value in
+            AxisMarks(values: [0, 0.25, 0.5, 0.75, 1]) { value in
                 AxisGridLine()
                 AxisValueLabel {
-                    if let minutes = value.as(Double.self) {
-                        Text("\(Int(minutes))")
+                    if let share = value.as(Double.self) {
+                        Text("\(Int((share * 100).rounded()))%")
                     }
                 }
             }
@@ -62,8 +86,13 @@ struct HistoryChartView: View {
         .chartLegend(position: .bottom, alignment: .leading, spacing: 4)
         .environment(\.calendar, calendar)
         .environment(\.timeZone, timeZone)
-        .frame(height: 120)
+        .frame(width: 200, height: 120)
         .accessibilityLabel("history.last7days".localized())
+    }
+
+    private func isCurrentDay(_ date: Date) -> Bool {
+        guard let currentDay else { return false }
+        return calendar.isDate(date, inSameDayAs: currentDay.date)
     }
 
     var calendar: Calendar {

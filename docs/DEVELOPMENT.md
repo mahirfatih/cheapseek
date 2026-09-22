@@ -87,7 +87,7 @@ Because of the ad-hoc signature, `SMAppService.mainApp` may reject the launch-at
 | `./test/test.sh` | Unit tests (`xcodegen generate` + `xcodebuild test`) — see [TESTING.md](./TESTING.md) |
 | `./test/test.sh --ui` | Include the UI tests (local only) |
 | `./test/test.sh --coverage` | Unit tests plus an `xccov` coverage summary |
-| `./test/capture-screenshots.sh` | Render the light/dark screenshots for `docs/screenshots/` |
+| `./test/capture-screenshots.sh` | Render the light/dark screenshots for `docs/screenshots/` — re-run after any UI-affecting change (CI never renders them) |
 | `swiftlint lint --strict` | Lint the app and test targets (`.swiftlint.yml`) |
 | `./scripts/bump-version.sh 1.1.0` | Bump `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` in `project.yml` |
 

@@ -11,12 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Searchable, region-grouped timezone picker with live UTC offsets.
 - History backfill: gaps while the app was closed are recomputed on launch and on timezone change.
-- ViewInspector + `ImageRenderer` unit-test layers, **95.54%** measured `CheapSeek.app` line coverage, and a 95% line-coverage gate in CI.
+- Percentage-normalized 7-day history chart with a separate in-progress-day marker.
+- Confirmed Settings action for clearing history.
+- ViewInspector + `ImageRenderer` unit-test layers, **95.37%** measured `CheapSeek.app` line coverage, and a 95% line-coverage gate in CI.
 
 ### Changed
 
 - Grouped, System Settings–style layout for the Settings window.
 - Language changes now refresh the popup, settings, menu bar, and pending notifications without a relaunch.
+- Timezone-aware history retention, single-write recording, and corrected history reaggregation/reset behavior.
 
 ## [1.0.0] - 2026-09-15
 

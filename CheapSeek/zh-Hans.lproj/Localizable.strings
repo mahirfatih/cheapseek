@@ -62,5 +62,6 @@
 "history.peak" = "高峰";
 "history.offpeak" = "非高峰";
 "history.empty" = "暂无数据";
+"history.reset" = "清除历史记录";
 "timezone.no_results" = "没有匹配的时区";
 "timezone.search" = "搜索时区";

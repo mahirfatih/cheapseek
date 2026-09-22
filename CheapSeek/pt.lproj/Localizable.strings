@@ -62,5 +62,6 @@
 "history.peak" = "Pico";
 "history.offpeak" = "Fora de pico";
 "history.empty" = "Ainda sem dados";
+"history.reset" = "Limpar histórico";
 "timezone.no_results" = "Nenhum fuso horário correspondente";
 "timezone.search" = "Pesquisar fusos horários";
