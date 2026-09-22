@@ -7,7 +7,19 @@
 3. Open `CheapSeek.xcodeproj` in Xcode
 4. Press `Cmd + R` to build and run (the app lives in the menu bar)
 
-> **Note:** `project.yml` is the canonical source. Never edit `.xcodeproj` by hand. Run `xcodegen generate` after any change to `project.yml` or after adding/removing source files.
+> **Note:** `project.yml` is the canonical source. The `.xcodeproj` is generated and **gitignored** — never edit or commit it. Run `xcodegen generate` after any change to `project.yml` or after adding/removing source files.
+
+### Local signing
+
+The Apple team id is kept out of the repository:
+
+```bash
+cp Config/Local.xcconfig.example Config/Local.xcconfig   # then set DEVELOPMENT_TEAM
+```
+
+`Config/Base.xcconfig` (committed) optionally `#include?`s `Config/Local.xcconfig`
+(gitignored). Do not set signing in Xcode — the project is regenerated. See
+[docs/RELEASE.md](./docs/RELEASE.md) for distribution signing.
 
 ## Running Tests
 
