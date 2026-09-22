@@ -31,7 +31,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 - Durum rozeti (**Yoğun Saatler** / **Yoğun Olmayan Saatler**), geçerli saat ve seçili saat dilimi (örn. `Europe/Istanbul · GMT+3`).
 - **Bugünün Programı:** seçili saat diliminde günün tüm peak/off-peak dilimleri.
 - **Sonraki Değişim:** sonraki geçişe canlı geri sayım (`içinde 3sa 42dk Yoğun saate`).
-- Katlanabilir **Geçmiş** grafiği (son 7 gün, yoğun/yoğun olmayan dakikalar).
+- Katlanabilir **Geçmiş** grafiği (son 7 gün, her takvim gününe normalize edilmiş peak payı; devam eden gün ayrıca işaretlenir).
 - Eylemler: **Ayarlar**, **Bilgi** (fiyatlandırma), **Çık**.
 
 ### Fiyatlandırma / bilgi
@@ -52,6 +52,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 - **Bildirimler** — bildirimleri etkinleştirme, yoğun olmayan saat başlangıcı, yoğun saat başlangıcı, yoğun saatten önce uyarı ve sessiz saatler.
 - **Girişte Başlat** — `SMAppService` ile.
 - **Güncelleme aralığı** — 30–300 sn (varsayılan 60 sn).
+- **Geçmişi Sıfırla** — onay sonrası kayıtlı peak/off-peak geçmişini temizler.
 
 ---
 
@@ -76,7 +77,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 - **Durum:** `AppModel` (`@MainActor`, `@Observable`; yenileme tiki, program, geçmiş) + `AppSettings` (`UserDefaults` kalıcılığı, `SMAppService`) + `Clock` (async ticker) + `HistoryStore` + `NotificationManager`.
 - **Yapılandırma:** `DeepSeekConfig`, `Configuration.plist`'i (peak pencereleri, fiyatlar, bağlantılar) yerleşik yedekle yükler.
 - **View'lar:** `PopupHost`/`PopupView` (`MenuBarExtra` `.window`), `SettingsView`, `PricingInfoView`, `HistoryChartView` (Swift Charts), `TimeZonePicker`, `MenuBarLabel`, `PeakStatus`.
-- **Geçmiş:** olay tabanlı — örnek yalnızca durum değişiminde `UserDefaults`'a yazılır; kayıtlar 7 güne budanır ve sınır çapası korunur; `HistoryAggregator` aralıkları yerel güne göre yoğun/yoğun olmayan dakikalara böler (DST'li 23sa/25sa günler dahil).
+- **Geçmiş:** olay tabanlı — örnek yalnızca durum değişiminde `UserDefaults`'a yazılır; kayıtlar son 7 takvim gününe budanır ve sınır çapası korunur; `HistoryAggregator` aralıkları yerel güne göre yoğun/yoğun olmayan paylara böler (DST'li 23sa/25sa günler dahil). Geçmiş, Ayarlar'daki onaylı sıfırlama ile temizlenebilir.
 
 ---
 
@@ -100,8 +101,8 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ## Quality, testing, and project management
 
-- **Test:** **214 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **5 UI testi** (açılış, Ayarlar ve saat dilimi seçici assert edilir; menü çubuğu popup'ı best-effort'tur ve macOS durum öğesini açığa çıkarmazsa atlar).
-- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,54** (son yerel tam koşum), CI kapısı **≥%95**.
+- **Test:** **220 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **5 UI testi** (açılış, Ayarlar ve saat dilimi seçici assert edilir; menü çubuğu popup'ı best-effort'tur ve macOS durum öğesini açığa çıkarmazsa atlar).
+- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,39** (son yerel tam koşum), CI kapısı **≥%95**.
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — SwiftLint (`--strict`) işi, `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
 - **Proje yönetimi:** `project.yml` (XcodeGen) tek doğruluk kaynağı; doküman/asset `docs/diagrams/` (Archify) ve `docs/screenshots/` altında.
 - **Sürüm:** `project.yml`'de `MARKETING_VERSION` artırılır; uygulama arşivlenir, imzalanır, dışa aktarılır, notarize edilir, staple'lanır ve dağıtım için paketlenir.

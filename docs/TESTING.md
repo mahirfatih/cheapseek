@@ -51,12 +51,12 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `PeakCalculatorTests` (39) | `isPeak` windows and boundaries, weekends, `nextTransition` (incl. exact transition instants), `transitions` between dates, `todaySchedules`, `schedules` (UTC, Istanbul, New York, DST day). | Pure functions — no mocks |
 | `CountdownFormatterTests` (7) | Hours/minutes/seconds formatting, exact hour, negative clamp, hour-truncation spec. | Compares against the localized unit keys — language-independent |
 | `AppSettingsTests` (7) | Defaults, `updateInterval`/notification clamping and persistence, timezone resolution, quiet-hours preferences, launch-at-login via a fake `LoginItemService`. | Injected `UserDefaults` suite + `LoginItemService` |
-| `AppModelTests` (12) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule, launch backfill (weekend gap, empty store), timezone-change backfill (LA/Kolkata/DST, idempotent, re-aggregation), tick callback, `hasHistory`. | Injected clock/timezone via `autoStart: false` |
+| `AppModelTests` (13) | `isPeak`/`schedule` from injected date + timezone, `setUpdateInterval`, language-change revision and notification reschedule, launch backfill (weekend gap, empty store), timezone-change backfill (LA/Kolkata/DST, idempotent, re-aggregation), tick callback, `hasHistory`, history reset. | Injected clock/timezone via `autoStart: false` |
 | `MenuBarLabelTests` (6) | Menu bar status text for each `PeakStatus`, short-length guard, distinct non-empty symbols, accessibility titles, per-language status titles. | Pins the language to English via Localize |
 | `NotificationManagerTests` (7) | Cancel-then-add scheduling, disabled settings clear pending, denied permission skips scheduling, permission state updates, `SystemNotificationCenterClient` delegation, no-op disabled client. | Mock `NotificationCenterClient` + fake `UserNotificationCenterAdapter` |
 | `NotificationPlannerTests` (11) | Peak warning at `T−before`, off-peak/peak-start events, disabled options, past-date drop, 7-day horizon, quiet-hours suppression, wrap-around and same-day windows. | Pure functions with injected `now`/`PeakSchedule` |
-| `HistoryAggregatorTests` (11) | Empty data, single day, full 7 days, timezone reassignment, DST spring-forward (23h) and fall-back (25h), window clipping, last-interval state, identifier, guarded durations. | Pure functions with injected `now`/`TimeZone` |
-| `HistoryStoreTests` (18) | Event-based dedupe, persistence round-trip, prune anchor, in-memory mode, plus backfill: transitions+final sample, no-op guards, off-peak-only gap, peak→off→peak, full weekend, idempotency, 50-sample cap, DST 23/25h, non-UTC and half-hour zones. | Injected `UserDefaults` suite + in-memory store |
+| `HistoryAggregatorTests` (13) | Empty data, single day, full 7 days, normalized completed-day shares, current-day flagging and elapsed-time handling, timezone reassignment, DST spring-forward (23h) and fall-back (25h), window clipping, last-interval state, identifier, guarded durations. | Pure functions with injected `now`/`TimeZone` |
+| `HistoryStoreTests` (19) | Event-based dedupe, persistence round-trip, prune anchor, calendar-day retention boundary across DST, key-removing reset, in-memory mode, plus backfill: transitions+final sample, no-op guards, off-peak-only gap, peak→off→peak, full weekend, idempotency, 50-sample cap, DST 23/25h, non-UTC and half-hour zones. | Injected `UserDefaults` suite + in-memory store |
 | `LocalizationTests` (4) | All 17 `.lproj` files have identical key sets; every expected key present in every language; notification/history/menu-bar strings are not left in English; every language resolves to a valid locale. | Direct source-file parsing — no bundle state |
 | `PricingConfigTests` (6) | Bundled `Configuration.plist` is present and parses; fallback schedule matches DeepSeek defaults; custom schedule peak calculation; usage URL present. | Injected `PeakSchedule` — no mocks |
 | `TimeZoneCatalogTests` (6) | System entry without a title, region grouping, city extraction (incl. 3-part identifiers), offset formatting, and case/diacritic-insensitive search filtering. | Injected identifier lists — no global state |
@@ -67,9 +67,9 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `PeakStatusTests` (6) | `isPeak` init, titles/colors/symbols, badge body + accessibility label. | Pure values + ViewInspector |
 | `PricingInfoViewTests` (3) | Scrollable/flat render, every model row, links present. | ViewInspector |
 | `PopupViewTests` (6) | Popup/subviews render, status helpers, action buttons. | ViewInspector |
-| `SettingsViewTests` (6) | Default/notification/quiet/denied variants render, bindings read/write, quiet date math, pricing sheet. | ViewInspector |
+| `SettingsViewTests` (7) | Default/notification/quiet/denied variants render, clear-history action, bindings read/write, quiet date math, pricing sheet. | ViewInspector |
 | `TimeZonePickerTests` (6) | Selected label, grouped content, empty result, selection callback, system entry. | ViewInspector |
-| `HistoryChartViewTests` (4) | Empty state, chart properties, single/7-day rendering. | ViewInspector |
+| `HistoryChartViewTests` (5) | Empty state, chart properties, current-day annotation, single/7-day rendering. | ViewInspector |
 | `HistoryChartViewRenderTests` (2) | Offscreen `ImageRenderer` executes the `Chart`/`AxisMarks` builders. | `ImageRenderer` |
 | `ViewRenderTests` (15) | Offscreen `ImageRenderer` renders every view + variant; button taps and binding writes. | `ImageRenderer` + ViewInspector |
 | `ScreenshotCaptureTests` (1) | Offscreen light/dark PNG rendering of the popup, pricing, settings, and timezone picker. **Skipped by default** (`XCTSkipUnless`) and only runs with `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` (see `test/capture-screenshots.sh`). | `ImageRenderer` + process environment |
@@ -117,7 +117,7 @@ Both flags are test-only; production behavior is identical when they are absent.
 | Test | Result | What it checks |
 | :--- | :--- | :--- |
 | `testAppLaunches` | **assert** | The app is running after launch. |
-| `testSettingsOpensAndListsLanguages` | **assert** | `settings.language` lists exactly 17 languages. |
+| `testSettingsOpensAndListsLanguages` | **assert** | `settings.language` lists exactly 17 languages and `settings.clearHistory` exists. |
 | `testSettingsTimezonePickerOpens` | **assert** | `settings.timezone` opens its popover and the search field filters to Tokyo. |
 | `testQuitMenuItemExists` | **assert** | The Quit command (⌘Q) terminates the app. |
 | `testPopupOpensAndShowsStatus` | **assert** | `popup.root`, `popup.status` (peak/off-peak), `popup.countdown`, and the history toggle/chart. |
@@ -155,14 +155,14 @@ deployment target is macOS 14+. UI tests are intended to run **locally**; see CI
 - **`SMAppService` registration:** `register()` / `unregister()` change real login-item state and can require user approval; not exercised in tests. `AppSettings` only reads `status`.
 - **Menu bar tint rendering:** macOS may render the label as a monochrome template, so the app intentionally avoids color and uses `leaf`/`flame.fill` plus text; visual appearance is verified manually.
 - **Notification delivery:** authorization prompts and actual banner delivery depend on a signed app and user approval; `NotificationManager` is tested through a mock client, while real delivery is verified manually.
-- **History chart rendering:** the SwiftUI `Charts` view is not snapshot-tested; all date math is covered by `HistoryAggregatorTests` and the chart is verified manually.
+- **History chart rendering:** the SwiftUI `Charts` view is not pixel/snapshot-tested; its builders are executed offscreen by `HistoryChartViewRenderTests`, all date math is covered by `HistoryAggregatorTests`, and the final appearance is verified manually.
 - **SwiftUI snapshot tests:** SwiftUI previews + manual visual verification were deemed sufficient.
 
 ## Coverage
 
-### Measured Coverage (2026-09-20, local macOS run)
+### Measured Coverage (2026-09-22, local macOS run)
 
-`CheapSeek.app` line coverage: **95.54%** (2742/2870 lines).
+`CheapSeek.app` line coverage: **95.39%** (2875/3014 lines).
 
 **CI coverage gate:** `.github/workflows/ci.yml` enforces an **app-wide** `CheapSeek.app` line coverage of **≥ 95%** (`COVERAGE_MIN: "0.95"`). CI does **not** enforce any per-file minimum — the table below is a measurement, not a target.
 
@@ -181,14 +181,14 @@ The figure above is the local full run (both system-boundary tests included). CI
 | `PeakStatus.swift` | 100.00% | pure value type |
 | `SystemUserNotificationCenterAdapter.swift` | 100.00% | system boundary — exercised locally; CI skips this test |
 | `TimeZoneLabel.swift` | 100.00% | pure formatting |
-| `HistoryChartView.swift` | 99.24% | SwiftUI view — ViewInspector + ImageRenderer |
-| `HistoryAggregator.swift` | 98.59% | pure aggregation |
+| `HistoryChartView.swift` | 98.29% | SwiftUI view — ViewInspector + ImageRenderer |
+| `HistoryAggregator.swift` | 97.85% | pure aggregation |
 | `PricingInfoView.swift` | 98.39% | SwiftUI view — ViewInspector + ImageRenderer |
 | `NotificationPlanner.swift` | 97.70% | pure planning |
 | `PopupView.swift` | 97.47% | SwiftUI view — ViewInspector + ImageRenderer |
-| `HistoryStore.swift` | 97.44% | file persistence, temp dirs in tests |
+| `HistoryStore.swift` | 96.91% | file persistence, temp dirs in tests |
 | `TimeZonePicker.swift` | 97.39% | SwiftUI view — ViewInspector + ImageRenderer |
-| `SettingsView.swift` | 96.15% | SwiftUI view — ViewInspector + ImageRenderer |
+| `SettingsView.swift` | 95.47% | SwiftUI view — ViewInspector + ImageRenderer |
 | `PeakCalculator.swift` | 96.03% | pure logic; remainder is `xccov` partial-line subranges |
 | `TimeZoneCatalog.swift` | 92.96% | pure catalog; remainder is `xccov` partial-line subranges |
 | `CheapSeekApp.swift` | 40.19% | `@main`/scene glue + UI-test-only window bootstrap |
