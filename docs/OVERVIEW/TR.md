@@ -32,7 +32,11 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 - **Bugünün Programı:** seçili saat diliminde günün tüm peak/off-peak dilimleri.
 - **Sonraki Değişim:** sonraki geçişe canlı geri sayım (`içinde 3sa 42dk Yoğun saate`).
 - Katlanabilir **Geçmiş** grafiği (son 7 gün, her takvim gününe normalize edilmiş peak payı; devam eden gün ayrıca işaretlenir).
-- Eylemler: **Ayarlar**, **Bilgi** (fiyatlandırma), **Çık**.
+- Eylemler: **Ayarlar**, **Fiyatlandırma**, **Hakkında**, **Çık**.
+
+### Hakkında
+
+- Uygulama ikonu, ad ve sürüm; **labrus.com** ve **info@labrus.com** bağlantıları (popup alt bilgisinden ve Ayarlar başlığından erişilir).
 
 ### Fiyatlandırma / bilgi
 
@@ -101,8 +105,8 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ## Quality, testing, and project management
 
-- **Test:** **220 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **7 UI testi** (açılış, Ayarlar, saat dilimi seçici ve popup — hepsi assert eder).
-- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,37** (son yerel tam koşum), CI kapısı **≥%95**.
+- **Test:** **224 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **7 UI testi** (açılış, Ayarlar, saat dilimi seçici ve popup — hepsi assert eder).
+- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,22** (son yerel tam koşum), CI kapısı **≥%95**.
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — SwiftLint (`--strict`) işi, `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
 - **Proje yönetimi:** `project.yml` (XcodeGen) tek doğruluk kaynağı; doküman/asset `docs/diagrams/` (Archify) ve `docs/screenshots/` altında.
 - **Sürüm:** `project.yml`'de `MARKETING_VERSION` artırılır; uygulama arşivlenir, imzalanır, dışa aktarılır, notarize edilir, staple'lanır ve dağıtım için paketlenir.
