@@ -4,7 +4,7 @@
 ![Platform](https://img.shields.io/badge/platform-macOS%2014%2B-blue)
 ![Swift](https://img.shields.io/badge/Swift-5.9-orange)
 ![Languages](https://img.shields.io/badge/languages-17-green)
-![Tests](https://img.shields.io/badge/tests-224%20passing%20%281%20gated%29-brightgreen)
+![Tests](https://img.shields.io/badge/tests-passing-brightgreen)
 ![Coverage](https://img.shields.io/badge/coverage-%E2%89%A595%25-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
 
@@ -30,9 +30,9 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
-- **Testing:** XCTest unit tests (224 passing; includes security, config, ViewInspector and ImageRenderer view tests) + XCUITest (7 tests: launch, settings, timezone picker, popup — all assert); `ScreenshotCaptureTests` is gated and skips by default
+- **Testing:** Extensive XCTest + XCUITest coverage (unit, security, config, ViewInspector and ImageRenderer view tests, plus UI tests — all assert; `ScreenshotCaptureTests` is gated and skips by default; see `docs/TESTING.md` for the current counts and coverage)
 - **Project Generation:** Declarative `project.yml` managed with [XcodeGen](https://github.com/yonaskolb/XcodeGen) for reproducible builds
-- **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored — see note in `project.yml`)
+- **Dependency:** [Localize-Swift](https://github.com/marmelroy/Localize-Swift) 3.2.0 (MIT, by [Roy Marmelstein](https://github.com/marmelroy); vendored runtime dependency — see note in `project.yml`; ViewInspector 0.10.3 is test-only)
 - **Bundle ID:** `com.labrus.CheapSeek`
 
 ---
@@ -112,7 +112,7 @@ graph TD
     L10n -->|"localized()"| Settings
 ```
 
-### Architecture Diagrams (Archify)
+### Diagrams
 
 System architecture and visual documentation are generated with [Archify](https://github.com/tt-a1i/archify). Generated files live in [`docs/diagrams/`](./docs/diagrams) as interactive HTML visualizers plus their JSON definitions:
 
@@ -263,6 +263,7 @@ CheapSeek/
 │   ├── Base.xcconfig                    # Shared defaults; #include? Local.xcconfig
 │   └── Local.xcconfig.example           # Copy to Local.xcconfig and set your team id
 ├── scripts/
+│   ├── README.md                      # Script/tooling reference
 │   ├── bump-version.sh                  # Bump MARKETING_VERSION / CURRENT_PROJECT_VERSION
 │   ├── release.sh                       # Release build + DMG (+ notarize/publish)
 │   ├── make-dmg.sh                      # Package a built .app into a DMG
@@ -296,8 +297,8 @@ CheapSeek/
 │   │   └── lifecycle.html               # Peak status states and transitions
 │   └── screenshots/                     # English UI screenshots (used in README)
 │       ├── README.md                    # Light/dark gallery
-│       ├── light/                       # popup, pricing, settings, timezone-picker
-│       └── dark/                        # popup, pricing, settings, timezone-picker
+│       ├── light/                       # popup, pricing, settings, timezone-picker, about
+│       └── dark/                        # popup, pricing, settings, timezone-picker, about
 ├── README.md
 └── logs/                                # Raw test logs (gitignored; .empty keeps the dir)
 ```
@@ -315,9 +316,9 @@ CheapSeek/
 ```
 
 - Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
-- Suites: `PeakCalculatorTests` (39), `CountdownFormatterTests` (7), `AppSettingsTests` (7), `AppModelTests` (13), `MenuBarLabelTests` (6), `NotificationManagerTests` (7), `NotificationPlannerTests` (11), `HistoryAggregatorTests` (13), `HistoryStoreTests` (19), `LocalizationTests` (4), `PricingConfigTests` (6), `TimeZoneCatalogTests` (6), `TimeZoneLabelTests` (5), `DeepSeekConfigTests` (10), `AppLanguageTests` (2), `ClockTests` (3), `PeakStatusTests` (6), `PricingInfoViewTests` (3), `AboutViewTests` (4), `PopupViewTests` (6), `SettingsViewTests` (7), `TimeZonePickerTests` (6), `HistoryChartViewTests` (5), `HistoryChartViewRenderTests` (2), `ViewRenderTests` (15), `SystemUserNotificationCenterAdapterTests` (1), `SystemLoginItemServiceTests` (1), `SecurityRegressionTests` (10); `ScreenshotCaptureTests` (1) is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — **224 unit tests** (excluding the gated capture test), plus `CheapSeekUITests` (7 tests: launch, settings, timezone picker, popup — all assert).
-- UI tests are **local-only** and run under test-only launch flags (`-UITestMode` / `-UITestSettings`, which present the popup and Settings in plain windows); all 7 assert real behavior with no skips.
-- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **CI coverage gate** (`CheapSeek.app` ≥ 95%); the latest local full run measures **95.22%**. UI tests are local-only (macOS XCUITest needs an interactive session).
+- Suites: unit tests (`PeakCalculatorTests`, `CountdownFormatterTests`, `AppSettingsTests`, `AppModelTests`, `MenuBarLabelTests`, `NotificationManagerTests`, `NotificationPlannerTests`, `HistoryAggregatorTests`, `HistoryStoreTests`, `LocalizationTests`, `PricingConfigTests`, `TimeZoneCatalogTests`, `TimeZoneLabelTests`, `DeepSeekConfigTests`, `AppLanguageTests`, `ClockTests`, `PeakStatusTests`, `PricingInfoViewTests`, `AboutViewTests`, `PopupViewTests`, `SettingsViewTests`, `TimeZonePickerTests`, `HistoryChartViewTests`, `HistoryChartViewRenderTests`, `ViewRenderTests`, `SystemUserNotificationCenterAdapterTests`, `SystemLoginItemServiceTests`, `SecurityRegressionTests`; `ScreenshotCaptureTests` is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — see `docs/TESTING.md` for the current test counts), plus `CheapSeekUITests` (launch, settings, timezone picker, popup — all assert).
+- UI tests are **local-only** and run under test-only launch flags (`-UITestMode` / `-UITestSettings`, which present the popup and Settings in plain windows); all UI tests assert real behavior with no skips.
+- CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **CI coverage gate** (`CheapSeek.app` ≥ 95%; see `docs/TESTING.md` for the latest measured coverage). UI tests are local-only (macOS XCUITest needs an interactive session).
 
 ---
 
@@ -325,12 +326,15 @@ CheapSeek/
 
 ### Project Documentation
 
+- [OVERVIEW/EN.md](./docs/OVERVIEW/EN.md) · [TR](./docs/OVERVIEW/TR.md) — detailed feature, architecture, and data-layer walkthrough.
 - [TESTING.md](./docs/TESTING.md) — test suites, runner, UI tests, and coverage.
 - [DEVELOPMENT.md](./docs/DEVELOPMENT.md) — local setup, project generation, and tooling.
 - [DATABASE.md](./docs/DATABASE.md) — data and persistence.
 - [API.md](./docs/API.md) — interfaces and integrations.
 - [RELEASE.md](./docs/RELEASE.md) — signing, notarizing, publishing, and distribution.
 - [HOMEBREW.md](./docs/HOMEBREW.md) — Homebrew tap, cask, and troubleshooting.
+- [diagrams/](./docs/diagrams) — Archify architecture, data-flow, workflow, and lifecycle diagrams.
+- [screenshots/README.md](./docs/screenshots/README.md) — light/dark UI screenshot gallery.
 - [SECURITY.md](./SECURITY.md) — OWASP Top 10, MASVS, threat model, and privacy posture.
 - [CONTRIBUTING.md](./CONTRIBUTING.md) — development setup, tests, and commit conventions.
 

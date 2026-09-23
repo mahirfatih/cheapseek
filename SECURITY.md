@@ -2,7 +2,7 @@
 
 **Scope:** `CheapSeek` macOS client (menu bar app).
 **Architecture:** 100% on-device. No network calls, no telemetry, no accounts, no shared container.
-**Date:** 2026-09-15 · **Last re-verified:** 2026-09-17 (114 unit tests pass; 3 UI tests pass/skip) · **Validated by:** `SecurityRegressionTests` (8 automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `TimeZoneCatalogTests`, `TimeZoneLabelTests`, `LocalizationTests` (run per build via `test/test.sh`).
+**Date:** 2026-09-15 · **Last re-verified:** 2026-09-17 · **Validated by:** `SecurityRegressionTests` (automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `TimeZoneCatalogTests`, `TimeZoneLabelTests`, `LocalizationTests` (run on every test run via `test/test.sh`). Exact test counts and coverage: see `docs/TESTING.md`.
 
 ## OWASP Top 10 (2021) — Desktop Client Applicability
 
@@ -13,7 +13,7 @@
 | A03 | Injection | **N/A** | No SQL, shell, or network input. The only external value is a timezone identifier, validated through `TimeZone(identifier:)` with a safe `.current` fallback (`AppSettings.timeZone`). |
 | A04 | Insecure Design | **Pass** | Peak pricing is computed locally from the system clock (`PeakCalculator`, UTC). No remote trust boundary exists. |
 | A05 | Security Misconfiguration | **Pass** | `LSUIElement = true` (no Dock icon/menu), no entitlements, no debug backdoors in the app logic. |
-| A06 | Vulnerable Components | **Pass** | A single dependency, Localize-Swift, is **vendored locally** at 3.2.0 — no SPM/network resolution and no third-party runtime SDKs. |
+| A06 | Vulnerable Components | **Pass** | The only runtime dependency, Localize-Swift 3.2.0, is **vendored locally** under `Packages/Localize-Swift`. The test target additionally uses ViewInspector 0.10.3 as a test-only remote Swift Package dependency. It is not linked into the shipped application. No remote runtime dependencies are used by the shipped app. |
 | A07 | Identification & Auth Failures | **N/A** | No authentication or identity surface. |
 | A08 | Software/Data Integrity | **Pass** | `UserDefaults` values are type-checked on load; invalid/absent timezones fall back to `.current`; intervals are clamped to `30...300`. |
 | A09 | Logging & Monitoring Failures | **Pass** | No sensitive data is logged. No crash reporters or analytics are present. |
@@ -44,7 +44,7 @@
 3. **Supply-chain risk**
    - **Asset:** Build integrity.
    - **Adversary:** Malicious upstream dependency.
-   - **Control:** The only dependency is vendored in-repo and pinned at 3.2.0; no code is fetched at build time.
+   - **Control:** The only runtime dependency is vendored in-repo (Localize-Swift, pinned at 3.2.0); no remote runtime code is fetched at build time. The test target additionally uses ViewInspector as a test-only remote package.
 
 ## Risk Assessment Matrix (known, unresolved)
 
@@ -72,9 +72,9 @@ xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek \
   -only-testing:CheapSeekTests test
 ```
 
-## Security Regression Suite (runs on every build)
+## Security Regression Suite (runs on every test run)
 
-`SecurityRegressionTests.swift` — if any check fails, the **build is rejected**:
+`SecurityRegressionTests.swift` — if any check fails, the **test run fails**:
 
 | Check | Category | Assurance |
 | :--- | :--- | :--- |
@@ -84,14 +84,14 @@ xcodebuild -project CheapSeek.xcodeproj -scheme CheapSeek \
 | `test_noNetworkingAPIs` | A10 / MASVS-NETWORK | No `URLSession` / `URLRequest` / `import Network` in app sources |
 | `test_noAnalyticsOrTelemetrySDKs` | MASVS-PRIVACY | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | MASVS-STORAGE | No Keychain / `SecItem` — UserDefaults-only persistence |
-| `testA06_noRemotePackageDependencies` | A06 | No remote SPM packages; only the vendored Localize-Swift |
+| `testA06_appTargetHasNoRemotePackageDependencies` | A06 | The app target has no remote SPM packages; only the vendored Localize-Swift (ViewInspector is test-only) |
 | `testLocalizations_allLanguagesPresent` | i18n integrity | All 17 `.lproj` packs exist |
 
 ## Findings Closed This Sprint
 
 | Finding | Risk | Fix |
 | :--- | :--- | :--- |
-| Localize-Swift pulled from upstream SPM did not build for macOS (iOS-only `import UIKit`) | Medium (A06 / supply chain) | Vendored 3.2.0 locally under `Packages/` — no remote resolution |
+| Localize-Swift pulled from upstream SPM did not build for macOS (iOS-only `import UIKit`) | Medium (A06 / supply chain) | Vendored 3.2.0 locally under `Packages/` — no remote resolution for the app target |
 | Settings window could not open on macOS 26 (private `showSettingsWindow:` selector removed) | Low (UX) | Modern `openSettings` action with a macOS 14 selector fallback |
 | Launch-at-login silently failed for ad-hoc signed builds | Low | `SMAppService` errors are caught and surfaced in Settings |
 | Signing secrets could be committed by accident | Low | The Apple team id lives in gitignored `Config/Local.xcconfig`; `.gitignore` excludes `*.p12`/`*.cer`/`*.pem`/`*.key`, provisioning profiles, and `ExportOptions.plist` |

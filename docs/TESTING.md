@@ -81,9 +81,9 @@ xcodebuild -project CheapSeek.xcodeproj \
 
 > **Views are unit-tested in two layers:** ViewInspector evaluates each view's `body` and lets tests tap controls, and `ImageRenderer` renders views offscreen, which executes the deferred `Chart`/`List`/`Form`/`TimelineView` content closures. This lifted view coverage from ~0% to ~96–99%. See **Excluded from coverage** for the framework/system lines that remain.
 
-## Security Regression Suite (runs on every build)
+## Security Regression Suite (runs on every test run)
 
-`SecurityRegressionTests.swift` — if any check fails, the **build is rejected**:
+`SecurityRegressionTests.swift` — if any check fails, the **test run fails**:
 
 | Check | Assurance |
 | :--- | :--- |
@@ -95,7 +95,7 @@ xcodebuild -project CheapSeek.xcodeproj \
 | `test_noAnalyticsOrTelemetrySDKs` | No Firebase/Sentry/Mixpanel/Analytics/Telemetry SDKs |
 | `test_noKeychainOrSecretStorage` | No Keychain / `SecItem` usage (UserDefaults-only persistence) |
 | `testPrivacyManifestDeclaresRequiredReasonAPI` | `PrivacyInfo.xcprivacy` declares the UserDefaults required-reason code `CA92.1` |
-| `testA06_noRemotePackageDependencies` | The app target has no remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
+| `testA06_appTargetHasNoRemotePackageDependencies` | The app target has no remote SPM packages (`url:` / `from:`); only the vendored Localize-Swift |
 | `testLocalizations_allLanguagesPresent` | All 17 `.lproj` packs exist |
 
 ## UI Tests

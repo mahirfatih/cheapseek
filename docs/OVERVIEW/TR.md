@@ -6,7 +6,7 @@ CheapSeek, DeepSeek API'sinin şu an **peak** (pahalı) mi yoksa **off-peak** (u
 
 ---
 
-## How it works
+## Nasıl çalışır
 
 1. `Clock`, yapılandırılabilir aralıkta (varsayılan **60 sn**) tetiklenir ve geçerli tarihi `AppModel`'e verir.
 2. `AppModel`, saf `PeakCalculator`'a bu anın peak olup olmadığını sorar; UTC takvimi ve yarı-açık pencereler kullanılır (`[01:00,04:00)` ve `[06:00,10:00)`).
@@ -19,7 +19,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 
 ---
 
-## Screens and features
+## Ekranlar ve özellikler
 
 ### Menü çubuğu
 
@@ -60,7 +60,7 @@ Kritik nokta: **ağ çağrısı ve hesap yok.** Karar, sistem saatinden ve UTC k
 
 ---
 
-## Peak logic
+## Peak mantığı
 
 Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her zaman off-peak'tir.
 
@@ -75,7 +75,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Architecture and data layer
+## Mimari ve veri katmanı
 
 - **Saf çekirdek:** `PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`, `TimeZoneCatalog`, `TimeZoneLabel` — yalnızca Foundation, tamamen birim testli, global durum yok.
 - **Durum:** `AppModel` (`@MainActor`, `@Observable`; yenileme tiki, program, geçmiş) + `AppSettings` (`UserDefaults` kalıcılığı, `SMAppService`) + `Clock` (async ticker) + `HistoryStore` + `NotificationManager`.
@@ -85,7 +85,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Privacy and design
+## Gizlilik ve tasarım
 
 - **%100 cihaz üstü:** analitik, telemetri, ağ çağrısı ve üçüncü taraf çalışma-zamanı SDK'sı yok.
 - Durum yalnızca `UserDefaults`'ta (saat dilimi, bildirim tercihleri, sessiz saatler, güncelleme aralığı, dil, geçmiş örnekleri); `PrivacyInfo.xcprivacy` UserDefaults gerekçe kodunu (`CA92.1`) bildirir.
@@ -94,7 +94,7 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Known limitations
+## Bilinen sınırlamalar
 
 - **Ad-hoc imza:** proje varsayılan olarak ad-hoc imzalanır; bu nedenle `SMAppService` girişte başlat kaydı, bir Development Team ile imzalanana kadar başarısız olabilir.
 - **Menü çubuğu görünümü:** macOS durum öğesini monokrom template olarak çizebilir; bu yüzden renk yerine kısa metin ve belirgin SF Symbols kullanılır.
@@ -103,10 +103,10 @@ Peak pencereleri **UTC**'dir ve Pazartesi–Cuma uygulanır; hafta sonları her 
 
 ---
 
-## Quality, testing, and project management
+## Kalite, test ve proje yönetimi
 
-- **Test:** **224 birim testi** (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri) ve **7 UI testi** (açılış, Ayarlar, saat dilimi seçici ve popup — hepsi assert eder).
-- **Kapsam:** `CheapSeek.app` satır kapsamı **%95,22** (son yerel tam koşum), CI kapısı **≥%95**.
+- **Test:** Kapsamlı XCTest + XCUITest kapsamı (saf çekirdek, durum, yöneticiler, yerelleştirme, güvenlik + ViewInspector ve offscreen `ImageRenderer` view testleri — hepsi assert eder; güncel sayılar için `../TESTING.md`).
+- **Kapsam:** `CheapSeek.app` satır kapsamı için CI kapısı **≥%95** (son ölçüm için `../TESTING.md`).
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) **yalnızca manuel tetikleme (`workflow_dispatch`) ile** — SwiftLint (`--strict`) işi, `xcodegen generate`, build, kapsamlı birim testleri ve kapsam kapısı.
 - **Proje yönetimi:** `project.yml` (XcodeGen) tek doğruluk kaynağı; doküman/asset `docs/diagrams/` (Archify) ve `docs/screenshots/` altında.
 - **Sürüm:** `project.yml`'de `MARKETING_VERSION` artırılır; uygulama arşivlenir, imzalanır, dışa aktarılır, notarize edilir, staple'lanır ve dağıtım için paketlenir.

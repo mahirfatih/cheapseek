@@ -105,8 +105,8 @@ Peak windows are **UTC** and applied Monday–Friday; weekends are always off-pe
 
 ## Quality, testing, and project management
 
-- **Tests:** **224 unit tests** (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests) and **7 UI tests** (launch, Settings, timezone picker, popup — all assert).
-- **Coverage:** `CheapSeek.app` line coverage **95.22%** (latest local full run) with a CI gate of **≥95%**.
+- **Tests:** Extensive XCTest + XCUITest coverage (pure core, state, managers, localization, security, plus ViewInspector and offscreen `ImageRenderer` view tests — all assert; see `../TESTING.md` for the current counts).
+- **Coverage:** CI gate of **≥95%** for `CheapSeek.app` line coverage (see `../TESTING.md` for the latest measured coverage).
 - **CI:** GitHub Actions (`.github/workflows/ci.yml`) on **manual dispatch (`workflow_dispatch`) only** — a SwiftLint (`--strict`) job, `xcodegen generate`, build, unit tests with coverage, and the coverage gate.
 - **Project management:** `project.yml` (XcodeGen) is the single source of truth; docs and assets live in `docs/diagrams/` (Archify) and `docs/screenshots/`.
 - **Release:** `MARKETING_VERSION` in `project.yml` is bumped, then the app is archived, signed, exported, notarized, stapled, and packaged for distribution.

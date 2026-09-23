@@ -14,7 +14,7 @@ final class SecurityRegressionTests: XCTestCase {
     }
 
     /// The `CheapSeek:` application target block only — test targets may use remote
-    /// packages (e.g. ViewInspector), the shipped app must stay dependency-free.
+    /// packages (e.g. ViewInspector), the shipped app must have no remote runtime dependencies.
     private var appTargetYML: String {
         let marker = "\n  CheapSeek:\n"
         guard let start = projectYML.range(of: marker)?.upperBound else { return "" }
@@ -100,7 +100,7 @@ final class SecurityRegressionTests: XCTestCase {
         XCTAssertFalse(source.contains("SecItem"))
     }
 
-    func testA06_noRemotePackageDependencies() {
+    func testA06_appTargetHasNoRemotePackageDependencies() {
         // The app target must not pull remote SPM packages; only the vendored
         // local Localize-Swift is allowed. Test targets may use remote packages.
         let appTarget = appTargetYML
