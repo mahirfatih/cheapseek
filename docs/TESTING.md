@@ -31,19 +31,15 @@ xcodebuild -project CheapSeek.xcodeproj \
         ┌─────────┐
         │  Manual │  Menu bar rendering, Settings interactions, SMAppService
         ├─────────┤
-        │   UI    │  CheapSeekUITests (launch, settings, timezone picker; popup best-effort)
+        │   UI    │  CheapSeekUITests (launch, settings, timezone picker, popup — all assert)
         ├─────────┤
-        │  Unit   │  PeakCalculatorTests, CountdownFormatterTests,
-        │         │  AppSettingsTests, AppModelTests, MenuBarLabelTests,
-        │         │  NotificationManagerTests, NotificationPlannerTests,
-        │         │  HistoryAggregatorTests, HistoryStoreTests,
-        │         │  LocalizationTests, PricingConfigTests,
-        │         │  TimeZoneCatalogTests, TimeZoneLabelTests,
-        │         │  AboutViewTests,
-        │         │  SecurityRegressionTests,
+        │  Unit   │  Core/state/managers/config/localization/security (see Suites table),
+        │         │  ViewInspector + ImageRenderer view tests,
         │         │  ScreenshotCaptureTests (gated/skipped by default)
         └─────────┘
 ```
+
+> Full suite list: see **Suites & Strategy** below (single source of truth).
 
 ## Suites & Strategy
 

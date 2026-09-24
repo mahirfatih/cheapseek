@@ -2,7 +2,7 @@
 
 **Scope:** `CheapSeek` macOS client (menu bar app).
 **Architecture:** 100% on-device. No network calls, no telemetry, no accounts, no shared container.
-**Date:** 2026-09-15 · **Last re-verified:** 2026-09-17 · **Validated by:** `SecurityRegressionTests` (automated checks) + `PricingConfigTests`, `PeakCalculatorTests`, `AppSettingsTests`, `AppModelTests`, `TimeZoneCatalogTests`, `TimeZoneLabelTests`, `LocalizationTests` (run on every test run via `test/test.sh`). Exact test counts and coverage: see `docs/TESTING.md`.
+**Date:** 2026-09-15 · **Last re-verified:** 2026-09-24 · **Validated by:** `SecurityRegressionTests` (automated checks) + the full `CheapSeekTests` suite (run on every test run via `test/test.sh`). Full suite list, exact test counts and coverage: see `docs/TESTING.md`.
 
 ## OWASP Top 10 (2021) — Desktop Client Applicability
 
@@ -51,7 +51,7 @@
 | # | Risk | Severity | Likelihood | Status | Rationale / Accepted because | Mitigation if threat model changes |
 | :-- | :--- | :--- | :--- | :--- | :--- | :--- |
 | R1 | `SMAppService.register()` may fail for ad-hoc signed builds | Low | Medium | Accepted | Ad-hoc signing is dev-only; distributed builds should be properly signed/notarized. Failures are caught and surfaced in Settings. | Sign with a Development Team / notarize for distribution |
-| R2 | Menu bar label may render monochrome, hiding red/green | Low | High | Accepted | A macOS rendering behavior, not a security issue. Status text remains present in the popup. | Use a shape/emblem indicator if color is required |
+| R2 | Menu bar label may render monochrome, hiding red/green | Low | High | Mitigated | The app uses short text + distinct SF Symbols (`leaf`/`flame.fill`) instead of color, so the status stays readable in monochrome template mode. | — |
 | R3 | Incorrect status if the system clock is wrong | Low | Low | Accepted | Peak logic trusts UTC from the OS; there is no independent time source by design. | Fetch trusted time if an offline-trust requirement emerges |
 
 ## Incident Response (condensed playbook)

@@ -27,7 +27,7 @@ CheapSeek turns DeepSeek's peak/off-peak pricing into a glanceable menu bar sign
 - **Language & Framework:** Swift 5.9 / SwiftUI, macOS 14+, `MenuBarExtra` popup (`.window` style)
 - **Architecture Pattern:** Clean separation — pure core (`PeakCalculator`, `CountdownFormatter`, `NotificationPlanner`, `HistoryAggregator`, `TimeZoneCatalog`, `TimeZoneLabel`), state (`AppModel`, `AppSettings`, `Clock`, `HistoryStore`, `NotificationManager`), config (`DeepSeekConfig`), and views (`PopupView`, `SettingsView`, `PricingInfoView`, `HistoryChartView`, `TimeZonePicker`, `MenuBarLabel`)
 - **Peak Engine:** Pure Foundation `PeakCalculator` — UTC Gregorian calendar, half-open windows (`[01:00,04:00)` & `[06:00,10:00)`, Mon–Fri; weekends off-peak)
-- **State & Settings:** `AppModel` (`@Observable`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
+- **State & Settings:** `AppModel` (`@Observable` + `@MainActor`, async `Clock` tick) + `AppSettings` (`UserDefaults` persistence, `SMAppService` launch-at-login)
 - **Localization:** 17 languages (EN / TR / DE / ES / PT / FR / IT / ZH-Hans / HI / BN / RU / ID / MS / JA / KO / VI / SW) via vendored [Localize-Swift](https://github.com/marmelroy/Localize-Swift) (MIT); live switching through `LCLLanguageChangeNotification`; system language auto-detected with English fallback
 - **Design:** Semantic system colors, `.regularMaterial` popup background, light & dark mode follow the system automatically
 - **Testing:** Extensive XCTest + XCUITest coverage (unit, security, config, ViewInspector and ImageRenderer view tests, plus UI tests — all assert; `ScreenshotCaptureTests` is gated and skips by default; see `docs/TESTING.md` for the current counts and coverage)
@@ -191,16 +191,17 @@ Updates are published as GitHub Releases; each release refreshes the cask via
 ```
 CheapSeek/
 ├── project.yml                          # XcodeGen declarative project spec (single source of truth)
-├── CheapSeek.xcodeproj/                 # Generated project — gitignored, never edit by hand
-├── Config/                              # Signing configuration
+├── CheapSeek.xcodeproj/                 # Generated project — gitignored (run `xcodegen generate`), never edit by hand
+├── Config/                              # Signing configuration (team id stays local)
 │   ├── Base.xcconfig                    # Shared defaults; #include? Local.xcconfig
 │   └── Local.xcconfig.example           # Copy to Local.xcconfig and set your team id
 ├── CheapSeek/                           # Main app target
 │   ├── CheapSeekApp.swift               # @main entry: MenuBarExtra + Settings scene
-│   ├── AppModel.swift                   # @Observable: peak status, schedule, clock-driven updates
+│   ├── AppModel.swift                   # @Observable + @MainActor: peak status, schedule, clock-driven updates
 │   ├── Clock.swift                      # Async ticker (no Timer/Combine)
-│   ├── AppSettings.swift                # UserDefaults-backed settings, notifications prefs + SMAppService
+│   ├── AppSettings.swift                # UserDefaults-backed settings, notifications prefs + SMAppService (incl. LoginItemService protocol)
 │   ├── NotificationManager.swift        # Permission state + schedules transition notifications
+│   ├── SystemUserNotificationCenterAdapter.swift # Real UNUserNotificationCenter adapter (system boundary)
 │   ├── NotificationPlanner.swift        # Pure peak/off-peak notification planning + quiet hours
 │   ├── HistoryStore.swift               # Event-based, on-device peak/off-peak history (UserDefaults)
 │   ├── HistoryAggregator.swift          # Pure per-day peak/off-peak share aggregation
@@ -210,8 +211,8 @@ CheapSeek/
 │   ├── DesignSystem.swift               # Shared spacing/layout tokens
 │   ├── MenuBarLabel.swift               # Menu bar icon/label with accessibility
 │   ├── CountdownFormatter.swift         # Localized countdown formatting
-│   ├── TimeZoneLabel.swift              # Pretty timezone names + live UTC offsets
 │   ├── TimeZoneCatalog.swift            # Pure grouped/searchable timezone catalog
+│   ├── TimeZoneLabel.swift              # Pretty timezone names + live UTC offsets
 │   ├── AppLanguage.swift                # Single source of truth for the 17 languages
 │   ├── DeepSeekConfig.swift             # Loads Configuration.plist (peak hours, prices, links)
 │   ├── Configuration.plist              # Bundled config: peak windows, model pricing, links
@@ -240,7 +241,7 @@ CheapSeek/
 │   ├── vi.lproj/Localizable.strings     # Tiếng Việt
 │   └── sw.lproj/Localizable.strings     # Kiswahili
 ├── Packages/Localize-Swift/             # Vendored Localize-Swift 3.2.0 (local SPM package)
-├── CheapSeekTests/                      # Unit tests
+├── CheapSeekTests/                      # Unit tests (full list — see docs/TESTING.md)
 │   ├── PeakCalculatorTests.swift        # Peak logic, boundaries, weekends, DST
 │   ├── AppSettingsTests.swift           # Defaults, clamping, persistence
 │   ├── AppModelTests.swift              # State computation with injected date/timezone
@@ -252,9 +253,22 @@ CheapSeek/
 │   ├── HistoryStoreTests.swift          # Event-based recording, retention, persistence
 │   ├── LocalizationTests.swift          # 17-language key parity & completeness
 │   ├── PricingConfigTests.swift         # Bundled config parsing + fallback schedule
+│   ├── DeepSeekConfigTests.swift        # Config decode/load/validation branches
+│   ├── AppLanguageTests.swift           # 17-language enum metadata
+│   ├── ClockTests.swift                 # Async ticker scheduling
+│   ├── PeakStatusTests.swift            # PeakStatus values + badge
+│   ├── PricingInfoViewTests.swift       # Pricing view rendering
+│   ├── AboutViewTests.swift             # About sheet rendering + Labrus links
+│   ├── PopupViewTests.swift             # Popup/subsurface rendering
+│   ├── SettingsViewTests.swift          # Settings variants + bindings
+│   ├── TimeZonePickerTests.swift        # Picker grouping, search, selection
 │   ├── TimeZoneCatalogTests.swift       # Grouping, offsets, and search filtering
 │   ├── TimeZoneLabelTests.swift         # Pretty names, offsets, and DST
-│   ├── AboutViewTests.swift             # About sheet rendering + Labrus links
+│   ├── HistoryChartViewTests.swift      # Chart states + properties
+│   ├── HistoryChartViewRenderTests.swift # Offscreen Chart/AxisMarks builders
+│   ├── ViewRenderTests.swift            # Offscreen ImageRenderer view coverage
+│   ├── SystemUserNotificationCenterAdapterTests.swift # Real UNUserNotificationCenter (CI-skipped)
+│   ├── SystemLoginItemServiceTests.swift # Real SMAppService wrapper (CI-skipped)
 │   ├── ScreenshotCaptureTests.swift     # Offscreen light/dark PNG rendering (gated)
 │   └── SecurityRegressionTests.swift    # OWASP/MASVS regression (entitlements, network, l10n)
 ├── CheapSeekUITests/                    # UI tests (XCUITest)
@@ -290,11 +304,11 @@ CheapSeek/
 │   ├── API.md                           # No network API; bundled config & links
 │   ├── RELEASE.md                       # Sign, notarize, publish, distribute
 │   ├── HOMEBREW.md                      # Homebrew tap + cask guide
-│   ├── diagrams/                        # Archify diagrams (interactive HTML + JSON)
-│   │   ├── architecture.html            # Components and boundaries
-│   │   ├── dataflow.html                # How data moves through the app
-│   │   ├── workflow.html                # Runtime workflow
-│   │   └── lifecycle.html               # Peak status states and transitions
+│   ├── diagrams/                        # Archify diagrams (interactive HTML + JSON source pairs)
+│   │   ├── architecture.html/.json      # Components and boundaries
+│   │   ├── dataflow.html/.json          # How data moves through the app
+│   │   ├── workflow.html/.json          # Runtime workflow
+│   │   └── lifecycle.html/.json         # Peak status states and transitions
 │   └── screenshots/                     # English UI screenshots (used in README)
 │       ├── README.md                    # Light/dark gallery
 │       ├── light/                       # popup, pricing, settings, timezone-picker, about
@@ -316,7 +330,7 @@ CheapSeek/
 ```
 
 - Screenshots: [`test/capture-screenshots.sh`](./test/capture-screenshots.sh) renders the main screens offscreen with SwiftUI `ImageRenderer` (gated by `TEST_RUNNER_CAPTURE_SCREENSHOTS=1`) and refreshes the gallery in [`docs/screenshots/`](./docs/screenshots).
-- Suites: unit tests (`PeakCalculatorTests`, `CountdownFormatterTests`, `AppSettingsTests`, `AppModelTests`, `MenuBarLabelTests`, `NotificationManagerTests`, `NotificationPlannerTests`, `HistoryAggregatorTests`, `HistoryStoreTests`, `LocalizationTests`, `PricingConfigTests`, `TimeZoneCatalogTests`, `TimeZoneLabelTests`, `DeepSeekConfigTests`, `AppLanguageTests`, `ClockTests`, `PeakStatusTests`, `PricingInfoViewTests`, `AboutViewTests`, `PopupViewTests`, `SettingsViewTests`, `TimeZonePickerTests`, `HistoryChartViewTests`, `HistoryChartViewRenderTests`, `ViewRenderTests`, `SystemUserNotificationCenterAdapterTests`, `SystemLoginItemServiceTests`, `SecurityRegressionTests`; `ScreenshotCaptureTests` is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default — see `docs/TESTING.md` for the current test counts), plus `CheapSeekUITests` (launch, settings, timezone picker, popup — all assert).
+- Suites: unit tests in `CheapSeekTests` (core, state, managers, localization, config, ViewInspector + ImageRenderer view tests) plus `CheapSeekUITests` (launch, settings, timezone picker, popup — all assert). `ScreenshotCaptureTests` is gated behind `TEST_RUNNER_CAPTURE_SCREENSHOTS=1` and skips by default; `System*Tests` touch real system APIs and are skipped in CI. Full suite list and counts: see `docs/TESTING.md`.
 - UI tests are **local-only** and run under test-only launch flags (`-UITestMode` / `-UITestSettings`, which present the popup and Settings in plain windows); all UI tests assert real behavior with no skips.
 - CI (`.github/workflows/ci.yml`, `macos-latest`): **manual dispatch only** (`workflow_dispatch`) — runs SwiftLint (`--strict`), installs XcodeGen, regenerates the project, builds, runs the unit tests with coverage, and enforces a **CI coverage gate** (`CheapSeek.app` ≥ 95%; see `docs/TESTING.md` for the latest measured coverage). UI tests are local-only (macOS XCUITest needs an interactive session).
 
