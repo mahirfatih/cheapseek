@@ -121,6 +121,7 @@ clones the tap into `../homebrew-tap` if needed, writes
 
 ```sh
 brew tap mahirfatih/tap
+brew trust --tap mahirfatih/tap
 brew audit --cask cheapseek
 brew style --cask cheapseek
 brew info --cask cheapseek
